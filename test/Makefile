@@ -18,7 +18,8 @@ LDFLAGS = -lmosquitto
 %.o: $(SRCDIR)/%.cpp
 	$(CC) -c $^ -o $@ $(CFLAGS)
 
-# Targets
+all: MQTTPublisherTest
+
 MQTTPublisherTest : MQTTPublisherTest.o MQTTPublisher.o
 MQTTPublisherTest.o : MQTTPublisherTest.cpp
 MQTTPublisher.o : $(SRCDIR)/MQTTPublisher.cpp
