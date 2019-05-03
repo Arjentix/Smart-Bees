@@ -2,7 +2,7 @@
 * Polyakov Daniil
 * Mail: arjentix@gmail.com
 * Github: Arjentix
-* Date: 02.0.19
+* Date: 02.05.19
 */
 
 #ifndef MQTT_PUBLISHER_H
