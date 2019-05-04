@@ -65,7 +65,7 @@ int main()
 		bool			res;
 
 		while (!finish) {
-			token = alice_conn.get_tokents();
+			token = alice_conn.get_token();
 			res = tok_hand.find(token, topic, command);
 			if (res == true) {
 				mqtt_pub.publish(topic, command);
