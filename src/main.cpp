@@ -7,8 +7,8 @@
 
 #include "AliceConnector.h"
 #include "MQTTPublisher.h"
+#include "TokenHandler.h"
 #include "LogPrinter.h"
-#include <queue>
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
@@ -58,15 +58,15 @@ int main()
 		/* Initialization */
 		AliceConnector		alice_conn();
 		MQTTPublisher		mqtt_pub();
-		TokensHandler		tok_hand();
-		std::queue<std::string>	tokens();
-		bool 			res;
+		TokenHandler		tok_hand();
+		std::string		token;
 		std::string		topic;
 		std::string		command;
+		bool			res;
 
 		while (!finish) {
-			tokens = alice_conn.get_tokents();
-			res = tok_hand.find(tokens, topic, command);
+			token = alice_conn.get_tokents();
+			res = tok_hand.find(token, topic, command);
 			if (res == true) {
 				mqtt_pub.publish(topic, command);
 				alice_conn.send_ok();
