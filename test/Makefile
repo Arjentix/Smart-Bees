@@ -18,11 +18,17 @@ LDFLAGS = -lmosquitto
 %.o: $(SRCDIR)/%.cpp
 	$(CC) -c $^ -o $@ $(CFLAGS)
 
-all: MQTTPublisherTest
+all: MQTTPublisherTest, TokenHandlerTest
 
-MQTTPublisherTest : MQTTPublisherTest.o MQTTPublisher.o
-MQTTPublisherTest.o : MQTTPublisherTest.cpp
-MQTTPublisher.o : $(SRCDIR)/MQTTPublisher.cpp
+MQTTPublisherTest: MQTTPublisherTest.o MQTTPublisher.o
+MQTTPublisherTest.o: MQTTPublisherTest.cpp
+MQTTPublisher.o: $(SRCDIR)/MQTTPublisher.cpp
+
+LDFLAGS = 
+
+TokenHandlerTest: TokenHandlerTest.o TokenHandler.o
+TokenHandlerTest.o: TokenHandlerTest.cpp
+TokenHandler.o: $(SRCDIR)/TokenHandler.cpp
 
 clean:
 	-rm *.o
