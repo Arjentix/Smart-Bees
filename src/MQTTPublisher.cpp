@@ -13,8 +13,8 @@
 #define KEEP_ALIVE 120
 
 /*
-* This file defines class MQTTPublisher, described in MQTTPublisher.h.
-* See all methods documentations in the header file.
+* This file defines class MQTTPublisher described in MQTTPublisher.h.
+* See all methods documentation in the header file.
 */
 
 MQTTPublisher::MQTTPublisher(std::string host, int port) : _host(host), _port(port)
