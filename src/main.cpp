@@ -28,7 +28,7 @@
 bool finish = false;
 
 /*
-* signal_handler() - handles SIGIGT and SIGTERM signals from system.
+* signal_handler() - handles SIGINT and SIGTERM signals from system.
 */
 void signal_handler(int sig)
 {
@@ -63,6 +63,10 @@ int main()
 		std::string		topic;
 		std::string		command;
 		bool			res;
+
+		/* Signal capture */
+		signal(SIGINT, signal_handler);
+		signal(SIGTERM, signal_handler);
 
 		while (!finish) {
 			token = alice_conn.get_token();
