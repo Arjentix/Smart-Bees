@@ -1,6 +1,12 @@
 # Source directory
 SRCDIR = ../src
 
+# Build directory
+BUILDDIR = build
+
+# Binary directory
+BINDIR = bin
+
 # Compiler
 CC = g++
 
@@ -11,24 +17,25 @@ CFLAGS = -I $(SRCDIR)
 LDFLAGS = -lmosquitto
 
 # Rules
-%:%.o
+$(BINDIR)/%: $(BUILDDIR)/%.o
+	mkdir -p $(BINDIR)
 	$(CC) $^ -o $@ $(LDFLAGS)
-%.o: %.cpp
+$(BUILDDIR)/%.o: %.cpp
+	mkdir -p $(BUILDDIR)
 	$(CC) -c $^ -o $@ $(CFLAGS)
-%.o: $(SRCDIR)/%.cpp
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+	mkdir -p $(BUILDDIR)
 	$(CC) -c $^ -o $@ $(CFLAGS)
 
-all: MQTTPublisherTest, TokenHandlerTest
+all: $(BINDIR)/MQTTPublisherTest $(BINDIR)/TokenHandlerTest
 
-MQTTPublisherTest: MQTTPublisherTest.o MQTTPublisher.o
-MQTTPublisherTest.o: MQTTPublisherTest.cpp
-MQTTPublisher.o: $(SRCDIR)/MQTTPublisher.cpp
+$(BINDIR)/MQTTPublisherTest: $(BUILDDIR)/MQTTPublisherTest.o $(BUILDDIR)/MQTTPublisher.o
+$(BUILDDIR)/MQTTPublisherTest.o: MQTTPublisherTest.cpp
+$(BUILDDIR)/MQTTPublisher.o: $(SRCDIR)/MQTTPublisher.cpp
 
-LDFLAGS = 
-
-TokenHandlerTest: TokenHandlerTest.o TokenHandler.o
-TokenHandlerTest.o: TokenHandlerTest.cpp
-TokenHandler.o: $(SRCDIR)/TokenHandler.cpp
+$(BINDIR)/TokenHandlerTest: $(BUILDDIR)/TokenHandlerTest.o $(BUILDDIR)/TokenHandler.o
+$(BUILDDIR)/TokenHandlerTest.o: TokenHandlerTest.cpp
+$(BUILDDIR)/TokenHandler.o: $(SRCDIR)/TokenHandler.cpp
 
 clean:
-	-rm *.o
+	-rm -r build/
