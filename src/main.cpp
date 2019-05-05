@@ -56,9 +56,12 @@ int main()
 		close(2);
 
 		/* Initialization */
+		PhotonConfigReader	photon_conf_reader();	// Reads config and gets new topic for every Photon
 		AliceConnector		alice_conn();
 		MQTTPublisher		mqtt_pub();
 		TokenHandler		tok_hand();
+		std::string		photon_mac;
+		std::string		photon_new_topic;
 		std::string		token;
 		std::string		topic;
 		std::string		command;
@@ -67,6 +70,14 @@ int main()
 		/* Signal capture */
 		signal(SIGINT, signal_handler);
 		signal(SIGTERM, signal_handler);
+
+		/* Initializing Photons */
+		res = photon_conf_reader.get_next(photon_mac, photon_new_topic);
+		while (res != false) {
+			/* Sending topics to the Photons for them to subscribe */
+			mqtt_pub.publish(photon_mac, photon_topic);
+			res = photon_conf_reader.get_next(photon_mac, photon_topic);
+		}
 
 		while (!finish) {
 			token = alice_conn.get_token();
