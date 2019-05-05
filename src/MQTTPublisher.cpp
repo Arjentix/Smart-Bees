@@ -43,11 +43,11 @@ MQTTPublisher::MQTTPublisher(std::string host, int port) : _host(host), _port(po
 	}
 }
 
-void MQTTPublisher::publish(std::string topic, std::string mes)
+void MQTTPublisher::publish(std::string topic, std::string mes, bool retain)
 {
 	int res;
 
-	res = mosquitto_publish(_mosq, NULL, topic.c_str(), mes.length(), mes.c_str(), 1, true);
+	res = mosquitto_publish(_mosq, NULL, topic.c_str(), mes.length(), mes.c_str(), 1, retain);
 	if (res != MOSQ_ERR_SUCCESS) {
 		switch (res) {
 		case MOSQ_ERR_INVAL:
