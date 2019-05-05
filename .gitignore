@@ -3,3 +3,5 @@
 *.base
 *.conf
 test/bin/*
+bin/*
+log/*
