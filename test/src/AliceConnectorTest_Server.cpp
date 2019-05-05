@@ -47,8 +47,11 @@ int main()
 
 		cout << "Connected to the client" << endl;
 		do {
+			cout << "Enter token: ";
 			cin >> buffer;
 			send(client_sockfd, buffer, 512, 0);
+			recv(client_sockfd, buffer, 512, 0);
+			cout << "Answer: " << buffer << endl;
 		} while (strcmp(buffer, "EOF") != 0);
 	}
 	catch (const std::exception &error) {

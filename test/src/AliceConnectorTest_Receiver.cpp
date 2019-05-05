@@ -14,6 +14,7 @@ int main()
 			token = alice_conn.get_token();
 			if (token != "") {
 				cout << "Received token: " << token << endl;
+				alice_conn.send_ok();
 			}
 		}
 
