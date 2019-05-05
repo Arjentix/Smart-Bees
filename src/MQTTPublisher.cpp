@@ -47,7 +47,7 @@ void MQTTPublisher::publish(std::string topic, std::string mes)
 {
 	int res;
 
-	res = mosquitto_publish(_mosq, NULL, topic.c_str(), mes.length(), mes.c_str(), 1, false);
+	res = mosquitto_publish(_mosq, NULL, topic.c_str(), mes.length(), mes.c_str(), 1, true);
 	if (res != MOSQ_ERR_SUCCESS) {
 		switch (res) {
 		case MOSQ_ERR_INVAL:

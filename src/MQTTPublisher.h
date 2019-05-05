@@ -32,7 +32,7 @@ public:
 	~MQTTPublisher();
 
 	/*
-	* publish() - publish given message to the given topic with quality = 1 and not retain.
+	* publish() - publish given message to the given topic with quality = 1 and retain.
 	* Cat thow std::runtime_error if some error occured in publishing process.
 	*/
 	void publish(std::string topic, std::string mes);
