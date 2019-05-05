@@ -37,10 +37,28 @@ bool TokenHandler::find(std::string token, std::string &topic, std::string &comm
 
 	while(_base.getline(line, 256)) {
 		sscanf(line, "%[^:] : %[^:] : %[^\n]", getted_token, getted_topic, getted_command);
+
+		/* Deleting last whitespaces in the getted_token */
 		len = strlen(getted_token);
-		if (getted_token[len - 1] == ' ') {
+		while (getted_token[len - 1] == ' ') {
 			getted_token[len - 1] = '\0';
+			len = strlen(getted_token);
 		}
+
+		/* Deleting last whitespaces in the getted_topic */
+		len = strlen(getted_topic);
+		while (getted_topic[len - 1] == ' ') {
+			getted_topic[len - 1] = '\0';
+			len = strlen(getted_topic);
+		}
+
+		/* Deleting last whitespaces in the getted_command */
+		len = strlen(getted_command);
+		while (getted_command[len - 1] == ' ') {
+			getted_command[len - 1] = '\0';
+			len = strlen(getted_command);
+		}
+
 		if (strcmp(getted_token, token.c_str()) == 0) {
 			topic = getted_topic;
 			command = getted_command;
