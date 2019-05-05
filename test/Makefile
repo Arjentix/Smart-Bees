@@ -1,6 +1,9 @@
 # Source directory
 SRCDIR = ../src
 
+# Source directory of *Test classes
+TESTSRCDIR = src
+
 # Build directory
 BUILDDIR = build
 
@@ -23,6 +26,9 @@ $(BINDIR)/%: $(BUILDDIR)/%.o
 $(BUILDDIR)/%.o: %.cpp
 	mkdir -p $(BUILDDIR)
 	$(CC) -c $^ -o $@ $(CFLAGS)
+$(BUILDDIR)/%.o: $(TESTSRCDIR)/%.cpp
+	mkdir -p $(BUILDDIR)
+	$(CC) -c $^ -o $@ $(CFLAGS)
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	mkdir -p $(BUILDDIR)
 	$(CC) -c $^ -o $@ $(CFLAGS)
@@ -30,11 +36,11 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 all: $(BINDIR)/MQTTPublisherTest $(BINDIR)/TokenHandlerTest
 
 $(BINDIR)/MQTTPublisherTest: $(BUILDDIR)/MQTTPublisherTest.o $(BUILDDIR)/MQTTPublisher.o
-$(BUILDDIR)/MQTTPublisherTest.o: MQTTPublisherTest.cpp
+$(BUILDDIR)/MQTTPublisherTest.o: $(TESTSRCDIR)/MQTTPublisherTest.cpp
 $(BUILDDIR)/MQTTPublisher.o: $(SRCDIR)/MQTTPublisher.cpp
 
 $(BINDIR)/TokenHandlerTest: $(BUILDDIR)/TokenHandlerTest.o $(BUILDDIR)/TokenHandler.o
-$(BUILDDIR)/TokenHandlerTest.o: TokenHandlerTest.cpp
+$(BUILDDIR)/TokenHandlerTest.o: $(TESTSRCDIR)/TokenHandlerTest.cpp
 $(BUILDDIR)/TokenHandler.o: $(SRCDIR)/TokenHandler.cpp
 
 clean:
