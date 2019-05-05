@@ -5,6 +5,7 @@
 * Date: 03.05.19
 */
 
+#include "PhotonConfigReader.h"
 #include "AliceConnector.h"
 #include "MQTTPublisher.h"
 #include "TokenHandler.h"
@@ -50,6 +51,8 @@ int main()
 
 	/* Child */
 	try {
+		LogPrinter::print("!!!---Program started---!!!");
+
 		/* Closing useless fds */
 		close(0);
 		close(1);
@@ -57,7 +60,7 @@ int main()
 
 		/* Initialization */
 		PhotonConfigReader	photon_conf_reader("photon.conf");	// Reads config and gets new topic for every Photon
-		AliceConnector		alice_conn();				// Does all communication with Alice
+		AliceConnector		alice_conn("127.0.0.1", 4551);		// Does all communication with Alice
 		MQTTPublisher		mqtt_pub("localhost", 1883);		// Does publishing messages to the MQTT topis
 		TokenHandler		tok_hand("token.base");			// Checks for existing token and returns relevant parameters
 		std::string		photon_mac;
@@ -75,23 +78,31 @@ int main()
 		res = photon_conf_reader.get_next(photon_mac, photon_new_topic);
 		while (res != false) {
 			/* Sending topics to the Photons for them to subscribe */
-			mqtt_pub.publish(photon_mac, photon_topic);
-			res = photon_conf_reader.get_next(photon_mac, photon_topic);
+			mqtt_pub.publish(photon_mac, photon_new_topic, true);
+			res = photon_conf_reader.get_next(photon_mac, photon_new_topic);
 		}
 
 		while (!finish) {
 			token = alice_conn.get_token();
-			res = tok_hand.find(token, topic, command);
-			if (res == true) {
-				mqtt_pub.publish(topic, command);
-				alice_conn.send_ok();
-			}
-			else {
-				alice_conn.send_err();
+			if (token != "") {
+				LogPrinter::print("Token getted: " + token);
+				res = tok_hand.find(token, topic, command);
+				LogPrinter::print("Topic: " + topic);
+				LogPrinter::print("Command: " + command);
+				if (res == true) {
+					LogPrinter::print("Publishing");
+					mqtt_pub.publish(topic, command, false);
+					alice_conn.send_ok();
+				}
+				else {
+					alice_conn.send_err();
+				}
 			}
 		}
 	}
 	catch (const std::exception &error) {
 		LogPrinter::print(error.what());
 	}
+
+	LogPrinter::print("Program finished");
 }
