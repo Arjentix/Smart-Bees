@@ -22,7 +22,7 @@ private:
 public:
 	/*
 	* TokenHanlder() - opens file with path base_path.
-	* Cat throw str::runtime_error if can't open file.
+	* Can throw str::runtime_error if can't open file.
 	*/
 	TokenHandler(std::string base_path);
 
