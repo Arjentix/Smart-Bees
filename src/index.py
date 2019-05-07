@@ -67,7 +67,7 @@ def handle_dialog(req, res):
 		gateproc.send_tokens(user_id, tokens)
 		answer = gateproc.recv_answer(user_id)
 		logging.info('Gate answer: %s', answer)
-		if (answer[0:1] == 'OK'):
+		if (answer[0:2] == 'OK'):
 			res['response']['text'] = 'Готово!'
 		else:
 			res['response']['text'] = 'Что-то пошло не так'
