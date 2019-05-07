@@ -6,13 +6,16 @@
 */
 
 #include "AliceConnector.h"
+#include "LogPrinter.h"
 #include <stdexcept>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <unistd.h>
+#include <cstring>
 
 /*
 * BUF_SIZE - size of the buffer for receiving and sending messages to Alice.
@@ -30,17 +33,24 @@ _sockfd(socket(AF_INET, SOCK_STREAM, 0))
 	/* Initialization */
 	struct sockaddr_in	socket_address;
 	int			result;
+	hostent			*host;
 
 	/* Setting address */
 	socket_address.sin_family = AF_INET;
-	socket_address.sin_addr.s_addr = inet_addr(address.c_str());
+	host = gethostbyname(address.c_str());
+	if (host == NULL) {
+		throw std::runtime_error("Failed to get host");
+	}
+	memcpy(&socket_address.sin_addr, host->h_addr_list[0], host->h_length);
 	socket_address.sin_port = htons(port);
 
 	/* Connecting */
+	LogPrinter::print("Connecting");
 	result = connect(_sockfd, (struct sockaddr *)&socket_address, sizeof(socket_address));
 	if (result == -1) {
 		throw std::runtime_error("Failed to connect to Alice.");
 	}
+	LogPrinter::print("Connected");
 
 	_connected = true;
 }
