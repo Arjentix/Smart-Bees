@@ -90,4 +90,4 @@ if __name__ == '__main__':
 	sock.bind(('', 4443))
 	port = sock.getsockname()[1]
 	sock.close()
-	app.run(ssl_context='adhoc', host='0.0.0.0', port=port)
+	app.run(ssl_context=('cert.pem', 'key.pem'), host='0.0.0.0', port=port)
