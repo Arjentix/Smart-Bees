@@ -60,6 +60,7 @@ def handle_dialog(req, res):
 		if req['session']['new']:
 			# Это новая сессия.
 			res['response']['text'] = 'Привет! Что мне включить?'
+			return;
 
 		# Обрабатываем ответ пользователя.
 		tokens = req['request']['nlu']['tokens']
