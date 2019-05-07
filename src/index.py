@@ -12,6 +12,8 @@ sys.path.insert(0, 'src')
 # Импортируем модуль связи со шлюзами
 import GateProcessor
 
+import socket
+
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
 app = Flask(__name__)
@@ -82,3 +84,10 @@ def get_suggests(user_id):
 	]
 
 	return suggests
+
+if __name__ == '__main__':
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sock.bind(('', 4443))
+	port = sock.getsockname()[1]
+	sock.close()
+	app.run(port=port)
