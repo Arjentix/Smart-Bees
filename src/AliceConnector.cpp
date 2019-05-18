@@ -73,6 +73,8 @@ std::string AliceConnector::get_token()
 	struct timespec	timeout;
 	int		res;
 
+	memset(buffer, BUF_SIZE, 0);
+
 	/* Setting select parameters */
 	FD_ZERO(&inputs);
 	FD_SET(_sockfd, &inputs);
