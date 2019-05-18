@@ -3,7 +3,7 @@
 timeout=7
 
 rm photon_firmware_*.bin
-# particle compile photon
+particle compile photon
 
 echo "Make photon enter in DFU mode for $(timeout) seconds!"
 for (( i=1; i <= timeout; i++ ))
