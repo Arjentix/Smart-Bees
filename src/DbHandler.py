@@ -31,4 +31,8 @@ class DbHandler:
 		with self.connection.cursor() as cursor:
 			query = 'SELECT gate FROM gate_uid WHERE uid = \'{}\''.format(user_id)
 			cursor.execute(query)
-			return cursor.fetchone()['gate']
+			res = cursor.fetchone()
+			if res is not None:
+				return res['gate']
+			else:
+				return ''
