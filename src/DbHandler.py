@@ -27,7 +27,7 @@ class DbHandler:
 
 			return True
 
-	def get_gate_for(self, user_id):
+	def get_gate_from_db(self, user_id):
 		with self.connection.cursor() as cursor:
 			query = 'SELECT gate FROM gate_uid WHERE uid = \'{}\''.format(user_id)
 			cursor.execute(query)
