@@ -56,23 +56,34 @@ def handle_dialog(req, res):
 	user_id = req['session']['user_id']
 
 	# Проверка существования соединения со шлюзом этого пользователя
-	if (gateproc.has_gate_for(user_id)):
-		if req['session']['new']:
-			# Это новая сессия.
-			res['response']['text'] = 'Привет! Что мне включить?'
-			return;
+	gate_serial = gateproc.get_gate_for(user_id)
+	if (gate_serial != ''):
+		if (gateproc.is_gate_connected(gate_serial)):
+			if req['session']['new']:
+				# Это новая сессия.
+				res['response']['text'] = 'Привет! Что мне включить?'
+				return;
 
-		# Обрабатываем ответ пользователя.
-		tokens = req['request']['nlu']['tokens']
-		gateproc.send_tokens(user_id, tokens)
-		answer = gateproc.recv_answer(user_id)
-		logging.info('Gate answer: %s', answer)
-		if (answer[0:2] == 'OK'):
-			res['response']['text'] = 'Готово!'
+			# Обрабатываем ответ пользователя.
+			if req['request']['original_utterance'].lower() in [
+				'uid',
+				'идентификатор',
+				'уникальный'
+			]:
+				res['response']['text'] = user_id
+			else:
+				tokens = req['request']['nlu']['tokens']
+				gateproc.send_tokens(gate_serial, tokens)
+				answer = gateproc.recv_answer(gate_serial)
+				logging.info('Gate answer: %s', answer)
+				if (answer[0:2] == 'OK'):
+					res['response']['text'] = 'Готово!'
+				else:
+					res['response']['text'] = 'Что-то пошло не так'
 		else:
-			res['response']['text'] = 'Что-то пошло не так'
+			res['response']['text'] = 'Нет соединения со шлюзом'
 	else:
-		res['response']['text'] = 'Нет соединения со шлюзом'
+		res['response']['text'] = 'Ваше устройство еще не привязано ни к какому шлюзу. Следуйте инструкции по регистрации нового устройства'
 
 
 # Функция возвращает подсказки для ответа.

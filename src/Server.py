@@ -14,21 +14,17 @@ class Server:
 		if hasattr(self, 'sock'):
 			self.sock.close()
 
-	def accepting(self, user_gate):
+	def accepting(self, gates):
 		def accept():
 			while (True):
 				new_client, client_addr = self.sock.accept()
 				logging.info('Connected with Gate: %s', client_addr[0])
 
-				'''
-				Будующий код:
-				user_id = get_user_from_db(client_addr)
-				if user != '':
-					user_gate[user_id] = new_client
-				'''
+				serial = self.recv(new_client)
+				logging.info('Getted serial: %s', serial)
 
-				# MVP код:
-				user_gate['all'] = new_client
+				if user != '':
+					gates[serial] = new_client;
 
 		logging.info('Server accepting started')
 		threading.Thread(target=accept).start()
