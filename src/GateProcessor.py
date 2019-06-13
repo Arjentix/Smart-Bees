@@ -20,9 +20,9 @@ class GateProcessor:
 	def is_gate_connected(self, gate_serial):
 		return gate_serial in self.gates.keys()
 
-	def send_tokens(self, user_id, tokens):
-		self.server.send(self.gates['all'], ' '.join(tokens))
+	def send_tokens(self, gate_serial, tokens):
+		self.server.send(self.gates[gate_serial], ' '.join(tokens))
 
-	def recv_answer(self, user_id):
-		answer = self.server.recv(self.gates['all'])
+	def recv_answer(self, gate_serial):
+		answer = self.server.recv(self.gates[gate_serial])
 		return answer

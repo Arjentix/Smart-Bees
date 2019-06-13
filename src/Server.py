@@ -25,6 +25,7 @@ class Server:
 
 				if serial != '':
 					gates[serial] = new_client;
+					logging.info('Gates: %s', gates)
 
 		logging.info('Server accepting started')
 		threading.Thread(target=accept).start()
