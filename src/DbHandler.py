@@ -31,4 +31,4 @@ class DbHandler:
 		with self.connection.cursor() as cursor:
 			query = 'SELECT gate FROM gate_uid WHERE uid = \'{}\''.format(user_id)
 			cursor.execute(query)
-			return cursor[0]['gate']
+			return cursor.pop().['gate']
