@@ -1,5 +1,6 @@
 import pymysql
 from pymysql.cursors import DictCursor
+import logging
 
 class DbHandler:
 	def __init__(self):
