@@ -65,25 +65,19 @@ def handle_dialog(req, res):
 				return;
 
 			# Обрабатываем ответ пользователя.
-			if req['request']['original_utterance'].lower() in [
-				'uid',
-				'идентификатор',
-				'уникальный'
-			]:
-				res['response']['text'] = user_id
+			tokens = req['request']['nlu']['tokens']
+			gateproc.send_tokens(gate_serial, tokens)
+			answer = gateproc.recv_answer(gate_serial)
+			logging.info('Gate answer: %s', answer)
+			if (answer[0:2] == 'OK'):
+				res['response']['text'] = 'Готово!'
 			else:
-				tokens = req['request']['nlu']['tokens']
-				gateproc.send_tokens(gate_serial, tokens)
-				answer = gateproc.recv_answer(gate_serial)
-				logging.info('Gate answer: %s', answer)
-				if (answer[0:2] == 'OK'):
-					res['response']['text'] = 'Готово!'
-				else:
-					res['response']['text'] = 'Что-то пошло не так'
+				res['response']['text'] = 'Что-то пошло не так'
 		else:
 			res['response']['text'] = 'Нет соединения со шлюзом'
 	else:
-		res['response']['text'] = 'Ваше устройство еще не привязано ни к какому шлюзу. Следуйте инструкции по регистрации нового устройства'
+		res['response']['text'] = 'Ваше устройство еще не привязано ни к какому шлюзу.\
+Следуйте инструкции по регистрации нового устройства. Ваш uID: {}'.format(user_id)
 
 
 # Функция возвращает подсказки для ответа.
