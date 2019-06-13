@@ -22,6 +22,7 @@ class DbHandler:
 		with self.connection.cursor() as cursor:
 			query = 'SELECT gate FROM gate_uid WHERE uid = \'{}\''.format(user_id)
 			cursor.execute(query)
+			self.connection.commit()
 			res = cursor.fetchone()
 			logging.info('Result from db: %s', res)
 			if res is not None:
