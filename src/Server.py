@@ -23,7 +23,7 @@ class Server:
 				serial = self.recv(new_client)
 				logging.info('Getted serial: %s', serial)
 
-				if user != '':
+				if serial != '':
 					gates[serial] = new_client;
 
 		logging.info('Server accepting started')
