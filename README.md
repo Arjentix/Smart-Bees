@@ -4,5 +4,5 @@ This is an Yandex Alice skill program that interacts with my [Gate program](http
 
 ## Usage example
 
-<video src="/home/arjentix/Projects/Smart Home/Пример работы.mp4"></video>
+<video src="https://i.imgur.com/xMFHUfk.mp4"></video>
 
