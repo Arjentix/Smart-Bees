@@ -54,7 +54,7 @@ _sockfd(socket(AF_INET, SOCK_STREAM, 0))
 
 	/* Sending serial number */
 	char buffer[BUF_SIZE] = {"12345\0"};
-	send(_sockfd, buffer, BUF_SIZE, 0);
+	send(_sockfd, buffer, strlen(buffer), 0);
 
 	_connected = true;
 }
