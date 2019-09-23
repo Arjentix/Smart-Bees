@@ -5,6 +5,8 @@
  * @date: 14.09.2019
 */
 
+#pragma once
+
 #include <string>
 #include <ostream>
 #include <map>
