@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhandler.a  CMakeFiles/handler.dir/home/batman/prj/Smart-Bees/Micro-services/libs/HTTPHandler/HTTPHandler.cpp.o
+/usr/bin/ranlib libhandler.a

@@ -1,4 +1,0 @@
-/home/batman/prj/cpp/server/build/CMakeFiles/rebuild_cache.dir
-/home/batman/prj/cpp/server/build/CMakeFiles/serv.dir
-/home/batman/prj/cpp/server/build/CMakeFiles/edit_cache.dir
-/home/batman/prj/cpp/server/build/CMakeFiles/main.dir

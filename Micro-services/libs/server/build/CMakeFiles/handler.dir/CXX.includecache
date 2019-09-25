@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/batman/prj/Smart-Bees/Micro-services/libs/HTTPHandler/HTTPHandler.cpp
+HTTPHandler.h
+/home/batman/prj/Smart-Bees/Micro-services/libs/HTTPHandler/HTTPHandler.h
+sstream
+-
+stdexcept
+-
+algorithm
+-
+iostream
+-
+
+/home/batman/prj/Smart-Bees/Micro-services/libs/HTTPHandler/HTTPHandler.h
+string
+-
+ostream
+-
+map
+-
+vector
+-
+utility
+-
+

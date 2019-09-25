@@ -1,0 +1,1 @@
+/usr/bin/c++   -I/usr/include/mysql -DBIG_JOINS=1  -fno-strict-aliasing -g -L/usr/lib -lmysqlclient -lpthread -lz -lm -lrt -ldl   CMakeFiles/main.dir/main.cpp.o  -o main libserver.a libhandler.a libdatabase.a 
