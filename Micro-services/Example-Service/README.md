@@ -11,7 +11,7 @@
 * [CMakeLists.txt](CMakeLists.txt) - основной файл для сборки с помощью cmake;
 * [docker-compose.yml](docker-compose.yml) - конфиг для docker-compose, позволяющей запускать несколько контейнеров одновременно (см. [еще один пример использования](https://docs.docker.com/compose/gettingstarted/));
 * [Dockerfile](Dockerfile) - описывает контейнер именно для микро-сервиса. Контейнер для БД создается непосредственно в [docker-compose.yml](docker-compose.yml);
-* [README.md](README.md) - необязательный файл с пояснениями. Но было бы неплохо и красиво, если бы они были.
+* [README.md](README.md) - необязательный файл с пояснениями. Но было бы неплохо и красиво, если бы он был.
 
 ## src
 
