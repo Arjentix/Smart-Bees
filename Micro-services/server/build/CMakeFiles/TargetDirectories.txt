@@ -1,0 +1,6 @@
+/home/batman/prj/Smart-Bees/Micro-services/server/build/CMakeFiles/database.dir
+/home/batman/prj/Smart-Bees/Micro-services/server/build/CMakeFiles/rebuild_cache.dir
+/home/batman/prj/Smart-Bees/Micro-services/server/build/CMakeFiles/server.dir
+/home/batman/prj/Smart-Bees/Micro-services/server/build/CMakeFiles/edit_cache.dir
+/home/batman/prj/Smart-Bees/Micro-services/server/build/CMakeFiles/main.dir
+/home/batman/prj/Smart-Bees/Micro-services/server/build/CMakeFiles/handler.dir

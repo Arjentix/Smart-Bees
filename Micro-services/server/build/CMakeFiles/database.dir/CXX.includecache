@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/batman/prj/Smart-Bees/Micro-services/server/src/database.cpp
+database.h
+/home/batman/prj/Smart-Bees/Micro-services/server/src/database.h
+
+/home/batman/prj/Smart-Bees/Micro-services/server/src/database.h
+iostream
+-
+mysql/mysql.h
+-
+string
+-
+

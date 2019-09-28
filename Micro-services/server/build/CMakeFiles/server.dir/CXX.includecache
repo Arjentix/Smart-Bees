@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/batman/prj/Smart-Bees/Micro-services/server/src/server.cpp
+server.h
+/home/batman/prj/Smart-Bees/Micro-services/server/src/server.h
+
+/home/batman/prj/Smart-Bees/Micro-services/server/src/server.h
+iostream
+-
+string.h
+-
+sys/types.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+arpa/inet.h
+-
+stdlib.h
+-
+unistd.h
+-
+thread
+-
+vector
+-
+
