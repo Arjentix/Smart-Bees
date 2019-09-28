@@ -59,15 +59,7 @@ QueryResult& QueryResult::operator=(QueryResult&& other)
 }
 
 
-Connector::Connector(
-	const std::string& host,
-	const std::string& user,
-	const std::string& passwd,
-	const std::string& db,
-	unsigned int port,
-	const std::string& unix_socket,
-	unsigned int client_flag
-) : _last_res_ptr(nullptr)
+Connector::Connector() : _last_res_ptr(nullptr), _connected(false)
 {
 	_conn_ptr = mysql_init(nullptr);
 	if (_conn_ptr == nullptr) {
@@ -76,7 +68,18 @@ Connector::Connector(
 			std::string(mysql_error(_conn_ptr))
 		);
 	}
+}
 
+bool Connector::connect(
+	const std::string& host,
+	const std::string& user,
+	const std::string& passwd,
+	const std::string& db,
+	unsigned int port,
+	const std::string& unix_socket,
+	unsigned int client_flag
+)
+{
 	MYSQL* res = mysql_real_connect(
 		_conn_ptr, 
 		host.c_str(),
@@ -87,12 +90,16 @@ Connector::Connector(
 		unix_socket.c_str(),
 		client_flag
 	);
-	if (res == nullptr) {
-		throw std::runtime_error(
-			"MySQL connection failed: " +
-			std::string(mysql_error(res))
-		);
+	if (res != nullptr) {
+		_connected = true;
 	}
+
+	return _connected;
+}
+
+bool Connector::is_connected()
+{
+	return _connected;
 }
 
 Connector::~Connector()

@@ -86,10 +86,18 @@ namespace SimpleSQL {
 	class Connector {
 	public:
 		/**
-		 * Connector() - throws a std::runtime_error exception if can't connect
-		 * to the database.
+		 * Connector() - throws a std::runtime_error exception if can't
+		 * initialize connection.
 		*/
-		Connector(
+		Connector();
+
+		~Connector();
+
+		/**
+		 * connect() - tries to connect to the database. 
+		 * Return true, if connection was established and false if not.
+		*/
+		bool connect(
 			const std::string& host,
 			const std::string& user,
 			const std::string& passwd,
@@ -99,7 +107,11 @@ namespace SimpleSQL {
 			unsigned int client_flag = 0
 		);
 
-		~Connector();
+		/**
+		 * is_connected() - return true, if connection with database was
+		 * established and false if not.
+		*/
+		bool is_connected();
 
 		/**
 		 * query() - sends given query to the connected database.
@@ -112,5 +124,6 @@ namespace SimpleSQL {
 	private:
 		MYSQL* _conn_ptr;
 		std::shared_ptr<QueryResult> _last_res_ptr;
+		bool _connected;
 	};
 }
