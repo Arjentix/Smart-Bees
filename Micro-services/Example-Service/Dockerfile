@@ -1,6 +1,9 @@
 # Building --------------
 FROM ubuntu:latest AS build
 
+# Name of the service folder
+ARG SERVICE=Example-Service
+
 # Downloading dependencies
 RUN apt-get update && \
     apt-get install -y \
@@ -15,8 +18,9 @@ RUN apt-get update && \
 
 # Configuring working environment
 RUN mkdir -p /app
-COPY CMakeLists.txt /app
-COPY src /app/src
+COPY ${SERVICE}/CMakeLists.txt /app
+COPY ${SERVICE}/src /app/src
+COPY /libs/SimpleSQL /libs/SimpleSQL
 RUN mkdir -p /app/build
 WORKDIR /app/build
 

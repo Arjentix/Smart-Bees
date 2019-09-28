@@ -1,16 +1,15 @@
 cmake_minimum_required(VERSION 3.10.2)
 
+set(SIMPLESQL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/SimpleSQL)
+
 project(example_src)
 
 set(SOURCE_EXE main.cpp)
 
-# Adding path to the FindMySQL.cmake
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-
-# Searching for MySQL lib
-find_package(MySQL REQUIRED)
+include_directories(${SIMPLESQL_INCLUDE_DIR})
 
 add_executable(main ${SOURCE_EXE})
 
-include_directories(${MYSQL_INCLUDE_DIR})
-target_link_libraries(main ${MYSQL_LIBRARIES})
+add_subdirectory(${SIMPLESQL_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/SimpleSQL)
+
+target_link_libraries(main SimpleSQL)

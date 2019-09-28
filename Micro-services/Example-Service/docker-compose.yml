@@ -1,19 +1,21 @@
 version: '3'
 services:
   example_service:
-      build: .
+      build:
+        context: ./..
+        dockerfile: ./Example-Service/Dockerfile
   mysql:
-      container_name: mysql
-      image: mysql:5.7
-      restart: on-failure
-      command: --init-file /data/application/init.sql
-      environment:
-          - MYSQL_DATABASE=TestDb
-          - MYSQL_ROOT_PASSWORD=root
-          - MYSQL_USER=Tester
-          - MYSQL_PASSWORD=secret
-      ports:
-          - "33060:3306"
-      volumes:
-          - "./database/data/mysql:/var/lib/mysql"
-          - "./database/init.sql:/data/application/init.sql"
+    container_name: mysql
+    image: mysql:5.7
+    restart: on-failure
+    command: --init-file /data/application/init.sql
+    environment:
+        - MYSQL_DATABASE=TestDb
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_USER=Tester
+        - MYSQL_PASSWORD=secret
+    ports:
+        - "33060:3306"
+    volumes:
+        - "./database/data/mysql:/var/lib/mysql"
+        - "./database/init.sql:/data/application/init.sql"
