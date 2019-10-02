@@ -80,6 +80,9 @@ bool Connector::connect(
 	unsigned int client_flag
 )
 {
+	const char* tmp_unix_socket = (unix_socket.empty() ? 
+		nullptr : unix_socket.c_str()
+	);
 	MYSQL* res = mysql_real_connect(
 		_conn_ptr, 
 		host.c_str(),
@@ -87,7 +90,7 @@ bool Connector::connect(
 		passwd.c_str(),
 		db.c_str(),
 		port,
-		unix_socket.c_str(),
+		tmp_unix_socket,
 		client_flag
 	);
 	if (res != nullptr) {
