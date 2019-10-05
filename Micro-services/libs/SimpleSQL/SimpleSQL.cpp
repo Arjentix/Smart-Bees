@@ -87,7 +87,7 @@ bool Connector::connect(
 		passwd.c_str(),
 		db.c_str(),
 		port,
-		unix_socket.c_str(),
+		NULL,
 		client_flag
 	);
 	if (res != nullptr) {

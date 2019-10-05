@@ -1,0 +1,97 @@
+#include "database.h"
+
+DataBase::DataBase() {}
+
+DataBase::~DataBase() {}
+
+DataBase::DataBase(std::string h_name, std::string db_name, std::string user, std::string pass, unsigned int port) {
+	try {
+		hostname = h_name;
+		database = db_name;
+    	username = user;
+    	password = pass;
+		port_num = port;
+
+		SimpleSQL::Connector dbc;
+//		dbc = new SimpleSQL::Connector();
+
+		dbc.connect(hostname, username, password, database, port_num);
+		if(dbc.is_connected())
+			std::cout << "Database " << database << " successfully connected" << std::endl;
+		else
+			std::cout << "ERROR with connecting database " << database << std::endl;
+	/*
+       	conn = mysql_init(NULL);
+
+        if (!mysql_real_connect(conn, HOSTNAME, USERNAME, PASSWORD, 
+					DATABASE, PORT_NO, SOCKET, OPT)) {
+            cerr << mysql_error(conn) << endl;
+        }
+		else
+			std::cout << "Database " << db_name << " successfully connected" << std::endl;
+			*/
+
+    } catch (char *e) {
+		std::cerr << "[EXCEPTION] " << e << std::endl;
+    }
+}
+
+/*
+bool DataBase::check_for_sub(int id) {
+	if(dbc->is_connected()) {
+		std::string request = "SELECT user_id, sub_start_date, sub_end_date FROM subs_table WHERE user_id=" + std::to_string(id);
+//		auto query_res_ptr = dbc.query(request);
+//		while(auto row = query_res_ptr->get_row()) {
+//			std::cout << row[0] << std::endl;
+//		}
+	}
+	return true;
+}
+
+void DataBase::update_sub(int id, time_t s_start, time_t s_end) {}
+void DataBase::insert_sub(std::string username, int id, time_t s_start, time_t s_end) {}
+void DataBase::delete_sub(int id) {}
+*/
+/*
+void DataBase::exec() {
+	try {
+        // Format a MySQL object
+        conn = mysql_init(NULL);
+
+        // Establish a MySQL connection
+        if (!mysql_real_connect(
+                conn,
+                MY_HOSTNAME, MY_USERNAME,
+                MY_PASSWORD, MY_DATABASE,
+                MY_PORT_NO, MY_SOCKET, MY_OPT)) {
+            cerr << mysql_error(conn) << endl;
+            return false;
+        }
+
+        // Execute a sql statement
+        if (mysql_query(conn, "SHOW TABLES")) {
+            cerr << mysql_error(conn) << endl;
+            return false;
+        }
+
+        // Get a result set
+        res = mysql_use_result(conn);
+
+        // Fetch a result set
+        cout << "* MySQL - SHOW TABLES in `"
+             << MY_DATABASE << "`" << endl;
+        while ((row = mysql_fetch_row(res)) != NULL)
+            cout << row[0] << endl;
+
+        // Release memories
+        mysql_free_result(res);
+
+        // Close a MySQL connection
+        mysql_close(conn);
+    } catch (char *e) {
+        cerr << "[EXCEPTION] " << e << endl;
+        return false;
+    }
+    return true;
+}
+*/
