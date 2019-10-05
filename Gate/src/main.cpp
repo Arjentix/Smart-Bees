@@ -63,8 +63,6 @@ int main()
 		AliceConnector		alice_conn("77.51.199.31", 4551);	// Does all communication with Alice
 		MQTTPublisher		mqtt_pub("localhost", 1883);		// Does publishing messages to the MQTT topis
 		TokenHandler		tok_hand("token.base");				// Checks for existing token and returns relevant parameters
-		std::string			photon_mac;
-		std::string			photon_new_topic;
 		std::string			token;
 		std::string			topic;
 		std::string			command;
@@ -75,11 +73,12 @@ int main()
 		signal(SIGTERM, signal_handler);
 
 		/* Initializing Photons */
-		res = photon_conf_reader.get_next(photon_mac, photon_new_topic);
-		while (res != false) {
+		for (
+			const auto& [photon_mac, photon_new_topic] :
+			photon_conf_reader.get_all_configs()
+		) {
 			/* Sending topics to the Photons for them to subscribe */
 			mqtt_pub.publish(photon_mac, photon_new_topic, true);
-			res = photon_conf_reader.get_next(photon_mac, photon_new_topic);
 		}
 
 		while (!finish) {

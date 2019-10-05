@@ -16,7 +16,7 @@ LDFLAGS = -lmosquitto
 # Rules
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	mkdir -p build
-	$(CC) -c $^ -o $@
+	$(CC) -c --std=c++1z $^ -o $@
 
 all: $(BINDIR)/Smart-Home-Gate
 

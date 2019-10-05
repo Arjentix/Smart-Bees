@@ -8,6 +8,7 @@
 #include "PhotonConfigReader.h"
 #include <stdexcept>
 #include <cstring>
+#include <memory>
 
 /*
 * This file defines PhotonConfigReader class, which is decribed in the PhotonConfigReader.h.
@@ -25,6 +26,18 @@ PhotonConfigReader::PhotonConfigReader(const std::string& config_path)
 PhotonConfigReader::~PhotonConfigReader()
 {
 	_config_file.close();
+}
+
+std::vector<std::pair<std::string, std::string>> PhotonConfigReader::get_all_configs()
+{
+	std::vector<std::pair<std::string, std::string>> res;
+	std::string mac, topic;
+
+	while(get_next(mac, topic)) {
+		res.push_back(std::move(std::make_pair(mac, topic)));
+	}
+
+	return res;
 }
 
 bool PhotonConfigReader::get_next(
