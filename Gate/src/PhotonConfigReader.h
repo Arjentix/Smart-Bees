@@ -26,7 +26,7 @@ public:
 	* PhotonConfigReader() - opens photon's config file with path config_path.
 	* Can throw std::runtime_error if can't open file.
 	*/
-	PhotonConfigReader(std::string config_path);
+	PhotonConfigReader(const std::string& config_path);
 
 	~PhotonConfigReader();
 

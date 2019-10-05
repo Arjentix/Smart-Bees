@@ -17,7 +17,7 @@
 * See all methods documentation in the header file.
 */
 
-MQTTPublisher::MQTTPublisher(std::string host, int port) 
+MQTTPublisher::MQTTPublisher(const std::string& host, int port) 
 	: _host(host), _port(port)
 {
 	int res;
@@ -55,7 +55,7 @@ MQTTPublisher::MQTTPublisher(std::string host, int port)
 	}
 }
 
-void MQTTPublisher::publish(std::string topic, std::string mes, bool retain)
+void MQTTPublisher::publish(const std::string& topic, const std::string& mes, bool retain)
 {
 	int res;
 

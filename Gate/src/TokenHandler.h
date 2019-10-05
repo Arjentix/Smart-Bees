@@ -24,7 +24,7 @@ public:
 	* TokenHanlder() - opens file with path base_path.
 	* Can throw str::runtime_error if can't open file.
 	*/
-	TokenHandler(std::string base_path);
+	TokenHandler(const std::string& base_path);
 
 	~TokenHandler();
 
@@ -33,7 +33,7 @@ public:
 	* topic and command into the given parameters and return true.
 	* In another case returns false.
 	*/
-	bool find(std::string token, std::string &topic, std::string &command);
+	bool find(const std::string& token, std::string &topic, std::string &command);
 };
 
 #endif // TOKEN_HANDLER_H

@@ -14,7 +14,7 @@
 * See all methods documentation in the header file
 */
 
-PhotonConfigReader::PhotonConfigReader(std::string config_path)
+PhotonConfigReader::PhotonConfigReader(const std::string& config_path)
 	: _config_file(std::ifstream(config_path))
 {
 	if (!_config_file.is_open()) {

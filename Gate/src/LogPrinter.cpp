@@ -35,7 +35,7 @@ std::string get_time()
 /*
 * LogPrinter() - opens log file for writing at the end.
 */
-LogPrinter::LogPrinter(std::string file_name)
+LogPrinter::LogPrinter(const std::string& file_name)
 {
 	if (log_file.is_open()) {
 		log_file.close();
@@ -52,7 +52,7 @@ LogPrinter::~LogPrinter()
 	log_file.close();
 }
 
-void LogPrinter::open(std::string file_name)
+void LogPrinter::open(const std::string& file_name)
 {
 	if (log_file.is_open()) {
 		log_file.close();
@@ -61,7 +61,7 @@ void LogPrinter::open(std::string file_name)
 	log_file.open(file_name);
 }
 
-void LogPrinter::print(std::string message)
+void LogPrinter::print(const std::string& message)
 {
 	if (!log_file.is_open()) {
 		return;
@@ -70,7 +70,7 @@ void LogPrinter::print(std::string message)
 	log_file << "[" << get_time() << "]::" << message << std::endl;
 }
 
-void LogPrinter::error(std::string error_message)
+void LogPrinter::error(const std::string& error_message)
 {
 	if (log_file.is_open() != true) {
 		return;

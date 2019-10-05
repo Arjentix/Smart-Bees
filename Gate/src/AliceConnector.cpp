@@ -27,7 +27,7 @@
 * See all methods documentation in the header file.
 */
 
-AliceConnector::AliceConnector(std::string address, int port)
+AliceConnector::AliceConnector(const std::string& address, int port)
 	: _connected(false), _sockfd(socket(AF_INET, SOCK_STREAM, 0))
 {
 	/* Initialization */

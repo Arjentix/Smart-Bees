@@ -25,7 +25,7 @@ public:
 	* AliceConnector() - simply connects to the server with address and port form parameters.
 	* Can throw std::runtime_error if can't establish connection with Alice server.
 	*/
-	AliceConnector(std::string address, int port);
+	AliceConnector(const std::string& address, int port);
 
 	~AliceConnector();
 

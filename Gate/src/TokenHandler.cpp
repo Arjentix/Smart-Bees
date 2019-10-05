@@ -15,7 +15,7 @@
 * See all methods documentation in the header file.
 */
 
-TokenHandler::TokenHandler(std::string base_path)
+TokenHandler::TokenHandler(const std::string& base_path)
 	: _base(std::ifstream(base_path))
 {
 	if (!_base.is_open()) {
@@ -29,7 +29,7 @@ TokenHandler::~TokenHandler()
 }
 
 bool TokenHandler::find(
-	std::string token, std::string &topic, std::string &command
+	const std::string& token, std::string &topic, std::string &command
 )
 {
 	char line[256];
