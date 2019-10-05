@@ -1,15 +1,15 @@
-#include "server.h"
+#include "HTTPServer.h"
 
-Server::Server() {}
+HTTPServer::HTTPServer() {}
 
-Server::~Server() {
+HTTPServer::~HTTPServer() {
 	close(server);
 //	for(auto&& thread: threads)
 //		if(thread.joinable())
 //			thread.join();
 }
 
-void Server::start_server(int port_num)
+void HTTPServer::start_server(int port_num)
 {
     server = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -34,12 +34,12 @@ void Server::start_server(int port_num)
     size = sizeof(server_addr);
 }
 
-void Server::turn_to_listen(int queue_size) {
+void HTTPServer::turn_to_listen(int queue_size) {
 	std::cout << "=> Looking for clients..." << std::endl;
     listen(server, queue_size);
 }
 
-int Server::connect_client()
+int HTTPServer::connect_client()
 {
     int client = accept(server,(struct sockaddr *)&server_addr, &size);
 
@@ -51,7 +51,7 @@ int Server::connect_client()
 	return client;
 }
 
-std::string Server::get_request(int client)
+std::string HTTPServer::get_request(int client)
 {
 	std::string str_request = "";
 	while(recv(client, buffer, bufsize, 0))
@@ -64,12 +64,12 @@ std::string Server::get_request(int client)
 	return str_request;
 }
 
-HTTPHandler::Request Server::handling_request(const std::string& str_request) {
+HTTPHandler::Request HTTPServer::handling_request(const std::string& str_request) {
 	HTTPHandler::Request request = HTTPHandler::parse_request(str_request);
 	return request;
 }
 
-void Server::send_answer(int client, HTTPHandler::Answer answer)
+void HTTPServer::send_answer(int client, HTTPHandler::Answer answer)
 {
 
 	free(buffer);
@@ -82,13 +82,13 @@ void Server::send_answer(int client, HTTPHandler::Answer answer)
 	}
 }
 
-void Server::close_con(int client)
+void HTTPServer::close_con(int client)
 {
 	std::cout << "\n\n=> Connection terminated with IP " << inet_ntoa(server_addr.sin_addr) << std::endl;
     close(client);
 }
 /*
-void Server::find_empty_thread(void (*f)(int), int client) {
+void HTTPServer::find_empty_thread(void (*f)(int), int client) {
 	//check for empty threads
 	for(auto& thread: threads) {
 		if(thread.joinable())

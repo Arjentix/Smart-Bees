@@ -4,7 +4,7 @@ project(subscribe_service_src)
 
 set(SIMPLESQL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/SimpleSQL)
 set(HTTPHANDLER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/HTTPHandler) 
-set(SERVER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/server)
+set(SERVER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/HTTPServer)
 set(DATABASE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/database)
 
 set(SOURCE_EXE main.cpp)
@@ -17,11 +17,11 @@ add_executable(main ${SOURCE_EXE})
 
 add_subdirectory(${SIMPLESQL_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/SimpleSQL)
 
-add_subdirectory(${SERVER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/server)
+add_subdirectory(${SERVER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HTTPServer)
 
 add_subdirectory(${DATABASE_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/database)
 
 add_subdirectory(${HTTPHANDLER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HTTPHandler)
 
-target_link_libraries(main SimpleSQL HTTPHandler server database)
+target_link_libraries(main SimpleSQL HTTPHandler HTTPServer database)
 

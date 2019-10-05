@@ -1,5 +1,5 @@
 #include "database.h"
-#include "server.h"
+#include "HTTPServer.h"
 
 
 using namespace std;
@@ -61,7 +61,7 @@ int main()
 	*/
 	int port = 3000;
 
-	Server server;
+	HTTPServer server;
 	server.start_server(port);
 	server.turn_to_listen(10);
 	while(true) {

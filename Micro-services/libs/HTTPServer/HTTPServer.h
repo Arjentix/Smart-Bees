@@ -13,7 +13,7 @@
 #include <thread>
 #include <vector>
 
-class Server {
+class HTTPServer {
 private:
 	int server;
     struct sockaddr_in server_addr;
@@ -23,8 +23,8 @@ private:
 //	HTTPHandler::Request request;
 
 public:
-	Server();
-	~Server();
+	HTTPServer();
+	~HTTPServer();
 	void start_server(int);
 	void turn_to_listen(int);
 	int connect_client();
