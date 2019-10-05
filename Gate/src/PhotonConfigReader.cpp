@@ -14,7 +14,8 @@
 * See all methods documentation in the header file
 */
 
-PhotonConfigReader::PhotonConfigReader(std::string config_path) : _config_file(std::ifstream(config_path))
+PhotonConfigReader::PhotonConfigReader(std::string config_path)
+	: _config_file(std::ifstream(config_path))
 {
 	if (!_config_file.is_open()) {
 		throw std::runtime_error("Can't open photon's config file");
@@ -26,7 +27,9 @@ PhotonConfigReader::~PhotonConfigReader()
 	_config_file.close();
 }
 
-bool PhotonConfigReader::get_next(std::string &photon_mac, std::string &photon_new_topic)
+bool PhotonConfigReader::get_next(
+	std::string &photon_mac, std::string &photon_new_topic
+)
 {
 	char line[256];
 	char getted_mac[128];

@@ -27,8 +27,8 @@
 * See all methods documentation in the header file.
 */
 
-AliceConnector::AliceConnector(std::string address, int port) : _connected(false),
-_sockfd(socket(AF_INET, SOCK_STREAM, 0))
+AliceConnector::AliceConnector(std::string address, int port)
+	: _connected(false), _sockfd(socket(AF_INET, SOCK_STREAM, 0))
 {
 	/* Initialization */
 	struct sockaddr_in	socket_address;
@@ -46,7 +46,11 @@ _sockfd(socket(AF_INET, SOCK_STREAM, 0))
 
 	/* Connecting */
 	LogPrinter::print("Connecting");
-	result = connect(_sockfd, (struct sockaddr *)&socket_address, sizeof(socket_address));
+	result = connect(
+		_sockfd,
+		(struct sockaddr *)&socket_address,
+		sizeof(socket_address)
+	);
 	if (result == -1) {
 		throw std::runtime_error("Failed to connect to Alice.");
 	}
@@ -86,8 +90,10 @@ std::string AliceConnector::get_token()
 	timeout.tv_nsec = 0;
 
 	/* Waiting for token for timeout seconds */
-	res = pselect(FD_SETSIZE, &inputs, (fd_set*)NULL,
-			(fd_set*)NULL, &timeout, (const sigset_t*)NULL);
+	res = pselect(
+		FD_SETSIZE, &inputs, (fd_set*)NULL,
+		(fd_set*)NULL, &timeout, (const sigset_t*)NULL
+	);
 	switch(res) {
 	case -1:	// Select failed
 		throw std::runtime_error("Select was interrupted");

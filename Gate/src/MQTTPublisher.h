@@ -10,7 +10,7 @@
 
 /*
 * This file describes MQTTPublisher class, which can publish messages in the given topic.
-* It connects to the broker on host and port provided in conctructor.
+* It connects to the broker on host and port provided in the conctructor.
 */
 
 #include <mosquitto.h>
@@ -18,8 +18,8 @@
 
 class MQTTPublisher {
 private:
-	std::string		_host;
-	int			_port;
+	std::string			_host;
+	int					_port;
 	struct mosquitto	*_mosq; 	// Mosquitto instance for API
 
 public:
