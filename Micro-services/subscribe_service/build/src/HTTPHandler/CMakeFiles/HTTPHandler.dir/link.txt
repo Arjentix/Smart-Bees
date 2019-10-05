@@ -1,2 +1,0 @@
-/usr/bin/ar qc libHTTPHandler.a  CMakeFiles/HTTPHandler.dir/HTTPHandler.cpp.o
-/usr/bin/ranlib libHTTPHandler.a
