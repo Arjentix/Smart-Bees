@@ -19,7 +19,7 @@ void set_ok(HTTPHandler::Answer& answer) {
 	answer.status_code = 200;
 	answer.status_description = "OK";
 }
-
+/*
 HTTPHandler::Answer work_with_db(const DataBase& db, const HTTPHandler::Request& request) {
 	HTTPHandler::Answer answer;
 	int user_id = std::stoi(request.uti);
@@ -45,7 +45,7 @@ HTTPHandler::Answer work_with_db(const DataBase& db, const HTTPHandler::Request&
 	}
 	return answer;
 }
-
+*/
 int main()
 {
 	/*

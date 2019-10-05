@@ -1,1 +1,1 @@
-/usr/bin/c++     CMakeFiles/main.dir/main.cpp.o CMakeFiles/main.dir/server.cpp.o CMakeFiles/main.dir/database.cpp.o  -o main SimpleSQL/libSimpleSQL.a HTTPHandler/libHTTPHandler.a /usr/lib/x86_64-linux-gnu/libmysqlclient.so 
+/usr/bin/c++     CMakeFiles/main.dir/main.cpp.o  -o main SimpleSQL/libSimpleSQL.a HTTPHandler/libHTTPHandler.a server/libserver.a database/libdatabase.a HTTPHandler/libHTTPHandler.a SimpleSQL/libSimpleSQL.a /usr/lib/x86_64-linux-gnu/libmysqlclient.so 

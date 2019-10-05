@@ -4,9 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/database.cpp" "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src/CMakeFiles/main.dir/database.cpp.o"
   "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/main.cpp" "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src/CMakeFiles/main.dir/main.cpp.o"
-  "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/server.cpp" "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src/CMakeFiles/main.dir/server.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -14,6 +12,8 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../src/../../libs/SimpleSQL"
   "../src/../../libs/HTTPHandler"
+  "../src/libs/server"
+  "../src/libs/database"
   "/usr/include/mysql"
   )
 
@@ -21,6 +21,8 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
 set(CMAKE_TARGET_LINKED_INFO_FILES
   "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src/SimpleSQL/CMakeFiles/SimpleSQL.dir/DependInfo.cmake"
   "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src/HTTPHandler/CMakeFiles/HTTPHandler.dir/DependInfo.cmake"
+  "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src/server/CMakeFiles/server.dir/DependInfo.cmake"
+  "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src/database/CMakeFiles/database.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

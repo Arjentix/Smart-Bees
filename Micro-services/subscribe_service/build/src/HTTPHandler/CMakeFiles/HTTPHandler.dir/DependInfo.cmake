@@ -12,6 +12,8 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/../../libs/SimpleSQL"
   "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/../../libs/HTTPHandler"
+  "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/libs/server"
+  "/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/libs/database"
   )
 
 # Targets to which this target links.

@@ -26,17 +26,13 @@ string
 memory
 -
 
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/database.cpp
-database.h
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/database.h
-
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/database.h
+../src/libs/database/database.h
 iostream
 -
 string
 -
 SimpleSQL.h
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/SimpleSQL.h
+../src/libs/database/SimpleSQL.h
 ctime
 -
 chrono
@@ -44,17 +40,7 @@ chrono
 typeinfo
 -
 
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/main.cpp
-database.h
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/database.h
-server.h
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/server.h
-
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/server.cpp
-server.h
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/server.h
-
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/server.h
+../src/libs/server/server.h
 iostream
 -
 string.h
@@ -74,11 +60,17 @@ stdlib.h
 unistd.h
 -
 HTTPHandler.h
-/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/HTTPHandler.h
+../src/libs/server/HTTPHandler.h
 thread
 -
 vector
 -
+
+/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/main.cpp
+database.h
+/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/database.h
+server.h
+/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/server.h
 
 /usr/include/mysql/binary_log_types.h
 

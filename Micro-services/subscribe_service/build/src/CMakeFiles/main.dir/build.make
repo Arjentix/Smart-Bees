@@ -81,72 +81,24 @@ src/CMakeFiles/main.dir/main.cpp.o.provides: src/CMakeFiles/main.dir/main.cpp.o.
 src/CMakeFiles/main.dir/main.cpp.o.provides.build: src/CMakeFiles/main.dir/main.cpp.o
 
 
-src/CMakeFiles/main.dir/server.cpp.o: src/CMakeFiles/main.dir/flags.make
-src/CMakeFiles/main.dir/server.cpp.o: ../src/server.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/CMakeFiles/main.dir/server.cpp.o"
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/server.cpp.o -c /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/server.cpp
-
-src/CMakeFiles/main.dir/server.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/server.cpp.i"
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/server.cpp > CMakeFiles/main.dir/server.cpp.i
-
-src/CMakeFiles/main.dir/server.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/server.cpp.s"
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/server.cpp -o CMakeFiles/main.dir/server.cpp.s
-
-src/CMakeFiles/main.dir/server.cpp.o.requires:
-
-.PHONY : src/CMakeFiles/main.dir/server.cpp.o.requires
-
-src/CMakeFiles/main.dir/server.cpp.o.provides: src/CMakeFiles/main.dir/server.cpp.o.requires
-	$(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/server.cpp.o.provides.build
-.PHONY : src/CMakeFiles/main.dir/server.cpp.o.provides
-
-src/CMakeFiles/main.dir/server.cpp.o.provides.build: src/CMakeFiles/main.dir/server.cpp.o
-
-
-src/CMakeFiles/main.dir/database.cpp.o: src/CMakeFiles/main.dir/flags.make
-src/CMakeFiles/main.dir/database.cpp.o: ../src/database.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/main.dir/database.cpp.o"
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/database.cpp.o -c /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/database.cpp
-
-src/CMakeFiles/main.dir/database.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/database.cpp.i"
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/database.cpp > CMakeFiles/main.dir/database.cpp.i
-
-src/CMakeFiles/main.dir/database.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/database.cpp.s"
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/database.cpp -o CMakeFiles/main.dir/database.cpp.s
-
-src/CMakeFiles/main.dir/database.cpp.o.requires:
-
-.PHONY : src/CMakeFiles/main.dir/database.cpp.o.requires
-
-src/CMakeFiles/main.dir/database.cpp.o.provides: src/CMakeFiles/main.dir/database.cpp.o.requires
-	$(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/database.cpp.o.provides.build
-.PHONY : src/CMakeFiles/main.dir/database.cpp.o.provides
-
-src/CMakeFiles/main.dir/database.cpp.o.provides.build: src/CMakeFiles/main.dir/database.cpp.o
-
-
 # Object files for target main
 main_OBJECTS = \
-"CMakeFiles/main.dir/main.cpp.o" \
-"CMakeFiles/main.dir/server.cpp.o" \
-"CMakeFiles/main.dir/database.cpp.o"
+"CMakeFiles/main.dir/main.cpp.o"
 
 # External object files for target main
 main_EXTERNAL_OBJECTS =
 
 src/main: src/CMakeFiles/main.dir/main.cpp.o
-src/main: src/CMakeFiles/main.dir/server.cpp.o
-src/main: src/CMakeFiles/main.dir/database.cpp.o
 src/main: src/CMakeFiles/main.dir/build.make
 src/main: src/SimpleSQL/libSimpleSQL.a
 src/main: src/HTTPHandler/libHTTPHandler.a
+src/main: src/server/libserver.a
+src/main: src/database/libdatabase.a
+src/main: src/HTTPHandler/libHTTPHandler.a
+src/main: src/SimpleSQL/libSimpleSQL.a
 src/main: /usr/lib/x86_64-linux-gnu/libmysqlclient.so
 src/main: src/CMakeFiles/main.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable main"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable main"
 	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/main.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -155,8 +107,6 @@ src/CMakeFiles/main.dir/build: src/main
 .PHONY : src/CMakeFiles/main.dir/build
 
 src/CMakeFiles/main.dir/requires: src/CMakeFiles/main.dir/main.cpp.o.requires
-src/CMakeFiles/main.dir/requires: src/CMakeFiles/main.dir/server.cpp.o.requires
-src/CMakeFiles/main.dir/requires: src/CMakeFiles/main.dir/database.cpp.o.requires
 
 .PHONY : src/CMakeFiles/main.dir/requires
 

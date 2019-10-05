@@ -137,6 +137,32 @@ SimpleSQL/fast:
 .PHONY : SimpleSQL/fast
 
 #=============================================================================
+# Target rules for targets named server
+
+# Build rule for target.
+server: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 server
+.PHONY : server
+
+# fast build rule for target.
+server/fast:
+	$(MAKE) -f src/server/CMakeFiles/server.dir/build.make src/server/CMakeFiles/server.dir/build
+.PHONY : server/fast
+
+#=============================================================================
+# Target rules for targets named database
+
+# Build rule for target.
+database: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 database
+.PHONY : database
+
+# fast build rule for target.
+database/fast:
+	$(MAKE) -f src/database/CMakeFiles/database.dir/build.make src/database/CMakeFiles/database.dir/build
+.PHONY : database/fast
+
+#=============================================================================
 # Target rules for targets named HTTPHandler
 
 # Build rule for target.
@@ -159,6 +185,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... main"
 	@echo "... SimpleSQL"
+	@echo "... server"
+	@echo "... database"
 	@echo "... HTTPHandler"
 .PHONY : help
 

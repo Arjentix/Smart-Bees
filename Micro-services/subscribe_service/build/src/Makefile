@@ -125,33 +125,6 @@ main/fast:
 	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build && $(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/build
 .PHONY : main/fast
 
-database.o: database.cpp.o
-
-.PHONY : database.o
-
-# target to build an object file
-database.cpp.o:
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build && $(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/database.cpp.o
-.PHONY : database.cpp.o
-
-database.i: database.cpp.i
-
-.PHONY : database.i
-
-# target to preprocess a source file
-database.cpp.i:
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build && $(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/database.cpp.i
-.PHONY : database.cpp.i
-
-database.s: database.cpp.s
-
-.PHONY : database.s
-
-# target to generate assembly for a file
-database.cpp.s:
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build && $(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/database.cpp.s
-.PHONY : database.cpp.s
-
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -179,33 +152,6 @@ main.cpp.s:
 	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build && $(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-server.o: server.cpp.o
-
-.PHONY : server.o
-
-# target to build an object file
-server.cpp.o:
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build && $(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/server.cpp.o
-.PHONY : server.cpp.o
-
-server.i: server.cpp.i
-
-.PHONY : server.i
-
-# target to preprocess a source file
-server.cpp.i:
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build && $(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/server.cpp.i
-.PHONY : server.cpp.i
-
-server.s: server.cpp.s
-
-.PHONY : server.s
-
-# target to generate assembly for a file
-server.cpp.s:
-	cd /home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build && $(MAKE) -f src/CMakeFiles/main.dir/build.make src/CMakeFiles/main.dir/server.cpp.s
-.PHONY : server.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -215,15 +161,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... main"
 	@echo "... edit_cache"
-	@echo "... database.o"
-	@echo "... database.i"
-	@echo "... database.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... server.o"
-	@echo "... server.i"
-	@echo "... server.s"
 .PHONY : help
 
 

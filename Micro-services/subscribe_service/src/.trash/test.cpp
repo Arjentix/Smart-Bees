@@ -1,21 +1,17 @@
-#include<iostream>
-#include<vector>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <ctime>
 
 using namespace std;
 
-vector<int*> v = {0, 0, 0};
-
-int* f(int i) {
-	for(auto j: v)
-		if(j == 0) {
-			return j;
-		}
-}
 int main() {
-	int* tmp = f(0);
-	&tmp = 5;
+	time_t t = time(NULL);
+	struct tm *tm = localtime(&t);
+	char c[80];
+	strftime(c, 80, "%F %T", tm);
 
-	for(auto j: v)
-		cout << j << " ";
-	cout << endl;
+	string s = string(c);
+	cout << s << endl;
+
 }

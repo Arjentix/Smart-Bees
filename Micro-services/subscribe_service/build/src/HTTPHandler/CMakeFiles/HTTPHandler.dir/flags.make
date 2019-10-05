@@ -6,5 +6,5 @@ CXX_FLAGS =
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/../../libs/SimpleSQL -I/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/../../libs/HTTPHandler 
+CXX_INCLUDES = -I/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/../../libs/SimpleSQL -I/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/../../libs/HTTPHandler -I/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/libs/server -I/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/libs/database 
 

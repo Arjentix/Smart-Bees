@@ -206,6 +206,24 @@ SimpleSQL_LIB_DEPENDS:STATIC=general;/usr/lib/x86_64-linux-gnu/libmysqlclient.so
 SimpleSQL_SOURCE_DIR:STATIC=/home/batman/prj/Smart-Bees/Micro-services/libs/SimpleSQL
 
 //Value Computed by CMake
+database_BINARY_DIR:STATIC=/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src/database
+
+//Dependencies for the target
+database_LIB_DEPENDS:STATIC=general;SimpleSQL;
+
+//Value Computed by CMake
+database_SOURCE_DIR:STATIC=/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/libs/database
+
+//Value Computed by CMake
+server_BINARY_DIR:STATIC=/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build/src/server
+
+//Dependencies for the target
+server_LIB_DEPENDS:STATIC=general;HTTPHandler;
+
+//Value Computed by CMake
+server_SOURCE_DIR:STATIC=/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/src/libs/server
+
+//Value Computed by CMake
 subscribe_service_BINARY_DIR:STATIC=/home/batman/prj/Smart-Bees/Micro-services/subscribe_service/build
 
 //Value Computed by CMake
@@ -316,7 +334,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=4
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
