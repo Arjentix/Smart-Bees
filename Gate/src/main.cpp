@@ -11,6 +11,8 @@
 #include "TokenHandler.h"
 #include "LogPrinter.h"
 #include <string>
+#include <vector>
+#include <future>
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
@@ -21,6 +23,8 @@
 * When it receives a token from Alice it sends relevant command to the appropriate MQTT topic
 * and sends answer to the Alice.
 */
+
+using namespace std;
 
 /*
 * finish - bool variable that indicates should program stop working or not.
@@ -63,9 +67,9 @@ int main()
 		AliceConnector		alice_conn("77.51.199.31", 4551);	// Does all communication with Alice
 		MQTTPublisher		mqtt_pub("localhost", 1883);		// Does publishing messages to the MQTT topis
 		TokenHandler		tok_hand("token.base");				// Checks for existing token and returns relevant parameters
-		std::string			token;
-		std::string			topic;
-		std::string			command;
+		string				token;
+		string				topic;
+		string				command;
 		bool				res;
 
 		/* Signal capture */
@@ -81,21 +85,26 @@ int main()
 			mqtt_pub.publish(photon_mac, photon_new_topic, true);
 		}
 
+		vector<future<void>> futures;
 		while (!finish) {
 			token = alice_conn.get_token();
 			if (token != "") {
-				LogPrinter::print("Token getted: " + token);
-				res = tok_hand.find(token, topic, command);
-				LogPrinter::print("Topic: " + topic);
-				LogPrinter::print("Command: " + command);
-				if (res == true) {
-					LogPrinter::print("Publishing");
-					mqtt_pub.publish(topic, command, false);
-					alice_conn.send_ok();
-				}
-				else {
-					alice_conn.send_err();
-				}
+				futures.push_back(
+					async([&] () {
+						LogPrinter::print("Token getted: " + token);
+						res = tok_hand.find(token, topic, command);
+						LogPrinter::print("Topic: " + topic);
+						LogPrinter::print("Command: " + command);
+						if (res == true) {
+							LogPrinter::print("Publishing");
+							mqtt_pub.publish(topic, command, false);
+							alice_conn.send_ok();
+						}
+						else {
+							alice_conn.send_err();
+						}
+					})
+				);
 			}
 		}
 	}

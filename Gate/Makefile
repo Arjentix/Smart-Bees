@@ -11,7 +11,7 @@ BINDIR = bin
 CC = g++
 
 # Linker flags
-LDFLAGS = -lmosquitto
+LDFLAGS = -lmosquitto -pthread
 
 # Rules
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
