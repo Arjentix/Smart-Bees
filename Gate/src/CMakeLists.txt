@@ -30,3 +30,6 @@ set_target_properties(main PROPERTIES
 
 target_include_directories(main PUBLIC ${MOSQUITTO_INCLUDE_DIR})
 target_link_libraries(main ${MOSQUITTO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+# Installing
+install(TARGETS main DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../bin)
