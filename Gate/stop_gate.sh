@@ -1,3 +1,3 @@
 #! /bin/bash
 
-kill -s SIGINT $(pgrep "Smart-Home-Gate")
+kill -s SIGINT $(pgrep "gate")
