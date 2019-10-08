@@ -6,6 +6,7 @@
 #include <ctime>
 #include <chrono>
 #include <typeinfo>
+#include <exception>
 
 class DataBase {
 
@@ -21,19 +22,18 @@ private:
         PORT_NO = 3306,
         OPT = 0
     };
-    MYSQL *conn;
-    MYSQL_RES *res;
-    MYSQL_ROW row;
 
 	SimpleSQL::Connector* dbc;
 
+	std::string time_to_string(time_t);
+	void check_for_exist(int);
+	void check_for_exist(std::string);
 public:
 	DataBase();
 	~DataBase();
 	void init(const char*, const char*, const char*, const char*);
 	bool check_for_sub(int);
 	void update_sub(int, time_t, time_t);
-	void insert_sub(std::string, int, time_t, time_t);
+	int insert_sub(std::string, time_t, time_t);
 	void delete_sub(int);
-	std::string time_to_string(time_t);
 };

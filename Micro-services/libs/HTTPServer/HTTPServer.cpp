@@ -28,7 +28,7 @@ void HTTPServer::start_server(int port_num)
     if ((bind(server, (struct sockaddr*)&server_addr,sizeof(server_addr))) < 0) 
     {
 		std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
-        return;
+		throw std::runtime_error("error on binding");
     }
 
     size = sizeof(server_addr);
@@ -51,16 +51,11 @@ int HTTPServer::connect_client()
 	return client;
 }
 
-std::string HTTPServer::get_request(int client)
-{
+std::string HTTPServer::get_request(int client) {
 	std::string str_request = "";
-	while(recv(client, buffer, bufsize, 0))
-	{
-		std::cout << buffer;
+	recv(client, buffer, bufsize, 0);
 		str_request += buffer;
-		free(buffer);
-//		memset(buffer, 0, bufsize);
-	}
+		memset(buffer, 0, bufsize);
 	return str_request;
 }
 
@@ -71,14 +66,11 @@ HTTPHandler::Request HTTPServer::handling_request(const std::string& str_request
 
 void HTTPServer::send_answer(int client, HTTPHandler::Answer answer)
 {
-
-	free(buffer);
 	std::stringstream answer_ss;
 	HTTPHandler::write_answer(answer, answer_ss);
 	while(answer_ss) {
 		answer_ss.get(buffer, bufsize);
 		send(client, buffer, bufsize, 0);
-		free(buffer);
 	}
 }
 

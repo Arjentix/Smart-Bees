@@ -12,6 +12,7 @@
 #include "HTTPHandler.h"
 #include <thread>
 #include <vector>
+#include <exception>
 
 class HTTPServer {
 private:

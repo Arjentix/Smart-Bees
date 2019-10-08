@@ -21,6 +21,7 @@ map<string, string> parse_body(istream& input);
 
 Request HTTPHandler::parse_request(const string& request)
 {
+	std::cout << request << endl;
 	Request result;
 	istringstream input(request);
 
@@ -78,7 +79,8 @@ map<string, string> parse_headers(istream& input)
 
 	string line;
 	while (getline(input, line)) {
-		if (line == "") {
+		if (line == "\r") {
+			cout << "break" << endl;
 			break;
 		}
 
@@ -100,6 +102,7 @@ map<string, string> parse_body(istream& input)
 
 	string key;
 	while (getline(input, key, '=')) {
+		std::cout << "in while" << std::endl;
 		string value;
 		getline(input, value, '&');
 		if (value.back() == '\n') {
