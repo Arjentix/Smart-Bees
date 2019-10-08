@@ -20,7 +20,6 @@ private:
     struct sockaddr_in server_addr;
     socklen_t size;
     const static int bufsize = 1024;
-    char buffer[bufsize];
 //	HTTPHandler::Request request;
 
 public:

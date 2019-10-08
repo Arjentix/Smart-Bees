@@ -60,7 +60,7 @@ void DataBase::update_sub(int id, time_t s_start, time_t s_end) {
 	try {
 		if(dbc->is_connected()) {
 			check_for_exist(id);
-			std::string request = "UPDATE subs_table SET sub_start_date=" + time_to_string(s_start) + ", sub_end_date=" + time_to_string(s_end) + " WHERE user_id=" + std::to_string(id) + ";";
+			std::string request = "UPDATE subs_table SET sub_start_date=\'" + time_to_string(s_start) + "\', sub_end_date=\'" + time_to_string(s_end) + "\' WHERE user_id=" + std::to_string(id) + ";";
 			dbc->query(request);
 		}
 		else
@@ -75,8 +75,12 @@ int DataBase::insert_sub(std::string username, time_t s_start, time_t s_end) {
 	try {
 		if(dbc->is_connected()) {
 			check_for_exist(username);
-			std::string request = "INSERT INTO subs_table(username, sub_start_date, sub_end_date) VALUES (" + username + ", " + time_to_string(s_start) + ", " + time_to_string(s_end) + ");";
+			std::string request = "INSERT INTO subs_table(username, sub_start_date, sub_end_date) VALUES (\'" + username + "\', \'" + time_to_string(s_start) + "\', \'" + time_to_string(s_end) + "\');";
 			dbc->query(request);
+			request = "SELECT user_id FROM subs_table WHERE username=\'" + username + "\';";
+			auto query_res_ptr = dbc->query(request);
+			auto row = query_res_ptr->get_row();
+			return std::stoi(std::string(row[0]));
 		}
 		else
 			throw std::runtime_error("Database doesn't connected");
@@ -109,7 +113,8 @@ std::string DataBase::time_to_string(time_t t) {
 
 	struct tm *tm = localtime(&t);
 	char c[80];
-	strftime(c, 80, "%F", tm);
+	strftime(c, 80, "%Y.%m.%d", tm);
+	std::cout << std::string(c) << std::endl;
 	return std::string(c);
 
 }
@@ -130,7 +135,7 @@ void DataBase::check_for_exist(int id) {
 
 void DataBase::check_for_exist(std::string name) {
 	try {
-		std::string request = "SELECT * FROM subs_table WHERE username=" + name + ";";
+		std::string request = "SELECT * FROM subs_table WHERE username=\'" + name + "\';";
 		auto query_res_ptr = dbc->query(request);
 		auto row = query_res_ptr->get_row();
 		if(row)

@@ -52,11 +52,12 @@ int HTTPServer::connect_client()
 }
 
 std::string HTTPServer::get_request(int client) {
-	std::string str_request = "";
+	char buffer[1024];
+//	std::string str_request = "";
 	recv(client, buffer, bufsize, 0);
-		str_request += buffer;
-		memset(buffer, 0, bufsize);
-	return str_request;
+//	str_request += buffer;
+//	memset(buffer, 0, bufsize);
+	return buffer;
 }
 
 HTTPHandler::Request HTTPServer::handling_request(const std::string& str_request) {
@@ -66,12 +67,12 @@ HTTPHandler::Request HTTPServer::handling_request(const std::string& str_request
 
 void HTTPServer::send_answer(int client, HTTPHandler::Answer answer)
 {
+	std::string buffer;
 	std::stringstream answer_ss;
 	HTTPHandler::write_answer(answer, answer_ss);
-	while(answer_ss) {
-		answer_ss.get(buffer, bufsize);
-		send(client, buffer, bufsize, 0);
-	}
+//	std::cout << answer_ss.str() << std::endl;
+	buffer = answer_ss.str();
+	send(client, buffer.c_str(), buffer.size(), 0);
 }
 
 void HTTPServer::close_con(int client)
