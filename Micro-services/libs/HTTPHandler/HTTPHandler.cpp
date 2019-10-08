@@ -46,13 +46,13 @@ Request HTTPHandler::parse_request(const string& request)
 void HTTPHandler::write_answer(const Answer& answer, std::ostream& output)
 {
 	output << "HTTP/1.1 " << answer.status_code << " "
-		   << answer.status_description << '\n';
+		   << answer.status_description << "\r\n";
 
 	for (const auto& [key, value] : answer.headers) {
-		output << key << ": " << value << '\n';
+		output << key << ": " << value << "\r\n";
 	}
 
-	output << '\n' << answer.body;
+	output << "\r\n" << answer.body;
 }
 
 Method parse_method(const string& method)
@@ -80,7 +80,6 @@ map<string, string> parse_headers(istream& input)
 	string line;
 	while (getline(input, line)) {
 		if (line == "\r") {
-			cout << "break" << endl;
 			break;
 		}
 
@@ -89,6 +88,7 @@ map<string, string> parse_headers(istream& input)
 		getline(cur_line, key, ':');
 		cur_line.ignore(1);
 		getline(cur_line, value);
+		value.erase(prev(value.end())); // Deleting '\r' charater
 
 		headers[key] = value;
 	}

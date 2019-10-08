@@ -20,12 +20,12 @@ ostream& operator<<(ostream& os, HTTPHandler::Method method) {
 void test_get()
 {
 	istringstream input(
-		"GET /wiki/page HTTP/1.1\n"
-		"Host: ru.wikipedia.org\n"
-		"User-Agent: Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9b5) Gecko/2008050509 Firefox/3.0b5\n"
-		"Accept: text/html\n"
-		"Connection: close\n"
-		"\n"
+		"GET /wiki/page HTTP/1.1\r\n"
+		"Host: ru.wikipedia.org\r\n"
+		"User-Agent: Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9b5) Gecko/2008050509 Firefox/3.0b5\r\n"
+		"Accept: text/html\r\n"
+		"Connection: close\r\n"
+		"\r\n"
 	);
 	map<string, string> expected_headers = {
 		{"Host", "ru.wikipedia.org"},
@@ -43,14 +43,14 @@ void test_get()
 
 void test_post()
 {
-	istringstream input("POST http://www.site.ru/news.html HTTP/1.0\n"
-		"Host: www.site.ru\n"
-		"Referer: http://www.site.ru/index.html\n"
-		"Cookie: income=1\n"
-		"Content-Type: application/x-www-form-urlencoded\n"
-		"Content-Length: 35\n"
-		"\n"
-		"login=Petya%20Vasechkin&password=qq\n"
+	istringstream input("POST http://www.site.ru/news.html HTTP/1.0\r\n"
+		"Host: www.site.ru\r\n"
+		"Referer: http://www.site.ru/index.html\r\n"
+		"Cookie: income=1\r\n"
+		"Content-Type: application/x-www-form-urlencoded\r\n"
+		"Content-Length: 35\r\n"
+		"\r\n"
+		"login=Petya%20Vasechkin&password=qq"
 	);
 
 	map<string, string> expected_headers = {
@@ -86,10 +86,10 @@ void test_answer()
 	};
 	ostringstream result;
 	string expected(
-		"HTTP/1.1 200 OK\n"
-		"Content-Type: text/html\n"
-		"Connection: close\n"
-		"\n"
+		"HTTP/1.1 200 OK\r\n"
+		"Content-Type: text/html\r\n"
+		"Connection: close\r\n"
+		"\r\n"
 		"<html>Hello</html>"
 	);
 

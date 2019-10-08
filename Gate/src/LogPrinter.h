@@ -25,25 +25,25 @@ public:
 	* LogPrinter() - a name of a log file should be passed as a parameter.
 	* Data will be written at the end of file.
 	*/
-	LogPrinter(std::string file_name);
+	LogPrinter(const std::string& file_name);
 
 	~LogPrinter();
 
 	/*
 	* open() - opens another file and close previous
 	*/
-	static void open(std::string file_name);
+	static void open(const std::string& file_name);
 
 	/*
 	* print() - prints current time and the log message at the end of the log file.
 	*/
-	static void print(std::string message);
+	static void print(const std::string& message);
 
 	/*
 	* error() - prints current time, the ERROR label
 	* and error message at the end of the log file.
 	*/
-	static void error(std::string error_message);
+	static void error(const std::string& error_message);
 
 	/*
 	* close() - closes the log file.

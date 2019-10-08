@@ -8,13 +8,15 @@
 #include "PhotonConfigReader.h"
 #include <stdexcept>
 #include <cstring>
+#include <memory>
 
 /*
 * This file defines PhotonConfigReader class, which is decribed in the PhotonConfigReader.h.
 * See all methods documentation in the header file
 */
 
-PhotonConfigReader::PhotonConfigReader(std::string config_path) : _config_file(std::ifstream(config_path))
+PhotonConfigReader::PhotonConfigReader(const std::string& config_path)
+	: _config_file(std::ifstream(config_path))
 {
 	if (!_config_file.is_open()) {
 		throw std::runtime_error("Can't open photon's config file");
@@ -26,7 +28,21 @@ PhotonConfigReader::~PhotonConfigReader()
 	_config_file.close();
 }
 
-bool PhotonConfigReader::get_next(std::string &photon_mac, std::string &photon_new_topic)
+std::vector<std::pair<std::string, std::string>> PhotonConfigReader::get_all_configs()
+{
+	std::vector<std::pair<std::string, std::string>> res;
+	std::string mac, topic;
+
+	while(get_next(mac, topic)) {
+		res.push_back(std::move(std::make_pair(mac, topic)));
+	}
+
+	return res;
+}
+
+bool PhotonConfigReader::get_next(
+	std::string &photon_mac, std::string &photon_new_topic
+)
 {
 	char line[256];
 	char getted_mac[128];

@@ -15,7 +15,8 @@
 * See all methods documentation in the header file.
 */
 
-TokenHandler::TokenHandler(std::string base_path) : _base(std::ifstream(base_path))
+TokenHandler::TokenHandler(const std::string& base_path)
+	: _base(std::ifstream(base_path))
 {
 	if (!_base.is_open()) {
 		throw std::runtime_error("Can't open token base file");
@@ -27,7 +28,9 @@ TokenHandler::~TokenHandler()
 	_base.close();
 }
 
-bool TokenHandler::find(std::string token, std::string &topic, std::string &command)
+bool TokenHandler::find(
+	const std::string& token, std::string &topic, std::string &command
+)
 {
 	char line[256];
 	char getted_token[64];
@@ -36,7 +39,10 @@ bool TokenHandler::find(std::string token, std::string &topic, std::string &comm
 	int len;
 
 	while(_base.getline(line, 256)) {
-		sscanf(line, "%[^:] : %[^:] : %[^\n]", getted_token, getted_topic, getted_command);
+		sscanf(
+			line, "%[^:] : %[^:] : %[^\n]", 
+			getted_token, getted_topic, getted_command
+		);
 
 		/* Deleting last whitespaces in the getted_token */
 		len = strlen(getted_token);

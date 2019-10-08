@@ -17,7 +17,8 @@
 * See all methods documentation in the header file.
 */
 
-MQTTPublisher::MQTTPublisher(std::string host, int port) : _host(host), _port(port)
+MQTTPublisher::MQTTPublisher(const std::string& host, int port) 
+	: _host(host), _port(port)
 {
 	int res;
 
@@ -25,25 +26,36 @@ MQTTPublisher::MQTTPublisher(std::string host, int port) : _host(host), _port(po
 
 	_mosq = mosquitto_new(NULL, true, NULL);
 	if (_mosq == NULL) {
-		throw std::runtime_error("MQTT client instance establishing failed: " +  std::string(strerror(res)));
+		throw std::runtime_error(
+			"MQTT client instance establishing failed: " +
+			std::string(strerror(res))
+		);
 	}
 
 	res = mosquitto_connect(_mosq, _host.c_str(), _port, KEEP_ALIVE);
 	if (res != MOSQ_ERR_SUCCESS) {
 		switch (res) {
 		case MOSQ_ERR_INVAL:
-			throw std::runtime_error("MQTT server connection failed cause of invalid parameters");
+			throw std::runtime_error(
+				"MQTT server connection failed cause of invalid parameters"
+			);
 			break;
 		case MOSQ_ERR_ERRNO:
-			throw std::runtime_error("MQTT server connection failed: " +  std::string(strerror(errno)));
+			throw std::runtime_error(
+				"MQTT server connection failed: " +
+				std::string(strerror(errno))
+			);
 			break;
 		default:
-			throw std::runtime_error("MQTT server connection failed cause of unknown error: " +  std::string(strerror(errno)));
+			throw std::runtime_error(
+				"MQTT server connection failed cause of unknown error: " +
+				std::string(strerror(errno))
+			);
 		}
 	}
 }
 
-void MQTTPublisher::publish(std::string topic, std::string mes, bool retain)
+void MQTTPublisher::publish(const std::string& topic, const std::string& mes, bool retain)
 {
 	int res;
 
@@ -51,19 +63,29 @@ void MQTTPublisher::publish(std::string topic, std::string mes, bool retain)
 	if (res != MOSQ_ERR_SUCCESS) {
 		switch (res) {
 		case MOSQ_ERR_INVAL:
-			throw std::runtime_error("MQTT publishing failed cause of invalid parameters");
+			throw std::runtime_error(
+				"MQTT publishing failed cause of invalid parameters"
+			);
 			break;
 		case MOSQ_ERR_NOMEM:
-			throw std::runtime_error("MQTT publishing failed cause of out of memory");
+			throw std::runtime_error(
+				"MQTT publishing failed cause of out of memory"
+			);
 			break;
 		case MOSQ_ERR_NO_CONN:
-			throw std::runtime_error("MQTT publishing failed cause of no connection to the broker");
+			throw std::runtime_error(
+				"MQTT publishing failed cause of no connection to the broker"
+			);
 			break;
 		case MOSQ_ERR_PROTOCOL:
-			throw std::runtime_error("MQTT publishing failed cause of protocol error communticating with the broker");
+			throw std::runtime_error(
+				"MQTT publishing failed cause of protocol error communticating with the broker"
+			);
 			break;
 		case MOSQ_ERR_PAYLOAD_SIZE:
-			throw std::runtime_error("MQTT publishing failed cause of payload is too large");
+			throw std::runtime_error(
+				"MQTT publishing failed cause of payload is too large"
+			);
 			break;
 		}
 	}

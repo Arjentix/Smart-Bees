@@ -10,7 +10,7 @@
 
 /*
 * This file describes MQTTPublisher class, which can publish messages in the given topic.
-* It connects to the broker on host and port provided in conctructor.
+* It connects to the broker on host and port provided in the conctructor.
 */
 
 #include <mosquitto.h>
@@ -18,8 +18,8 @@
 
 class MQTTPublisher {
 private:
-	std::string		_host;
-	int			_port;
+	std::string			_host;
+	int					_port;
 	struct mosquitto	*_mosq; 	// Mosquitto instance for API
 
 public:
@@ -27,7 +27,7 @@ public:
 	* MQTTPublisher() - gets broker's host and port (usually 1883) and connects to it.
 	* Can throw std::runtime_error if can't create new mosquitto instance or can't connect to server.
 	*/
-	MQTTPublisher(std::string host, int port);
+	MQTTPublisher(const std::string& host, int port);
 
 	~MQTTPublisher();
 
@@ -35,7 +35,7 @@ public:
 	* publish() - publish given message to the given topic with quality = 1.
 	* Cat thow std::runtime_error if some error occured in publishing process.
 	*/
-	void publish(std::string topic, std::string mes, bool retain);
+	void publish(const std::string& topic, const std::string& mes, bool retain);
 };
 
 #endif // MQTT_PUBLISHER_H
