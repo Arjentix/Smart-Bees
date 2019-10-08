@@ -26,6 +26,7 @@ private:
 	SimpleSQL::Connector* dbc;
 
 	std::string time_to_string(time_t);
+	bool time_compare(struct tm, struct tm);
 	void check_for_exist(int);
 	void check_for_exist(std::string);
 public:
@@ -33,7 +34,7 @@ public:
 	~DataBase();
 	void init(const char*, const char*, const char*, const char*);
 	bool check_for_sub(int);
-	void update_sub(int, time_t, time_t);
-	int insert_sub(std::string, time_t, time_t);
+	void update_sub(int, std::string,  std::string);
+	int insert_sub(std::string, std::string, std::string);
 	void delete_sub(int);
 };

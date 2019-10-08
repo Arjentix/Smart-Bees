@@ -34,21 +34,13 @@ HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& reque
 			case HTTPHandler::Method::PUT:
 				sub_start_str = request.headers.at("sub_start_date");
 				sub_end_str = request.headers.at("sub_end_date");
-				strptime(sub_start_str.c_str(), "%Y.%m.%d", &tm);
-				sub_start = mktime(&tm);
-				strptime(sub_end_str.c_str(), "%Y.%m.%d", &tm);
-				sub_end = mktime(&tm);
-				db.update_sub(user_id, sub_start, sub_end);
+				db.update_sub(user_id, sub_start_str, sub_end_str);
 				answer.body = "User id: " + to_string(user_id) + " successfuly updated";
 				break;
 			case HTTPHandler::Method::POST:
 				sub_start_str = request.headers.at("sub_start_date");
 				sub_end_str = request.headers.at("sub_end_date");
-				strptime(sub_start_str.c_str(), "%Y.%m.%d", &tm);
-				sub_start = mktime(&tm);
-				strptime(sub_end_str.c_str(), "%Y.%m.%d", &tm);
-				sub_end = mktime(&tm);
-				user_id = db.insert_sub(request.headers.at("username"), sub_start, sub_end);
+				user_id = db.insert_sub(request.headers.at("username"), sub_start_str, sub_end_str);
 				answer.body = to_string(user_id);
 				break;
 			case HTTPHandler::Method::DELETE:
@@ -95,18 +87,11 @@ int main()
 		while(true) {
 			cout << "Awaiting for connection..." << endl;
 			int client_id = server.connect_client();
-			cout << "Going to handling" << endl;
 			string str_request = server.get_request(client_id);
-			cout << "\"" << str_request << "\"" << endl;
 			HTTPHandler::Request request = server.handling_request(str_request);
-			cout << "go to work" << endl;
 			HTTPHandler::Answer answer = work_with_db(db, request);
-			cout << answer.status_code << " " << answer.status_description << endl << answer.body << endl;
-			cout << "try to send" << endl;
 			server.send_answer(client_id, answer);
-			cout << "closing" << endl;
 			server.close_con(client_id);
-			cout << "closed" << endl;
 		}
 	} catch(std::runtime_error& e) {
         cout << "[EXCEPTION] " << e.what() << endl;
