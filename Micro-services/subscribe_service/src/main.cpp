@@ -1,5 +1,6 @@
 #include "database.h"
 #include "HTTPServer.h"
+#include "HTTPHandler.h"
 
 
 using namespace std;
@@ -88,9 +89,11 @@ int main()
 			cout << "Awaiting for connection..." << endl;
 			int client_id = server.connect_client();
 			string str_request = server.get_request(client_id);
-			HTTPHandler::Request request = server.handling_request(str_request);
+			HTTPHandler::Request request = HTTPHandler::parse_request(str_request);
 			HTTPHandler::Answer answer = work_with_db(db, request);
-			server.send_answer(client_id, answer);
+			stringstream answer_ss;
+			HTTPHandler::write_answer(answer, answer_ss);
+			server.send_answer(client_id, answer_ss);
 			server.close_con(client_id);
 		}
 	} catch(std::runtime_error& e) {

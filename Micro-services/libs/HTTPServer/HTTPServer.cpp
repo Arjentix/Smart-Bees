@@ -60,16 +60,9 @@ std::string HTTPServer::get_request(int client) {
 	return buffer;
 }
 
-HTTPHandler::Request HTTPServer::handling_request(const std::string& str_request) {
-	HTTPHandler::Request request = HTTPHandler::parse_request(str_request);
-	return request;
-}
-
-void HTTPServer::send_answer(int client, HTTPHandler::Answer answer)
+void HTTPServer::send_answer(int client, const std::stringstream& answer_ss)
 {
 	std::string buffer;
-	std::stringstream answer_ss;
-	HTTPHandler::write_answer(answer, answer_ss);
 //	std::cout << answer_ss.str() << std::endl;
 	buffer = answer_ss.str();
 	send(client, buffer.c_str(), buffer.size(), 0);
