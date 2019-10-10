@@ -32,7 +32,7 @@ namespace HTTPHandler {
 		Method method;
 		std::string uri;
 		std::map<std::string, std::string> headers;
-		std::map<std::string, std::string> body;
+		std::string body;
 	};
 
 	/**

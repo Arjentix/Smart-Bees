@@ -37,7 +37,10 @@ Request HTTPHandler::parse_request(const string& request)
 		throw invalid_argument("Expected empty line after headers");
 	}
 
-	result.body = parse_body(input);
+	string body_tmp;
+	while(getline(input, body_tmp)) {
+		result.body += body_tmp;
+	}
 
 	return result;
 }
@@ -93,22 +96,4 @@ map<string, string> parse_headers(istream& input)
 	}
 
 	return headers;
-}
-
-map<string, string> parse_body(istream& input)
-{
-	map<string, string> body;
-
-	string key;
-	while (getline(input, key, '=')) {
-		string value;
-		getline(input, value, '&');
-		if (value.back() == '\n') {
-			value.pop_back();
-		}
-
-		body[key] = value;
-	}
-
-	return body;
 }
