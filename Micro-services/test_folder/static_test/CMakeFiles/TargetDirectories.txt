@@ -1,3 +1,0 @@
-/home/batman/prj/Smart-Bees/Micro-services/test_folder/static_test/CMakeFiles/rebuild_cache.dir
-/home/batman/prj/Smart-Bees/Micro-services/test_folder/static_test/CMakeFiles/main.dir
-/home/batman/prj/Smart-Bees/Micro-services/test_folder/static_test/CMakeFiles/edit_cache.dir
