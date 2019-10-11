@@ -61,10 +61,7 @@ void test_post()
 		{"Content-Length", "35"},
 	};
 
-	map<string, string> expected_body = {
-		{"login", "Petya%20Vasechkin"},
-		{"password", "qq"}
-	};
+	string expected_body = "login=Petya%20Vasechkin&password=qq";
 
 	auto req = HTTPHandler::parse_request(input.str());
 	ASSERT_EQUAL(req.method, HTTPHandler::Method::POST);
