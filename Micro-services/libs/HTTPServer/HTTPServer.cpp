@@ -15,11 +15,11 @@ void HTTPServer::start_server(int port_num)
 
     if (server < 0) 
     {
-		std::cout << "\nError establishing socket..." << std::endl;
+		std::cout << "Error establishing socket..." << std::endl;
         exit(1);
     }
 
-	std::cout << "\n=> Socket server has been created..." << std::endl;
+	std::cout << "Socket server has been created..." << std::endl;
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = htons(INADDR_ANY);
@@ -27,7 +27,7 @@ void HTTPServer::start_server(int port_num)
 
     if ((bind(server, (struct sockaddr*)&server_addr,sizeof(server_addr))) < 0) 
     {
-		std::cout << "=> Error binding connection, the socket has already been established..." << std::endl;
+		std::cout << "Error binding connection, the socket has already been established..." << std::endl;
 		throw std::runtime_error("error on binding");
     }
 
@@ -35,7 +35,7 @@ void HTTPServer::start_server(int port_num)
 }
 
 void HTTPServer::turn_to_listen(int queue_size) {
-	std::cout << "=> Looking for clients..." << std::endl;
+	std::cout << "Looking for clients..." << std::endl;
     listen(server, queue_size);
 }
 
@@ -44,7 +44,7 @@ int HTTPServer::connect_client()
     int client = accept(server,(struct sockaddr *)&server_addr, &size);
 
     if (client < 0) 
-        std::cout << "=> Error on accepting..." << std::endl;
+        std::cout << "Error on accepting..." << std::endl;
 	else {
 		std::cout << "Client was connected" << std::endl;
 	}
@@ -52,27 +52,23 @@ int HTTPServer::connect_client()
 }
 
 std::string HTTPServer::get_request(int client) {
-	char buffer[1024];
-//	std::string str_request = "";
+	static char buffer[1024];
 	recv(client, buffer, bufsize, 0);
-//	str_request += buffer;
-//	memset(buffer, 0, bufsize);
 	return buffer;
 }
 
 void HTTPServer::send_answer(int client, const std::stringstream& answer_ss)
 {
-	std::string buffer;
-//	std::cout << answer_ss.str() << std::endl;
+	static std::string buffer;
 	buffer = answer_ss.str();
 	send(client, buffer.c_str(), buffer.size(), 0);
 }
 
 void HTTPServer::close_con(int client)
 {
-	std::cout << "\n\n=> Connection terminated with IP " << inet_ntoa(server_addr.sin_addr) << std::endl;
     close(client);
 }
+
 /*
 void HTTPServer::find_empty_thread(void (*f)(int), int client) {
 	//check for empty threads

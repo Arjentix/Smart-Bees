@@ -26,7 +26,7 @@ public:
 	void start_server(int);
 	void turn_to_listen(int);
 	int connect_client();
-	std::string get_request(int);
-	void send_answer(int, const std::stringstream&);
-	void close_con(int);
+	static std::string get_request(int);
+	static void send_answer(int, const std::stringstream&);
+	static void close_con(int);
 };
