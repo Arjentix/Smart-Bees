@@ -9,16 +9,11 @@
 #include "test_runner.h"
 
 #include <sstream>
-/*
+
 #define HOST "db4free.net"
 #define USER "arjentix"
 #define PASSWD "verysecret"
 #define DB "arjentix_test_db"
-*/
-#define HOST "localhost"
-#define USER "http_server"
-#define PASSWD "12345678"
-#define DB "alice_subs"
 
 using namespace std;
 
@@ -26,14 +21,13 @@ void test_basic()
 {
 	SimpleSQL::Connector db;
 	if (db.connect(HOST, USER, PASSWD, DB)) {
-		auto query_res_ptr = db.query("SELECT * FROM subs_table");
+		auto query_res_ptr = db.query("SELECT * FROM sample_table");
 		while (auto row = query_res_ptr->get_row()) {
-//			static int i = 1;
+			static int i = 1;
 			stringstream result;
 			result << row[0] << " - " << row[1];
-			cout << result.str() << endl;
-//			ASSERT_EQUAL(result.str(), to_string(i) + " - data " + to_string(i));
-//			++i;
+			ASSERT_EQUAL(result.str(), to_string(i) + " - data " + to_string(i));
+			++i;
 		}
 	}
 }
@@ -44,7 +38,7 @@ void test_multiple_queries()
 	db.connect(HOST, USER, PASSWD, DB);
 
 	if(db.is_connected()) {
-		auto query_res_ptr = db.query("SELECT * FROM subs_table WHERE user_id = 1");
+		auto query_res_ptr = db.query("SELECT * FROM sample_table WHERE Id = 1");
 		ASSERT_EQUAL(string(query_res_ptr->get_row()[1]), "data 1");
 
 		query_res_ptr = db.query("SELECT * FROM sample_table WHERE Id = 2");
@@ -120,14 +114,13 @@ int main()
 	cout << "Test can take a few moments, " 
 			"cause it connects to the db4free.net database..." << endl;
 
-	test_basic();
-//	TestRunner tr;
-//	RUN_TEST(tr, test_basic);
-//	RUN_TEST(tr, test_multiple_queries);
-//	RUN_TEST(tr, test_non_need_result);
-//	RUN_TEST(tr, test_insert_and_delete);
-//	RUN_TEST(tr, test_wrong_query);
-//	RUN_TEST(tr, test_get_row_on_released_res);
+	TestRunner tr;
+	RUN_TEST(tr, test_basic);
+	RUN_TEST(tr, test_multiple_queries);
+	RUN_TEST(tr, test_non_need_result);
+	RUN_TEST(tr, test_insert_and_delete);
+	RUN_TEST(tr, test_wrong_query);
+	RUN_TEST(tr, test_get_row_on_released_res);
 
 	return 0;
 }
