@@ -1,9 +1,11 @@
 #include "database.h"
 #include "HTTPServer.h"
 #include "HTTPHandler.h"
+#include <json.hpp>
 
 
 using namespace std;
+using json = nlohmann::json;
 
 const char* DB_HOSTNAME = "localhost";
 const char* DB_NAME = "alice_subs";
@@ -24,24 +26,22 @@ void set_ok(HTTPHandler::Answer& answer) {
 HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& request) {
 	HTTPHandler::Answer answer;
 	struct tm tm;
-	int user_id = std::stoi(request.uri.substr(1, request.uri.size()));
-	time_t sub_start, sub_end;
-	string sub_start_str, sub_end_str;
+	auto args_json = json::parse(request.body);
+	int user_id;
+
+	if(request.method != HTTPHandler::Method::PUT)
+		user_id = args_json["user_id"];
 	try {
 		switch(request.method) {
 			case HTTPHandler::Method::GET:
 				answer.body = to_string(db.check_for_sub(user_id));
 				break;
 			case HTTPHandler::Method::PUT:
-				sub_start_str = request.headers.at("sub_start_date");
-				sub_end_str = request.headers.at("sub_end_date");
-				db.update_sub(user_id, sub_start_str, sub_end_str);
+				db.update_sub(user_id, args_json["sub_start_date"], args_json["sub_end_date"]);
 				answer.body = "User id: " + to_string(user_id) + " successfuly updated";
 				break;
 			case HTTPHandler::Method::POST:
-				sub_start_str = request.headers.at("sub_start_date");
-				sub_end_str = request.headers.at("sub_end_date");
-				user_id = db.insert_sub(request.headers.at("username"), sub_start_str, sub_end_str);
+				user_id = db.insert_sub(args_json["username"], args_json["sub_start_date"], args_json["sub_end_date"]);
 				answer.body = to_string(user_id);
 				break;
 			case HTTPHandler::Method::DELETE:
