@@ -1,9 +1,32 @@
 {% extends "wrapper.html" %}
 
+{#{% block content %}#}
+{#    <form method="post">#}
+{#        {% csrf_token %}#}
+{#        {{ form.as_p }}#}
+{#        <input type="submit" value="Добавить">#}
+{#    </form>#}
+{#{% endblock %}#}
+
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
+    <h3> Устройство {{ gate }}</h3>
+    <h3>Список голосовых помощников:</h3>
+    {% for record in records %}
+        {% if record.uid != None %}
+            <div class="row">
+                <div class="col-sm-6">
+                    <p>{{record.uid}}</p>
+                </div>
+                <div class="col-sm-6">
+                    <a href="" class="btn btn-primary">Удалить</a>
+                </div>
+            </div>
+        {%  endif %}
+    {% endfor %}
+     <form method="post">
+{#        {% csrf_token %}#}
         {{ form.as_p }}
         <input type="submit" value="Добавить">
     </form>
 {% endblock %}
+

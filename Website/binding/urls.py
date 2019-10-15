@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import index
+from .views import devices, index, change_gate_id
 
 urlpatterns = [
-    path('<str:gate>', index),
+    path('devices', devices),
+    path('change_gate_id', change_gate_id),
     path('', index)
 ]
