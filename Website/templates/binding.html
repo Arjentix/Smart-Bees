@@ -12,16 +12,12 @@
     <h3> Устройство {{ gate }}</h3>
     <h3>Список голосовых помощников:</h3>
     {% for record in records %}
-        {% if record.uid != None %}
+        <form action="{{ record.url }}" method="post">
             <div class="row">
-                <div class="col-sm-6">
-                    <p>{{record.uid}}</p>
-                </div>
-                <div class="col-sm-6">
-                    <a href="" class="btn btn-primary">Удалить</a>
-                </div>
+                <div class="col-sm-6"><p>{{ record.uid }}</p></div>
+                <div class="col-sm-6"><input type="submit" value="Удалить"></div>
             </div>
-        {%  endif %}
+        </form>
     {% endfor %}
      <form method="post">
 {#        {% csrf_token %}#}
