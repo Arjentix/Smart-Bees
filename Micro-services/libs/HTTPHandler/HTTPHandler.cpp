@@ -37,10 +37,9 @@ Request HTTPHandler::parse_request(const string& request)
 		throw invalid_argument("Expected empty line after headers");
 	}
 
-	string body_tmp;
-	while(getline(input, body_tmp)) {
-		result.body += body_tmp;
-	}
+	stringstream body_stream;
+	body_stream << input.rdbuf();
+	result.body += body_stream.str();
 
 	return result;
 }
