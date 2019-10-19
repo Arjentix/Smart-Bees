@@ -52,7 +52,7 @@ public:
 	// Handling std::endl;
 	Logger& operator<<(std::ostream& (*f)(std::ostream&)) {
 		_log_file << "[" << _get_current_time() << "]::" << _sstream.str() << std::endl;
-		_sstream = stringstream();
+		_sstream = std::stringstream();
 
 		_locker.unlock();
 		return *this;
