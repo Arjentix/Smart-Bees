@@ -5,20 +5,25 @@ project(connection_manager)
 # Adding HTTPServer
 set(
 	HTTPSERVER_INCLUDE_DIR
-	${CMAKE_CURRENT_SOURCE_DIR}/../../libs/HTTPServer
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/HTTPServer
 )
-if(not TARGET HTTPServer)
+if(NOT TARGET HTTPServer)
 	add_subdirectory(${HTTPSERVER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HTTPServer)
 endif()
 
 # Adding Logger
 set(
 	LOGGER_INCLUDE_DIR
-	${CMAKE_CURRENT_SOURCE_DIR}/../../libs/Logger
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/Logger
 )
-if(not TARGET Logger)
+if(NOT TARGET Logger)
 	add_subdirectory(${LOGGER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/Logger)
 endif()
+
+set(
+	HTTPHANDLER_INCLUDE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/HTTPHandler
+)
 
 
 set(SOURCE_CONNECTION_MANAGER
@@ -36,6 +41,7 @@ set_target_properties(ConnectionManager PROPERTIES
 target_include_directories(ConnectionManager PUBLIC
 		${HTTPSERVER_INCLUDE_DIR}
 		${LOGGER_INCLUDE_DIR}
+		${HTTPHANDLER_INCLUDE_DIR}
 )
 
 target_link_libraries(ConnectionManager
