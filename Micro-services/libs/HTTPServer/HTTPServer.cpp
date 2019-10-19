@@ -1,5 +1,17 @@
 #include "HTTPServer.h"
 
+std::string get_n_bytes(int client, size_t n) {
+	if (n <= 0) {
+		return "";
+	}
+
+	char buffer[n + 1];	// + 1 for '\0'
+	memset(buffer, 0, n + 1);
+
+	recv(client, buffer, n, 0);
+	return buffer;
+}
+
 HTTPServer::HTTPServer() {}
 
 HTTPServer::~HTTPServer() {
@@ -51,10 +63,28 @@ int HTTPServer::connect_client()
 	return client;
 }
 
-std::string HTTPServer::get_request(int client) {
-	static char buffer[1024];
-	recv(client, buffer, bufsize, 0);
-	return buffer;
+HTTPHandler::Request HTTPServer::get_request(int client) {
+	std::string raw_request = get_raw(client);
+	auto parsed_request = HTTPHandler::parse_request(raw_request);
+
+	size_t cont_len;
+	if (parsed_request.headers.count("Content-Length")) {
+		cont_len = atoi(parsed_request.headers.at("Content-Length").c_str());
+	}
+	else if (parsed_request.headers.count("content-length")) {
+		cont_len = atoi(parsed_request.headers.at("content-length").c_str());
+	}
+	else {
+		throw std::runtime_error("Expected Content-Length header");
+	}
+
+	parsed_request.body += get_n_bytes(client, cont_len - parsed_request.body.size());
+
+	return parsed_request;
+}
+
+std::string HTTPServer::get_raw(int client) {
+	return get_n_bytes(client, bufsize);
 }
 
 void HTTPServer::send_answer(int client, const std::stringstream& answer_ss)

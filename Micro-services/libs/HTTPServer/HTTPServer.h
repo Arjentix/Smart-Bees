@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HTTPHandler.h"
 #include <iostream>
 #include <string.h>
 #include <sstream>
@@ -26,7 +27,8 @@ public:
 	void start_server(int);
 	void turn_to_listen(int);
 	int connect_client();
-	static std::string get_request(int);
+	static HTTPHandler::Request get_request(int);
+	static std::string get_raw(int);
 	static void send_answer(int, const std::stringstream&);
 	static void close_con(int);
 };
