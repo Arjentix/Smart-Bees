@@ -87,11 +87,16 @@ std::string HTTPServer::get_raw(int client) {
 	return get_n_bytes(client, bufsize);
 }
 
-void HTTPServer::send_answer(int client, const std::stringstream& answer_ss)
+void HTTPServer::send_answer(int client, const HTTPHandler::Answer& answer)
 {
-	static std::string buffer;
-	buffer = answer_ss.str();
-	send(client, buffer.c_str(), buffer.size(), 0);
+	std::stringstream answer_ss;
+	HTTPHandler::write_answer(answer, answer_ss);
+	send_raw(client, answer_ss.str());
+}
+
+void HTTPServer::send_raw(int client, const std::string& answer_str)
+{
+	send(client, answer_str.c_str(), answer_str.size(), 0);
 }
 
 void HTTPServer::close_con(int client)

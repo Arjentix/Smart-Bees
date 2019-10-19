@@ -29,6 +29,7 @@ public:
 	int connect_client();
 	static HTTPHandler::Request get_request(int);
 	static std::string get_raw(int);
-	static void send_answer(int, const std::stringstream&);
+	static void send_answer(int, const HTTPHandler::Answer&);
+	static void send_raw(int, const std::string&);
 	static void close_con(int);
 };
