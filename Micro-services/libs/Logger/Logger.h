@@ -14,26 +14,20 @@
 
 #include <fstream>
 #include <string>
+#include <sstream>
+#include <mutex>
 
 /**
  * Logger - class for logging your data into the log file provided in ctr.
- * You don't need to pass time at the beginning or std::endl at the end, cause
+ * You don't need to pass time at the beginning, cause
  * Logger do it automaticaly. For example the code below:
  * 		Logger my_logger("mylog.txt");
- * 		my_logger << "Start";
+ * 		my_logger << "Start" << 5 << std::endl;
  * 	will write:
  * 		[YYYY-MM-DD.hh:mm:ss]::Start
- * with std::endl at the end into the mylog.txt
+ * into the mylog.txt
  */
 class Logger {
-private:
-	std::ofstream _log_file;
-
-	/*
-	 * get_time() - returns string with current date and time.
-	 */
-	std::string _get_current_time();
-
 public:
 	/**
 	 * Logger() - takes name of the log file as a parameter.
@@ -50,15 +44,28 @@ public:
 	template <typename T>
 	Logger& operator<<(const T& obj)
 	{
-		_log_file << "[" << _get_current_time() << "]::" << obj << std::endl;
+		_locker.lock();
+		_sstream << obj;
 		return *this;
 	}
 
-	// Handling std::endl and etc.
+	// Handling std::endl;
 	Logger& operator<<(std::ostream& (*f)(std::ostream&)) {
-		f(_log_file);
+		_log_file << "[" << _get_current_time() << "]::" << _sstream.str() << std::endl;
+		_sstream = stringstream();
+
+		_locker.unlock();
 		return *this;
 	}
+private:
+	std::ofstream _log_file;
+	std::stringstream _sstream;
+	std::mutex _locker;
+
+	/*
+	 * get_time() - returns string with current date and time.
+	 */
+	std::string _get_current_time();
 };
 
 /**

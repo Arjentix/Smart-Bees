@@ -38,6 +38,7 @@ Logger::Logger(const std::string& file_name)
 
 void Logger::open(const std::string& file_name)
 {
+	std::lock_guard guard(_locker);
 	if (_log_file.is_open()) {
 		_log_file.close();
 	}
