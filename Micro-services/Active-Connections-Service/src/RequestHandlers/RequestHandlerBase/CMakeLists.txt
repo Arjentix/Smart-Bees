@@ -5,7 +5,7 @@ project(request_handlers)
 # Adding HTTPHandler
 set(
 	HTTPHANDLER_INCLUDE_DIR
-	${CMAKE_CURRENT_SOURCE_DIR}/../../HTTPHandler
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../../libs/HTTPHandler
 )
 if(NOT TARGET HTTPHandler)
 	add_subdirectory(${HTTPHANDLER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HTTPHandler)
@@ -14,10 +14,10 @@ endif()
 # Adding ConnectionManager
 set(
 	CONNECTION_MANAGER_INCLUDE_DIR
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../../ConnectionManager
+	${CMAKE_CURRENT_SOURCE_DIR}/../../ConnectionManager
 )
 if(NOT TARGET ConnectionManager)
-	add_subdirectory(${CONNECTION_MANAGEG_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ConnectionManager)
+	add_subdirectory(${CONNECTION_MANAGER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ConnectionManager)
 endif()
 
 
