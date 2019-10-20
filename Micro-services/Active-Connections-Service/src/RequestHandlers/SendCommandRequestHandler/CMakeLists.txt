@@ -28,21 +28,33 @@ if(NOT TARGET nlohmann_json::nlohmann_json)
 	)
 endif()
 
+# Adding Logger
+set(
+	LOGGER_INCLUDE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/Logger
+)
+if(NOT TARGET Logger)
+	add_subdirectory(${LOGGER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/Logger)
+endif()
+
 
 set(SOURCE SendCommandRequestHandler.cpp)
 
 add_library(SendCommandRequestHandler ${SOURCE})
 
-# set_target_properties(SendCommandRequestHandler PROPERTIES
-# 		CXX_STANDARD 17
-# 		CXX_STANDARD_REQUIRED ON
-# 		CXX_EXTENSIONS ON
-# )
+set_target_properties(SendCommandRequestHandler PROPERTIES
+		CXX_STANDARD 17
+		CXX_STANDARD_REQUIRED ON
+		CXX_EXTENSIONS ON
+)
 
 target_include_directories(SendCommandRequestHandler PUBLIC
 		${REQUEST_HANDLER_BASE_INCLUDE_DIR}
+		${JSON_INCLUDE_DIR}
+		${LOGGER_INCLUDE_DIR}
 )
 target_link_libraries(SendCommandRequestHandler
 		RequestHandlerBase
 		nlohmann_json::nlohmann_json
+		Logger
 )
