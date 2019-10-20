@@ -31,6 +31,7 @@ void ConnectionManager::send_command(
 	const string& command
 ) const
 {
+	HTTPServer::send_raw(_id_to_sock.at(id), "Check");
 	HTTPServer::send_raw(_id_to_sock.at(id), command);
 }
 
@@ -55,5 +56,8 @@ void ConnectionManager::_get_and_store_id(int sock)
 	logger << "Got gate id: " << id << endl;
 
 	lock_guard guard(_locker);
+	if (_id_to_sock.count(id)) {
+		HTTPServer::close_con(_id_to_sock.at(id));
+	}
 	_id_to_sock[id] = sock;
 }
