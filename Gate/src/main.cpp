@@ -91,11 +91,11 @@ int main()
 			if (token != "" && token != "Check") {
 				futures.push_back(
 					async([&] () {
-						LogPrinter::print("Token getted: " + token);
+						LogPrinter::print("Token getted: '" + token + "'");
 						res = tok_hand.find(token, topic, command);
-						LogPrinter::print("Topic: " + topic);
-						LogPrinter::print("Command: " + command);
 						if (res == true) {
+							LogPrinter::print("Topic: " + topic);
+							LogPrinter::print("Command: " + command);
 							LogPrinter::print("Publishing");
 							mqtt_pub.publish(topic, command, false);
 							alice_conn.send_ok();
