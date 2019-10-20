@@ -59,6 +59,8 @@ void HTTPServer::start_server(int port_num)
     server_addr.sin_addr.s_addr = htons(INADDR_ANY);
     server_addr.sin_port = htons(port_num);
 
+	int opt = 1;
+	setsockopt (server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (opt));
     if ((bind(server, (struct sockaddr*)&server_addr,sizeof(server_addr))) < 0) 
     {
 		throw HTTPServer::BindFailed(strerror(errno));
