@@ -1,4 +1,5 @@
 #include "HTTPServer.h"
+#include "signal.h"
 
 HTTPServer::Exception::Exception(const std::string& what_msg)
 	: std::runtime_error(what_msg) {}
@@ -33,7 +34,10 @@ std::string get_n_bytes(int client, size_t n) {
 	return buffer;
 }
 
-HTTPServer::HTTPServer() {}
+HTTPServer::HTTPServer()
+{
+	signal(SIGPIPE, SIG_IGN);
+}
 
 HTTPServer::~HTTPServer() {
 	close(server);
