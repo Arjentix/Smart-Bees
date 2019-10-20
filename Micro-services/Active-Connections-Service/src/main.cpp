@@ -41,36 +41,41 @@ int main()
     close(1);
     close(2);
 
-	logger << "Start" << endl;
+	try {
+		logger << "Start" << endl;
 
-	HTTPServer server;
-	server.start_server(2525);
-	server.turn_to_listen(5);
+		HTTPServer server;
+		server.start_server(2525);
+		server.turn_to_listen(5);
 
-	logger << "Before manager" << endl;
-	ConnectionManager connection_manager;
-	logger << "After manager" << endl;
+		logger << "Before manager" << endl;
+		ConnectionManager connection_manager;
+		logger << "After manager" << endl;
 
-	// Capturing SIGINT signal
-	signal(SIGINT, signal_handler);
+		// Capturing SIGINT signal
+		signal(SIGINT, signal_handler);
 
-	// Adding handlers
-	ClientHandler client_handler;
-	client_handler.add_request_handler(
-		HTTPHandler::Method::POST,
-		make_shared<
-			RequestHandler::SendCommandRequestHandler
-		>(connection_manager)
-	);
+		// Adding handlers
+		ClientHandler client_handler;
+		client_handler.add_request_handler(
+			HTTPHandler::Method::POST,
+			make_shared<
+				RequestHandler::SendCommandRequestHandler
+			>(connection_manager)
+		);
 
-	logger << "Connecting" << endl;
-	vector<future<void>> futures;
-	while (!finish) {
-		int client_sock = server.connect_client();
-		logger << "Client connected on socket " << client_sock << endl;
-		futures.push_back(async(
-			&ClientHandler::handle_client, &client_handler, client_sock
-		));
+		logger << "Connecting" << endl;
+		vector<future<void>> futures;
+		while (!finish) {
+			int client_sock = server.connect_client();
+			logger << "Client connected on socket " << client_sock << endl;
+			futures.push_back(async(
+				&ClientHandler::handle_client, &client_handler, client_sock
+			));
+		}
+	}
+	catch (exception& ex) {
+		logger << "Error: " << ex.what() << endl;
 	}
 	
 	logger << "Shutting down" << endl;
