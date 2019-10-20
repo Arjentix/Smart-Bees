@@ -13,9 +13,9 @@ const char* DB_USERNAME = "http_server";
 const char* DB_PASSWORD = "12345678";
 
 
-void set_not_found(HTTPHandler::Answer& answer) {
-	answer.status_code = 404;
-	answer.status_description = "Not Found";
+void set_bad_request(HTTPHandler::Answer& answer) {
+	answer.status_code = 403;
+	answer.status_description = "Bad Request";
 }
 
 void set_ok(HTTPHandler::Answer& answer) {
@@ -26,58 +26,59 @@ void set_ok(HTTPHandler::Answer& answer) {
 HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& request) {
 	HTTPHandler::Answer answer;
 	struct tm tm;
-	auto args_json = json::parse(request.body);
+	json args_json;
+	json answer_json;
 	int user_id;
+	string command;
 
-	if(request.method != HTTPHandler::Method::PUT)
-		user_id = args_json["user_id"];
+
 	try {
+		if(request.method == HTTPHandler::Method::POST || request.method == HTTPHandler::Method::PUT)
+			args_json = json::parse(request.body);
+		else {
+		// TODO:	
+		//	user_id = request.
+		//	if(request.method == HTTPHandler::Method::GET)
+		//		command = request.
+		}
 		switch(request.method) {
 			case HTTPHandler::Method::GET:
-				answer.body = to_string(db.check_for_sub(user_id));
+				if(command == "sub_status")
+					answer_json["sub_status"] = db.check_for_sub(user_id);
+				else if(command == "sub_left") {
+					DataBase::time_remains t_r = db.time_left(user_id);
+					answer_json["minutes"] = t_r.minutes;
+					answer_json["hours"] = t_r.hours;
+					answer_json["days"] = t_r.days;
+				}
+				else
+					throw runtime_error("Unknown command");
 				break;
 			case HTTPHandler::Method::PUT:
-				db.update_sub(user_id, args_json["sub_start_date"], args_json["sub_end_date"]);
-				answer.body = "User id: " + to_string(user_id) + " successfuly updated";
+				db.update_sub(args_json["user_id"], args_json["sub_start_date"], args_json["sub_end_date"]);
 				break;
 			case HTTPHandler::Method::POST:
-				user_id = db.insert_sub(args_json["username"], args_json["sub_start_date"], args_json["sub_end_date"]);
-				answer.body = to_string(user_id);
+				user_id = db.insert_sub(args_json["user_id"], args_json["username"], args_json["sub_start_date"], args_json["sub_end_date"]);
 				break;
 			case HTTPHandler::Method::DELETE:
 				db.delete_sub(user_id);
-				answer.body = "User id: " + to_string(user_id) + " successfuly deleted";
 				break;
 		}
 		set_ok(answer);
 	} catch(std::runtime_error& e) {
-		set_not_found(answer);
-		answer.body = "[EXCEPTION] ";
-	   	answer.body += e.what();
+		set_bad_request(answer);
+	   	answer_json["exception"] = e.what();
 	} catch(exception& e) {
-		set_not_found(answer);
-		answer.body = "[EXCEPTION] ";
-	   	answer.body += e.what();
+		set_bad_request(answer);
+	   	answer_json["exception"] = e.what();
 	}
+	answer.body = answer_json.dump(4);
 	return answer;
 }
 
 int main()
 {
-	/*
-	try {
-        DataBase db;
-		db.init(DB_HOSTNAME, DB_NAME, DB_USERNAME, DB_PASSWORD);
-        db.delete_sub(1);
-	} catch(std::runtime_error& e) {
-        cout << "[EXCEPTION] " << e.what() << endl;
-        return 1;
-    } catch (exception& e) {
-        cout << "[EXCEPTION] " << e.what() << endl;
-        return 1;
-    }
-	*/
-	int port = 3000;
+	const int port = 3000;
 
 	try {
    		DataBase db;
@@ -88,15 +89,12 @@ int main()
 		while(true) {
 			cout << "Awaiting for connection..." << endl;
 			int client_id = server.connect_client();
-			string str_request = server.get_request(client_id);
-			HTTPHandler::Request request = HTTPHandler::parse_request(str_request);
+			HTTPHandler::Request request = server.get_request(client_id);
 			HTTPHandler::Answer answer = work_with_db(db, request);
-			stringstream answer_ss;
-			HTTPHandler::write_answer(answer, answer_ss);
-			server.send_answer(client_id, answer_ss);
+			server.send_answer(client_id, answer);
 			server.close_con(client_id);
 		}
-	} catch(std::runtime_error& e) {
+	} catch(runtime_error& e) {
         cout << "[EXCEPTION] " << e.what() << endl;
         return 1;
     } catch (exception& e) {
