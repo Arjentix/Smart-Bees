@@ -26,13 +26,19 @@ ConnectionManager::~ConnectionManager()
 	}
 }
 
-void ConnectionManager::send_command(
+string ConnectionManager::send_command(
 	const string& id,
 	const string& command
 ) const
 {
-	HTTPServer::send_raw(_id_to_sock.at(id), "Check");
-	HTTPServer::send_raw(_id_to_sock.at(id), command);
+	int sock = _id_to_sock.at(id);
+
+	HTTPServer::send_raw(sock, "Check");
+	logger << "Sended Check" << endl;
+	HTTPServer::send_raw(sock, command);
+	logger << "Sended command" << endl;
+
+	return HTTPServer::get_raw(sock);
 }
 
 void ConnectionManager::_connect_loop()

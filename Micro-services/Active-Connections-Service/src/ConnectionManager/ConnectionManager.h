@@ -27,7 +27,7 @@ public:
 	 * send_command() -- sends command to the given gate.
 	 * Can throw std::out_of_range exception if gate never was connected
 	 */
-	void send_command(
+	std::string send_command(
 		const std::string& gate_id,
 		const std::string& command
 	) const;
