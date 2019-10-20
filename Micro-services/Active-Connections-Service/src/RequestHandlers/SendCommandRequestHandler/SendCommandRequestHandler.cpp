@@ -6,6 +6,7 @@
  */
 
 #include "SendCommandRequestHandler.h"
+#include "Logger.h"
 #include "json.hpp"
 #include <string>
 
@@ -35,9 +36,21 @@ HTTPHandler::Answer SendCommandRequestHandler::handle(HTTPHandler::Request reque
 			""
 		};
 	}
-	catch (...) {
+	catch (HTTPServer::SendFailed& ex) {
+		logger << "SendCommandRequestHandler::Send failed: " << ex.what() << endl;
 		return {
 			503, "Service Unavailable",
+			{
+				{"Content-Length", "0"},
+				{"Connection", "close"}
+			},
+			""
+		};
+	}
+	catch (exception& ex) {
+		logger << "SendCommandRequestHandler::Unexcpected exception: " << ex.what() << endl;
+		return {
+			520, "Unknown Error",
 			{
 				{"Content-Length", "0"},
 				{"Connection", "close"}
