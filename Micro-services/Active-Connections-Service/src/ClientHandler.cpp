@@ -55,11 +55,6 @@ void ClientHandler::handle_client(int client_sock) const
 			};
 		}
 	}
-	catch (out_of_range& ex) {
-		http_answer.status_code = 404;
-		http_answer.status_description = "Not Found";
-		logger << "out_of_range: " << ex.what() << endl;
-	}
 	catch (invalid_argument& ex) {
 		// http_answer is already set to "Bad Request"
 		logger << "invalid_argument: " << ex.what() << endl;

@@ -25,7 +25,17 @@ HTTPHandler::Answer SendCommandRequestHandler::handle(HTTPHandler::Request reque
 			json_body.at("command").get<string>()
 		);
 	}
-	catch (exception& ex) {
+	catch (out_of_range& ex) {
+		return {
+			404, "Not Found",
+			{
+				{"Content-Length", "0"},
+				{"Connection", "close"}
+			},
+			""
+		};
+	}
+	catch (...) {
 		return {
 			503, "Service Unavailable",
 			{
