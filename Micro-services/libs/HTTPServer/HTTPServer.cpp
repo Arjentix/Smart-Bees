@@ -112,12 +112,17 @@ void HTTPServer::send_answer(int client, const HTTPHandler::Answer& answer)
 {
 	std::stringstream answer_ss;
 	HTTPHandler::write_answer(answer, answer_ss);
-	send_raw(client, answer_ss.str());
+	send_raw(client, answer_ss.str(), false);
 }
 
-void HTTPServer::send_raw(int client, const std::string& answer_str)
+void HTTPServer::send_raw(
+	int client,
+	const std::string& answer_str,
+	bool include_null_ch
+)
 {
-	if (send(client, answer_str.c_str(), answer_str.size(), 0) < 0)
+	int increment = (include_null_ch ? 1 : 0);
+	if (send(client, answer_str.c_str(), answer_str.size() + increment, 0) < 0)
 	{
 		throw SendFailed(strerror(errno));
 	}
