@@ -42,7 +42,7 @@ namespace HTTPHandler {
 		int status_code;
 		std::string status_description;
 		// Vector is used for saving headers order
-		std::vector<std::pair<std::string, std::string>> headers;
+		std::map<std::string, std::string> headers;
 		std::string body;
 	};
 

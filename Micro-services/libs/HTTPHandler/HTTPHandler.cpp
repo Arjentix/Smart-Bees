@@ -62,8 +62,7 @@ Answer HTTPHandler::parse_answer(const std::string& answer)
 	input >> result.status_code >> result.status_description;
 	
 	input.ignore(256, '\n');
-	auto headers = parse_headers(input);
-	result.headers = {headers.begin(), headers.end()};
+	result.headers = parse_headers(input);
 
 	if (!input) {
 		throw invalid_argument("Expected empty line after headers");
