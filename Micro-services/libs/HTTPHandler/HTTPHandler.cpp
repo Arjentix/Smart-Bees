@@ -10,34 +10,48 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
-#include <iostream>
 
 using namespace std;
 using namespace HTTPHandler;
 
 Method string_to_method(const string& method);
 string method_to_string(Method method);
+map<string, string> parse_variables(istream& input);
 map<string, string> parse_headers(istream& input);
-map<string, string> parse_body(istream& input);
 
 Request HTTPHandler::parse_request(const string& request)
 {
 	Request result;
 	istringstream input(request);
 
+	// Method
 	string method_str;
 	input >> method_str;
 	result.method = string_to_method(method_str);
 
-	input >> result.uri;
+	// URI and variables
+	input.ignore(1);
+	string uri_and_vars;
+	int pos;
+	getline(input, uri_and_vars);
+	if ((pos = uri_and_vars.find_first_of('?')) != uri_and_vars.npos) {
+		result.uri = uri_and_vars.substr(0, pos);
+		istringstream vars_stream(uri_and_vars);
+		vars_stream.ignore(pos + 1, '?');
+		result.variables = parse_variables(vars_stream);
+	}
+	else {
+		result.uri = uri_and_vars.substr(0, uri_and_vars.find_first_of(' '));
+	}
 
-	input.ignore(256, '\n');
+	//Headers
 	result.headers = parse_headers(input);
 
 	if (!input) {
 		throw invalid_argument("Invalid request");
 	}
 
+	// Body
 	stringstream body_stream;
 	body_stream << input.rdbuf();
 	result.body += body_stream.str();
@@ -123,6 +137,24 @@ string method_to_string(Method method)
 	}
 
 	throw invalid_argument("Unknown method");
+}
+
+
+map<string, string> parse_variables(istream& input)
+{
+	map<string, string> var_to_val;
+
+	string var;
+	while (getline(input, var, '=')) {
+		string val;
+		getline(input, val, '&');
+		if (input.eof()) {
+			val = val.substr(0, val.find_first_of(' '));
+		}
+		var_to_val[var] = val;
+	}
+
+	return var_to_val;
 }
 
 map<string, string> parse_headers(istream& input)

@@ -31,6 +31,7 @@ namespace HTTPHandler {
 	struct Request {
 		Method method;
 		std::string uri;
+		std::map<std::string, std::string> variables;
 		std::map<std::string, std::string> headers;
 		std::string body;
 	};
