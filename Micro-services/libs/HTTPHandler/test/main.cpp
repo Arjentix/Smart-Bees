@@ -84,8 +84,8 @@ void test_answer()
 	ostringstream result;
 	string expected(
 		"HTTP/1.1 200 OK\r\n"
-		"Content-Type: text/html\r\n"
 		"Connection: close\r\n"
+		"Content-Type: text/html\r\n"
 		"\r\n"
 		"<html>Hello</html>"
 	);
@@ -94,12 +94,46 @@ void test_answer()
 	ASSERT_EQUAL(result.str(), expected);
 }
 
+void test_wrong_request()
+{
+	try {
+		auto request = HTTPHandler::parse_request("435fsadf fsdffa\r\n");
+	}
+	catch (std::invalid_argument&) {
+
+	}
+	try {
+		auto request = HTTPHandler::parse_request("GET fsdffa\r\n");
+	}
+	catch (std::invalid_argument&) {
+
+	}
+}
+
+void test_wrong_answer()
+{
+	try {
+		auto request = HTTPHandler::parse_request("435fsadf fsdffa\r\n");
+	}
+	catch (std::invalid_argument&) {
+
+	}
+	try {
+		auto request = HTTPHandler::parse_request("GET fsdffa\r\n");
+	}
+	catch (std::invalid_argument&) {
+
+	}
+}
+
 int main()
 {
 	TestRunner tr;
 	RUN_TEST(tr, test_get);
 	RUN_TEST(tr, test_post);
 	RUN_TEST(tr, test_answer);
+	RUN_TEST(tr, test_wrong_request);
+	RUN_TEST(tr, test_wrong_answer);
 
 	return 0;
 }
