@@ -50,7 +50,7 @@ set_target_properties(SendCommandRequestHandler PROPERTIES
 
 target_include_directories(SendCommandRequestHandler PUBLIC
 		${REQUEST_HANDLER_BASE_INCLUDE_DIR}
-		${JSON_INCLUDE_DIR}
+		${JSON_INCLUDE_DIR}/include
 		${LOGGER_INCLUDE_DIR}
 )
 target_link_libraries(SendCommandRequestHandler

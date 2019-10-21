@@ -7,7 +7,7 @@
 
 #include "SendCommandRequestHandler.h"
 #include "Logger.h"
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 #include <string>
 
 using namespace RequestHandler;
