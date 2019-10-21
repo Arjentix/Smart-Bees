@@ -45,13 +45,35 @@ Request HTTPHandler::parse_request(const string& request)
 	return result;
 }
 
-void write_request(const Request& request, std::ostream& output)
+void HTTPHandler::write_request(const Request& request, std::ostream& output)
 {
 	output << method_to_string(request.method) << " " << request.uri << "\r\n";
 	for (auto& [header, value] : request.headers) {
 		output << header << ": " << value << "\r\n";
 	}
 	output << request.body;
+}
+
+Answer HTTPHandler::parse_answer(const std::string& answer)
+{
+	Answer result;
+	stringstream input(answer);
+
+	input >> result.status_code >> result.status_description;
+	
+	input.ignore(256, '\n');
+	auto headers = parse_headers(input);
+	result.headers = {headers.begin(), headers.end()};
+
+	if (!input) {
+		throw invalid_argument("Expected empty line after headers");
+	}
+
+	stringstream body_stream;
+	body_stream << input.rdbuf();
+	result.body += body_stream.str();
+
+	return result;
 }
 
 void HTTPHandler::write_answer(const Answer& answer, std::ostream& output)
