@@ -1,0 +1,11 @@
+version: '3'
+services:
+  example_service:
+      build:
+        context: ./..
+        dockerfile: ./Active-Connections-Service/Dockerfile
+      ports:
+        - "2525:2525"
+        - "4551:4551"
+      volumes:
+        - "./log.txt:/app/log.txt"
