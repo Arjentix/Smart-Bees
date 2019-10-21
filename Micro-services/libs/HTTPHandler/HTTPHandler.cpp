@@ -35,7 +35,7 @@ Request HTTPHandler::parse_request(const string& request)
 	result.headers = parse_headers(input);
 
 	if (!input) {
-		throw invalid_argument("Expected empty line after headers");
+		throw invalid_argument("Invalid request");
 	}
 
 	stringstream body_stream;
@@ -65,7 +65,7 @@ Answer HTTPHandler::parse_answer(const std::string& answer)
 	result.headers = parse_headers(input);
 
 	if (!input) {
-		throw invalid_argument("Expected empty line after headers");
+		throw invalid_argument("Invalid answer");
 	}
 
 	stringstream body_stream;
