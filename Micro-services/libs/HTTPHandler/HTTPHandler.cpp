@@ -15,7 +15,8 @@
 using namespace std;
 using namespace HTTPHandler;
 
-Method parse_method(const string& method);
+Method string_to_method(const string& method);
+string method_to_string(Method method);
 map<string, string> parse_headers(istream& input);
 map<string, string> parse_body(istream& input);
 
@@ -26,7 +27,7 @@ Request HTTPHandler::parse_request(const string& request)
 
 	string method_str;
 	input >> method_str;
-	result.method = parse_method(method_str);
+	result.method = string_to_method(method_str);
 
 	input >> result.uri;
 
@@ -44,6 +45,15 @@ Request HTTPHandler::parse_request(const string& request)
 	return result;
 }
 
+void write_request(const Request& request, std::ostream& output)
+{
+	output << method_to_string(request.method) << " " << request.uri << "\r\n";
+	for (auto& [header, value] : request.headers) {
+		output << header << ": " << value << "\r\n";
+	}
+	output << request.body;
+}
+
 void HTTPHandler::write_answer(const Answer& answer, std::ostream& output)
 {
 	output << "HTTP/1.1 " << answer.status_code << " "
@@ -56,7 +66,7 @@ void HTTPHandler::write_answer(const Answer& answer, std::ostream& output)
 	output << "\r\n" << answer.body;
 }
 
-Method parse_method(const string& method)
+Method string_to_method(const string& method)
 {
 	if (method == "GET") {
 		return Method::GET;
@@ -72,6 +82,26 @@ Method parse_method(const string& method)
 	}
 
 	throw invalid_argument("Unknown method: " + method);
+}
+
+string method_to_string(Method method)
+{
+	switch (method) {
+	case (Method::GET) :
+		return "GET";
+		break;
+	case (Method::POST) :
+		return "POST";
+		break;
+	case (Method::PUT) :
+		return "PUT";
+		break;
+	case (Method::DELETE) :
+		return "DELETE";
+		break;
+	}
+
+	throw invalid_argument("Unknown method");
 }
 
 map<string, string> parse_headers(istream& input)

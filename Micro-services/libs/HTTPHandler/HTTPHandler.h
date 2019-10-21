@@ -54,6 +54,11 @@ namespace HTTPHandler {
 	Request parse_request(const std::string& request);
 
 	/**
+	 * write_request() - writes HTTP request to the given output stream.
+	*/
+	void write_request(const Request& request, std::ostream& output);
+
+	/**
 	 * write_answer() - writes HTTP answer to the given output stream.
 	*/
 	void write_answer(const Answer& answer, std::ostream& output);
