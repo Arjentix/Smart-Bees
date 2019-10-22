@@ -1,4 +1,24 @@
 #include "HTTPServer.h"
+#include "signal.h"
+
+HTTPServer::Exception::Exception(const std::string& what_msg)
+	: std::runtime_error(what_msg) {}
+
+HTTPServer::SocketFailed::SocketFailed(const std::string& what_msg)
+	: HTTPServer::Exception(what_msg) {}
+
+HTTPServer::BindFailed::BindFailed(const std::string& what_msg)
+	: HTTPServer::Exception(what_msg) {}
+
+HTTPServer::AcceptFailed::AcceptFailed(const std::string& what_msg)
+	: HTTPServer::Exception(what_msg) {}
+
+HTTPServer::RecvFailed::RecvFailed(const std::string& what_msg)
+	: HTTPServer::Exception(what_msg) {}
+
+HTTPServer::SendFailed::SendFailed(const std::string& what_msg)
+	: HTTPServer::Exception(what_msg) {}
+
 
 std::string get_n_bytes(int client, size_t n) {
 	if (n <= 0) {
@@ -8,11 +28,16 @@ std::string get_n_bytes(int client, size_t n) {
 	char buffer[n + 1];	// + 1 for '\0'
 	memset(buffer, 0, n + 1);
 
-	recv(client, buffer, n, 0);
+	if (recv(client, buffer, n, 0) <= 0) {
+		throw HTTPServer::RecvFailed(strerror(errno));
+	}
 	return buffer;
 }
 
-HTTPServer::HTTPServer() {}
+HTTPServer::HTTPServer()
+{
+	signal(SIGPIPE, SIG_IGN);
+}
 
 HTTPServer::~HTTPServer() {
 	close(server);
@@ -27,27 +52,24 @@ void HTTPServer::start_server(int port_num)
 
     if (server < 0) 
     {
-		std::cout << "Error establishing socket..." << std::endl;
-        exit(1);
+		throw HTTPServer::SocketFailed(strerror(errno));
     }
-
-	std::cout << "Socket server has been created..." << std::endl;
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = htons(INADDR_ANY);
     server_addr.sin_port = htons(port_num);
 
+	int opt = 1;
+	setsockopt (server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (opt));
     if ((bind(server, (struct sockaddr*)&server_addr,sizeof(server_addr))) < 0) 
     {
-		std::cout << "Error binding connection, the socket has already been established..." << std::endl;
-		throw std::runtime_error("error on binding");
+		throw HTTPServer::BindFailed(strerror(errno));
     }
 
     size = sizeof(server_addr);
 }
 
 void HTTPServer::turn_to_listen(int queue_size) {
-	std::cout << "Looking for clients..." << std::endl;
     listen(server, queue_size);
 }
 
@@ -55,11 +77,10 @@ int HTTPServer::connect_client()
 {
     int client = accept(server,(struct sockaddr *)&server_addr, &size);
 
-    if (client < 0) 
-        std::cout << "Error on accepting..." << std::endl;
-	else {
-		std::cout << "Client was connected" << std::endl;
+    if (client < 0) {
+		throw AcceptFailed(strerror(errno));
 	}
+
 	return client;
 }
 
@@ -91,12 +112,20 @@ void HTTPServer::send_answer(int client, const HTTPHandler::Answer& answer)
 {
 	std::stringstream answer_ss;
 	HTTPHandler::write_answer(answer, answer_ss);
-	send_raw(client, answer_ss.str());
+	send_raw(client, answer_ss.str(), false);
 }
 
-void HTTPServer::send_raw(int client, const std::string& answer_str)
+void HTTPServer::send_raw(
+	int client,
+	const std::string& answer_str,
+	bool include_null_ch
+)
 {
-	send(client, answer_str.c_str(), answer_str.size(), 0);
+	int increment = (include_null_ch ? 1 : 0);
+	if (send(client, answer_str.c_str(), answer_str.size() + increment, 0) < 0)
+	{
+		throw SendFailed(strerror(errno));
+	}
 }
 
 void HTTPServer::close_con(int client)

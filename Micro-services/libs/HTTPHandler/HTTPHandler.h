@@ -31,6 +31,7 @@ namespace HTTPHandler {
 	struct Request {
 		Method method;
 		std::string uri;
+		std::map<std::string, std::string> variables;
 		std::map<std::string, std::string> headers;
 		std::string body;
 	};
@@ -42,16 +43,26 @@ namespace HTTPHandler {
 		int status_code;
 		std::string status_description;
 		// Vector is used for saving headers order
-		std::vector<std::pair<std::string, std::string>> headers;
+		std::map<std::string, std::string> headers;
 		std::string body;
 	};
 
 	/**
-	 * parse_request() - parses HTTP request skipping extra information.
-	 * Only method and URI will be included in the result.
+	 * parse_request() - parses HTTP request.
 	 * Can throw std::invalid_argument if request format isn't allowed.
 	*/
 	Request parse_request(const std::string& request);
+
+	/**
+	 * write_request() - writes HTTP request to the given output stream.
+	*/
+	void write_request(const Request& request, std::ostream& output);
+
+	/**
+	 * parse_answer() - parses HTTP answer.
+	 * Can throw std::invalid_argument if request format isn't allowed.
+	*/
+	Answer parse_answer(const std::string& answer);
 
 	/**
 	 * write_answer() - writes HTTP answer to the given output stream.

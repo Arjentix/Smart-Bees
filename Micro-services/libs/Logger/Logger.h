@@ -44,17 +44,17 @@ public:
 	template <typename T>
 	Logger& operator<<(const T& obj)
 	{
-		_locker.lock();
+		std::lock_guard guard(_locker);
 		_sstream << obj;
 		return *this;
 	}
 
 	// Handling std::endl;
 	Logger& operator<<(std::ostream& (*f)(std::ostream&)) {
+		std::lock_guard guard(_locker);
 		_log_file << "[" << _get_current_time() << "]::" << _sstream.str() << std::endl;
 		_sstream = std::stringstream();
 
-		_locker.unlock();
 		return *this;
 	}
 private:
