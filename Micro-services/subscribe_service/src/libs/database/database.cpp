@@ -71,21 +71,21 @@ bool DataBase::check_for_sub(int id) {
     }
 }
 
-time_remains time_left_counter(struct tm tm_n, struct tm tm_e) {
+DataBase::Time DataBase::time_left_counter(struct tm tm_n, struct tm tm_e) {
 	long long all_seconds = difftime(mktime(&tm_e), mktime(&tm_n));
-	time_remains t_r;
-	t_r.minutes = (seconds/60)%60;
-	t_r.hours = (seconds/(60*60))%24;
-	t_r.days = (seconds/(60*60*24));
+	DataBase::Time t_r;
+	t_r.minutes = (all_seconds/60)%60;
+	t_r.hours = (all_seconds/(60*60))%24;
+	t_r.days = (all_seconds/(60*60*24));
 	return t_r;
 }
 
-time_remains time_left(int id) {
+DataBase::Time DataBase::time_left(int id) {
 	try {
 		if(dbc->is_connected()) {
 			check_for_exist(id);
-			if(check_for_sub == 0)
-				return time_remains(0, 0, 0);
+			if(check_for_sub(id) == 0)
+				return Time(0, 0, 0);
 			struct tm tm_e;
 			std::string request = "SELECT sub_end_date FROM subs_table WHERE user_id=" + std::to_string(id) + ";";
 			auto query_res_ptr = dbc->query(request);

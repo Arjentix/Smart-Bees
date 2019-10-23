@@ -1,7 +1,7 @@
 #include "database.h"
 #include "HTTPServer.h"
 #include "HTTPHandler.h"
-#include <json.hpp>
+#include "nlohmann/json.hpp"
 
 
 using namespace std;
@@ -36,17 +36,16 @@ HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& reque
 		if(request.method == HTTPHandler::Method::POST || request.method == HTTPHandler::Method::PUT)
 			args_json = json::parse(request.body);
 		else {
-		// TODO:	
-		//	user_id = request.
-		//	if(request.method == HTTPHandler::Method::GET)
-		//		command = request.
+			user_id = stoi(request.variables.at("user_id"));
+			if(request.method == HTTPHandler::Method::GET)
+				command = request.uri;
 		}
 		switch(request.method) {
 			case HTTPHandler::Method::GET:
-				if(command == "sub_status")
+				if(command == "/sub_status")
 					answer_json["sub_status"] = db.check_for_sub(user_id);
-				else if(command == "sub_left") {
-					DataBase::time_remains t_r = db.time_left(user_id);
+				else if(command == "/sub_left") {
+					DataBase::Time t_r = db.time_left(user_id);
 					answer_json["minutes"] = t_r.minutes;
 					answer_json["hours"] = t_r.hours;
 					answer_json["days"] = t_r.days;
@@ -58,7 +57,7 @@ HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& reque
 				db.update_sub(args_json["user_id"], args_json["sub_start_date"], args_json["sub_end_date"]);
 				break;
 			case HTTPHandler::Method::POST:
-				user_id = db.insert_sub(args_json["user_id"], args_json["username"], args_json["sub_start_date"], args_json["sub_end_date"]);
+				db.insert_sub(args_json["user_id"], args_json["username"], args_json["sub_start_date"], args_json["sub_end_date"]);
 				break;
 			case HTTPHandler::Method::DELETE:
 				db.delete_sub(user_id);

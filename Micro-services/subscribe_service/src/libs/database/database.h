@@ -25,9 +25,24 @@ private:
 
 	SimpleSQL::Connector* dbc;
 
-	struct time_remains {
-		time_remains() {}
-		time_remains(int d, int h, int m) {
+
+	std::string time_to_string(time_t);
+	bool time_compare(struct tm, struct tm);
+	void check_for_exist(int);
+	void check_for_exist(std::string);
+public:
+	DataBase();
+	~DataBase();
+	void init(const char*, const char*, const char*, const char*);
+	bool check_for_sub(int);
+	void update_sub(int, std::string,  std::string);
+	void insert_sub(int, std::string, std::string, std::string);
+	void delete_sub(int);
+
+	class Time {
+	public:
+		Time() {}
+		Time(int d, int h, int m) {
 			days = d;
 			hours = h;
 			minutes = m;
@@ -38,18 +53,7 @@ private:
 		int minutes;
 	};
 
-	std::string time_to_string(time_t);
-	bool time_compare(struct tm, struct tm);
-	time_remains time_left_counter(struct tm, struct tm);
-	void check_for_exist(int);
-	void check_for_exist(std::string);
-public:
-	DataBase();
-	~DataBase();
-	void init(const char*, const char*, const char*, const char*);
-	bool check_for_sub(int);
-	time_remains time_left(int);
-	void update_sub(int, std::string,  std::string);
-	void insert_sub(int, std::string, std::string, std::string);
-	void delete_sub(int);
+	Time time_left(int);
+private:
+	Time time_left_counter(struct tm, struct tm);
 };
