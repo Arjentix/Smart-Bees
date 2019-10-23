@@ -73,6 +73,8 @@ Answer HTTPHandler::parse_answer(const std::string& answer)
 	Answer result;
 	stringstream input(answer);
 
+	input.ignore(256, ' ');
+
 	input >> result.status_code >> result.status_description;
 	
 	input.ignore(256, '\n');
