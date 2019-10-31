@@ -4,6 +4,7 @@
 #include <string>
 #include "SimpleSQL.h"
 #include <ctime>
+#include <cstring>
 #include <chrono>
 #include <typeinfo>
 #include <exception>

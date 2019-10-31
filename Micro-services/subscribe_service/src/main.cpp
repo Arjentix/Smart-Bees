@@ -1,8 +1,11 @@
 #include "database.h"
 #include "HTTPServer.h"
 #include "HTTPHandler.h"
+#include "Logger.h"
 #include "nlohmann/json.hpp"
 
+#include <unistd.h>
+#include <signal.h>
 
 using namespace std;
 using json = nlohmann::json;
@@ -12,6 +15,7 @@ const char* DB_NAME = "alice_subs";
 const char* DB_USERNAME = "http_server";
 const char* DB_PASSWORD = "12345678";
 
+bool finish = false;
 
 void set_bad_request(HTTPHandler::Answer& answer) {
 	answer.status_code = 403;
@@ -40,6 +44,7 @@ HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& reque
 			if(request.method == HTTPHandler::Method::GET)
 				command = request.uri;
 		}
+
 		switch(request.method) {
 			case HTTPHandler::Method::GET:
 				if(command == "/sub_status")
@@ -64,10 +69,9 @@ HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& reque
 				break;
 		}
 		set_ok(answer);
-	} catch(std::runtime_error& e) {
-		set_bad_request(answer);
-	   	answer_json["exception"] = e.what();
+		logger << "work was ended without exceptions" << endl;
 	} catch(exception& e) {
+		logger << "[EXCEPTION on work] " << e.what() << endl;
 		set_bad_request(answer);
 	   	answer_json["exception"] = e.what();
 	}
@@ -75,29 +79,57 @@ HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& reque
 	return answer;
 }
 
+void signal_handler(int)
+{
+	finish = true;
+}
+
 int main()
 {
 	const int port = 3000;
 
+    int fork_res = fork();
+    if (fork_res == -1) {	// Error
+        return -1;
+    }
+    if (fork_res > 0) {		// Parent
+        return 0;
+    }
+    // Child 
+    // Closing useless fds
+    close(0);
+    close(1);
+    close(2);
+
+
 	try {
+		logger << "Initating database" << endl;
    		DataBase db;
 		db.init(DB_HOSTNAME, DB_NAME, DB_USERNAME, DB_PASSWORD);
+
+
 		HTTPServer server;
+		logger << "Starting server..." << endl;
 		server.start_server(port);
 		server.turn_to_listen(10);
-		while(true) {
-			cout << "Awaiting for connection..." << endl;
+
+		// Capturing SIGINT signal
+		signal(SIGINT, signal_handler);
+
+		while(!finish) {
+			logger << "Awaiting for connection..." << endl;
 			int client_id = server.connect_client();
+			logger << "Client was connected" << endl;
 			HTTPHandler::Request request = server.get_request(client_id);
 			HTTPHandler::Answer answer = work_with_db(db, request);
 			server.send_answer(client_id, answer);
+			logger << "Answer sent" << endl;
 			server.close_con(client_id);
+			logger << "Connection closed" << endl;
 		}
-	} catch(runtime_error& e) {
-        cout << "[EXCEPTION] " << e.what() << endl;
-        return 1;
     } catch (exception& e) {
-        cout << "[EXCEPTION] " << e.what() << endl;
+        logger << "[EXCEPTION] " << e.what() << endl;
         return 1;
     }
+	logger << "Shutting down..." << endl;
 }
