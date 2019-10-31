@@ -45,6 +45,15 @@ if(NOT TARGET HTTPServer)
 	add_subdirectory(${HTTP_SERVER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HTTPServer)
 endif()
 
+# Adding HTTPClient
+set(
+	HTTP_CLIENT_INCLUDE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/../../libs/HTTPClient
+)
+if(NOT TARGET HTTPClient)
+	add_subdirectory(${HTTP_CLIENT_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HTTPClient)
+endif()
+
 set(SOURCE_EXE main.cpp)
 
 # --------------------------
@@ -61,11 +70,13 @@ target_include_directories(main PRIVATE
 		${LOGGER_INCLUDE_DIR}
 		${HTTP_HANDLER_INCLUDE_DIR}
 		${HTTP_SERVER_INCLUDE_DIR}
+		${HTTP_CLIENT_INCLUDE_DIR}
 		${JSON_INCLUDE_DIR}/include
 )
 
 target_link_libraries(main
 		HTTPServer
+		HTTPClient
 		Logger
 		HTTPHandler
 		nlohmann_json::nlohmann_json

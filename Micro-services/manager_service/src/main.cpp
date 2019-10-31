@@ -1,8 +1,10 @@
 #include "HTTPHandler.h"
 #include "HTTPServer.h"
 #include "HTTPClient.h"
+#include "Logger.h"
+#include "nlohmann/json.hpp"
+
 #include <iostream>
-#include <json.hpp>
 
 #define SUB_SERVICE_HOST "localhost"
 #define ID_SERVICE_HOST "localhost"
@@ -36,9 +38,10 @@ void check_sub(json req_body) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	client.connect(SUB_SERVICE_HOST, SUB_SERVICE_PORT);
+	string user_id = req_body["user_id"];
+	client.connect_to_server(SUB_SERVICE_HOST, SUB_SERVICE_PORT);
 	if(client.is_connected()) {
-		client.send_request(build_request(HTTPHandler::Method::GET, "/sub_status?user_id=" + req_body["user_id"]));
+		client.send_request(build_request(HTTPHandler::Method::GET, "/sub_status?user_id=" + user_id));
 		answer = client.read_answer();
 		ans_body = json::parse(answer.body);
 		if(ans_body["sub_status"] == nullptr)
@@ -50,13 +53,14 @@ void check_sub(json req_body) {
 		throw runtime_error("Subscribe sevice is not responding");
 }
 
-string get_rasp_id() {
+string get_rasp_id(json req_body) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	client.connect(ID_SERVICE_HOST, ID_SERVICE_PORT);
+	string user_id = req_body["user_id"];
+	client.connect_to_server(ID_SERVICE_HOST, ID_SERVICE_PORT);
 	if(client.is_connected()) {
-		client.send_request(build_request(HTTPHandler::Method::GET, "/get_gate?user_id=" + req_body["user_id"]));
+		client.send_request(build_request(HTTPHandler::Method::GET, "/get_gate?user_id=" + user_id));
 		answer = client.read_answer();
 		ans_body = json::parse(answer.body);
 		if(ans_body["gate_id"] == nullptr)
@@ -72,7 +76,7 @@ void ac_send(json req_body) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	client.connect(AC_SERVICE_HOST, AC_SERVICE_PORT);
+	client.connect_to_server(AC_SERVICE_HOST, AC_SERVICE_PORT);
 	if(client.is_connected()) {
 		client.send_request(build_request(HTTPHandler::Method::POST, "/", req_body.dump(4)));
 		answer = client.read_answer();
@@ -97,10 +101,6 @@ HTTPHandler::Answer check_all(HTTPHandler::Request request) {
 		req_body["rasp_id"] = rasp_id;
 		ac_send(req_body);
 		answer_json["status"] = "ok";
-	} catch(runtime_error& e) {
-		set_bad_request(answer);
-		answer_json["status"] = "fail";
-	   	answer_json["exception"] = e.what();
     } catch (exception& e) {
 		set_bad_request(answer);
 		answer_json["status"] = "fail";
@@ -116,22 +116,27 @@ int main() {
 	const int port = 2000;
 
 	try {
+		logger << "Starting manager service..." << endl;
 		HTTPServer server;
+		logger << "Starting server..." << endl;
 		server.start_server(port);
 		server.turn_to_listen(10);
 		while(true) {
-			cout << "Awaiting for connection..." << endl;
+			logger << "Awaiting for connection..." << endl;
 			int client_id = server.connect_client();
+			logger << "Client connected" << endl;
+			logger << "Getting request..." << endl;
 			HTTPHandler::Request request = server.get_request(client_id);
+			logger << "Checking..." << endl;
 			HTTPHandler::Answer answer = check_all(request);
+			logger << "Sending answer" << endl;
 			server.send_answer(client_id, answer);
 			server.close_con(client_id);
+			logger << "Connection closed" << endl;
 
 		}
-	} catch(runtime_error& e) {
-        cout << "[EXCEPTION] " << e.what() << endl;
     } catch (exception& e) {
-        cout << "[EXCEPTION] " << e.what() << endl;
+        logger << "[EXCEPTION] " << e.what() << endl;
     }
 
 }
