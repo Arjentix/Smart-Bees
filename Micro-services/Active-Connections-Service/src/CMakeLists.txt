@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.2)
 
-project(animal_store_src)
+project(active_connections_service_src)
 
 # ------ Adding dependencies --------
 
