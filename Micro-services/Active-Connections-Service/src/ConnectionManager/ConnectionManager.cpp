@@ -35,6 +35,8 @@ string ConnectionManager::send_command(
 
 	HTTPServer::send_raw(sock, "Check");
 	logger << "Sended Check" << endl;
+	HTTPServer::get_raw(sock);
+	logger << "Check passed" << endl;
 	HTTPServer::send_raw(sock, command);
 	logger << "Sended command" << endl;
 
