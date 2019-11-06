@@ -2,6 +2,42 @@
 // Created by k3l on 01.11.2019.
 //
 
+/*
+ *  Usage:
+ *  try{
+ *
+ *      ConfigReader::ConfigReader reader("config_file.txt")
+ *      reader.read_config() // throws std::ios_base::failure
+ *
+ *      int variable_name1 = reader.ReadValueByKey<int>("variable_name1")
+ *      float variable_name2 = reader.ReadValueByKey<float>("variable_name2")
+ *      double variable_name3 = reader.ReadValueByKey<double>("variable_name3")
+ *      bool variable_name4 = reader.ReadValueByKey<bool>("variable_name4")
+ *      std::string variable_name5 = reader.ReadValueByKey<std::string>("variable_name5")
+ *
+ *  } catch (std::invalid_argument e) {
+ *      std::cout << e.what()
+ *      exit()
+ *  } catch (std::ios_base::failure e) {
+ *      std::cout << e.what()
+ *      exit()
+ *  }
+ *
+ *  Usage for user types
+ *
+ *
+ *  template<>
+ *  MyType TypeParser<MyType>::operator()( const std::string &s) {
+ *      // your
+ *  }
+ *
+ *  MyType my_type_var_name = reader.ReadValueByKey<MyType>("my_type_var_name")
+ *
+ */
+
+#include <stdexcept>
+
+
 #pragma once
 
 #include <string>
