@@ -43,6 +43,10 @@ public:
 		RecvFailed(const std::string& what_msg);
 	};
 
+	struct ClientDisconnected : public ServerException {
+		ClientDisconnected(const std::string& what_msg);
+	};
+
 	struct SendFailed : public ServerException {
 		SendFailed(const std::string& what_msg);
 	};
