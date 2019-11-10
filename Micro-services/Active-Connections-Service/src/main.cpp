@@ -45,6 +45,7 @@ int main(int argc, char** argv)
 	}
 
 	try {
+		logger.open("log/log.txt"); // Changing default log file
 		logger << "Start" << endl;
 
 		HTTPServer server;
