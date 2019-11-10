@@ -19,5 +19,6 @@ from binding import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('<str:gate>/', include(urls)),
     path('', include(urls))
 ]
