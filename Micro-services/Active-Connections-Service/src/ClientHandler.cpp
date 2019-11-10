@@ -63,6 +63,11 @@ void ClientHandler::handle_client(int client_sock) const
 		// http_answer is already set to "Bad Request"
 		logger << "nlohmann::detail::exception: " << ex.what() << endl;
 	}
+	catch (HTTPServer::ClientDisconnected& ex) {
+		logger << ex.what() << endl;
+		HTTPServer::close_con(client_sock);
+		return;
+	}
 	catch (exception& ex) {
 		logger << "exception: id = " << typeid(ex).name() <<  ", what = " << ex.what() << endl;
 		http_answer = {
