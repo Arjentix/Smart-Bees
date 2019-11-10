@@ -23,27 +23,27 @@ private:
 
 public:
 	//------ Exceptions ------
-	struct Exception : public std::runtime_error {
-		Exception(const std::string& what_msg);
+	struct ServerException : public std::runtime_error {
+		ServerException(const std::string& what_msg);
 	};
 
-	struct SocketFailed : public Exception {
+	struct SocketFailed : public ServerException {
 		SocketFailed(const std::string& what_msg);
 	};
 
-	struct BindFailed: public Exception {
+	struct BindFailed: public ServerException {
 		BindFailed(const std::string& what_msg);
 	};
 
-	struct AcceptFailed: public Exception {
+	struct AcceptFailed: public ServerException {
 		AcceptFailed(const std::string& what_msg);
 	};
 
-	struct RecvFailed : public Exception {
+	struct RecvFailed : public ServerException {
 		RecvFailed(const std::string& what_msg);
 	};
 
-	struct SendFailed : public Exception {
+	struct SendFailed : public ServerException {
 		SendFailed(const std::string& what_msg);
 	};
 

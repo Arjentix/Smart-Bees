@@ -1,23 +1,23 @@
 #include "HTTPServer.h"
 #include "signal.h"
 
-HTTPServer::Exception::Exception(const std::string& what_msg)
+HTTPServer::ServerException::ServerException(const std::string& what_msg)
 	: std::runtime_error(what_msg) {}
 
 HTTPServer::SocketFailed::SocketFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
 
 HTTPServer::BindFailed::BindFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
 
 HTTPServer::AcceptFailed::AcceptFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
 
 HTTPServer::RecvFailed::RecvFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
 
 HTTPServer::SendFailed::SendFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
 
 
 std::string get_n_bytes(int client, size_t n) {
