@@ -25,21 +25,24 @@ void signal_handler(int)
 	finish = true;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-    int fork_res = fork();
-    if (fork_res == -1) {	// Error
-        return -1;
-    }
-    if (fork_res > 0) {		// Parent
-        return 0;
-    }
-    
-    // Child 
-    // Closing useless fds
-    close(0);
-    close(1);
-    close(2);
+	// Daemon mode
+	if (argc > 1 && strcmp(argv[1], "-d") == 0) {
+		int fork_res = fork();
+		if (fork_res == -1) {	// Error
+			return -1;
+		}
+		if (fork_res > 0) {		// Parent
+			return 0;
+		}
+		
+		// Child 
+		// Closing useless fds
+		close(0);
+		close(1);
+		close(2);
+	}
 
 	try {
 		logger << "Start" << endl;
@@ -48,9 +51,7 @@ int main()
 		server.start_server(2525);
 		server.turn_to_listen(5);
 
-		logger << "Before manager" << endl;
 		ConnectionManager connection_manager;
-		logger << "After manager" << endl;
 
 		// Capturing SIGINT signal
 		signal(SIGINT, signal_handler);
