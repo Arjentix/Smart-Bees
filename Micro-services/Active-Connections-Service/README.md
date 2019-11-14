@@ -1,0 +1,19 @@
+# Active Connections Service
+
+## Using Docker
+
+All actions should be done from the **parent directory** -- **Micro-services**.
+
+This is used to configure right context for *Docker container*, which is using some libraries. 
+
+### Building
+
+```bash
+docker build -t active-connections-service -f Active-Connections-Service/Dockerfile .
+```
+
+### Running
+
+```bash
+docker run -it -p 2525:2525 -v "$(pwd)/app/active-connections-service/log":/app/log active-connections-service
+```

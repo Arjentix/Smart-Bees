@@ -64,7 +64,7 @@ int main()
 
 		/* Initialization */
 		PhotonConfigReader	photon_conf_reader("photon.conf");	// Reads config and gets new topic for every Photon
-		AliceConnector		alice_conn("77.51.199.31", 4551);	// Does all communication with Alice
+		AliceConnector		alice_conn("localhost", 4551);	// Does all communication with Alice
 		MQTTPublisher		mqtt_pub("localhost", 1883);		// Does publishing messages to the MQTT topis
 		TokenHandler		tok_hand("token.base");				// Checks for existing token and returns relevant parameters
 		string				token;
@@ -88,14 +88,15 @@ int main()
 		vector<future<void>> futures;
 		while (!finish) {
 			token = alice_conn.get_token();
-			if (token != "") {
+			LogPrinter::print("Token from Alice: " + token);
+			if (token != "Check") {
 				futures.push_back(
 					async([&] () {
-						LogPrinter::print("Token getted: " + token);
+						LogPrinter::print("Token getted: '" + token + "'");
 						res = tok_hand.find(token, topic, command);
-						LogPrinter::print("Topic: " + topic);
-						LogPrinter::print("Command: " + command);
 						if (res == true) {
+							LogPrinter::print("Topic: \"" + topic + "\"");
+							LogPrinter::print("Command: " + command);
 							LogPrinter::print("Publishing");
 							mqtt_pub.publish(topic, command, false);
 							alice_conn.send_ok();
@@ -105,6 +106,9 @@ int main()
 						}
 					})
 				);
+			}
+			else {
+				alice_conn.send_ok();
 			}
 		}
 	}
