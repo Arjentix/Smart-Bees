@@ -20,6 +20,7 @@ COPY /libs/HTTPHandler /libs/HTTPHandler
 COPY /libs/HTTPServer /libs/HTTPServer
 COPY /libs/json /libs/json
 COPY /libs/Logger /libs/Logger
+COPY /libs/ConfigReader /libs/ConfigReader
 
 RUN mkdir -p /app/build
 WORKDIR /app/build
