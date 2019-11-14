@@ -1,6 +1,16 @@
 # Active Connections Service
 
+## Using Docker Compose
+
+It is recommended to use Docker Compose instead of Docker. Simply run next command from this service directory:
+
+```bash
+docker-compose up
+```
+
 ## Using Docker
+
+**There aren't any real reason to use `docker` command.**
 
 All actions should be done from the **parent directory** -- **Micro-services**.
 
@@ -15,5 +25,5 @@ docker build -t active-connections-service -f Active-Connections-Service/Dockerf
 ### Running
 
 ```bash
-docker run -it -p 2525:2525 -v "$(pwd)/app/active-connections-service/log":/app/log active-connections-service
+docker run -it -p 2525:2525 -p 4551:4551 -v "$(pwd)/app/active-connections-service/log":/app/log active-connections-service
 ```
