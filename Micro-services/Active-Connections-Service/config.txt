@@ -1,0 +1,4 @@
+LOG_FILE = "log/log.txt"
+HTTP_SERVER_PORT = 2525
+GATE_SERVER_PORT = 4551
+API_KEY = "****************"
