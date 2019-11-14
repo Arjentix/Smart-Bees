@@ -2,11 +2,24 @@
 
 ## Using Docker Compose
 
-It is recommended to use Docker Compose instead of Docker. Simply run next command from this service directory:
+**It is recommended to use Docker Compose instead of Docker.**
+
+### Running
+
+Simply run next command from this service directory:
 
 ```bash
 docker-compose up
 ```
+
+### Building
+
+To rebuild app run:
+
+```bash
+docker-compose build
+```
+
 
 ## Using Docker
 
