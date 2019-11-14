@@ -5,6 +5,7 @@
  * @date: 15.10.2019
 */
 
+#include "ConfigReader.h"
 #include "ClientHandler.h"
 #include "HTTPServer.h"
 #include "Logger.h"
@@ -38,15 +39,30 @@ void ClientHandler::handle_client(int client_sock) const
 		auto request = HTTPServer::get_request(client_sock);
 		logger << "Getted request body: \n" << request.body << endl;
 
-		// If there is a handler for this HTTP method
-		if (_request_handlers.count(request.method)) {
-			// Handling request and getting answer
-			http_answer = _request_handlers.at(request.method)
-							->handle(request);
+		// Checking for correct API key
+		if (
+			request.headers["Api-Key"] ==
+			ConfigReader::reader.read_value_by_key<string>("API_KEY")
+		) {
+			// If there is a handler for this HTTP method
+			if (_request_handlers.count(request.method)) {
+				// Handling request and getting answer
+				http_answer = _request_handlers.at(request.method)->handle(request);
+			}
+			else {
+				http_answer = {
+					405, "Method Not Allowed",
+					{
+						{"Content-Length", "0"},
+						{"Connection", "close"}
+					},
+					""
+				};
+			}
 		}
 		else {
 			http_answer = {
-				405, "Method Not Allowed",
+				401, "Unauthorized",
 				{
 					{"Content-Length", "0"},
 					{"Connection", "close"}
