@@ -5,6 +5,7 @@
  * @date: 14.10.2019
 */
 
+#include "ConfigReader.h"
 #include "Logger.h"
 #include "HTTPServer.h"
 #include "ConnectionManager.h"
@@ -45,14 +46,21 @@ int main(int argc, char** argv)
 	}
 
 	try {
-		logger.open("log/log.txt"); // Changing default log file
+		ConfigReader::reader.set_file_name("config.txt");
+		ConfigReader::reader.read_config(); // Buffering all configs
+
+		logger.open(ConfigReader::reader.read_value_by_key<string>("LOG_FILE"));
 		logger << "Start" << endl;
 
 		HTTPServer server;
-		server.start_server(2525);
+		server.start_server(
+			ConfigReader::reader.read_value_by_key<int>("HTTP_SERVER_PORT")
+		);
 		server.turn_to_listen(5);
 
-		ConnectionManager connection_manager;
+		ConnectionManager connection_manager(
+			ConfigReader::reader.read_value_by_key<int>("GATE_SERVER_PORT")
+		);
 
 		// Capturing SIGINT signal
 		signal(SIGINT, signal_handler);
@@ -77,6 +85,7 @@ int main(int argc, char** argv)
 		}
 	}
 	catch (exception& ex) {
+		cout << "Error: " << ex.what() << endl;
 		logger << "Error: " << ex.what() << endl;
 	}
 	

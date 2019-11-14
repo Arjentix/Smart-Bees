@@ -22,6 +22,15 @@ if(NOT TARGET HTTPHandler)
 	add_subdirectory(${HTTP_HANDLER_INCLUDE_DIR})
 endif()
 
+# Adding ConfigReader
+set(
+	CONFIG_READER_INCLUDE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ConfigReader
+)
+if(NOT TARGET ConfigReader)
+	add_subdirectory(${CONFIG_READER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ConfigReader)
+endif()
+
 # Adding Logger
 set(
 	LOGGER_INCLUDE_DIR
@@ -85,6 +94,7 @@ set_target_properties(ActiveConnectionsService PROPERTIES
 
 target_include_directories(ActiveConnectionsService PRIVATE
 		${REQUEST_HANDLER_BASE_INCLUDE_DIR}
+		${CONFIG_READER_INCLUDE_DIR}
 		${LOGGER_INCLUDE_DIR}
 		${HTTP_HANDLER_INCLUDE_DIR}
 		${HTTP_SERVER_INCLUDE_DIR}
@@ -100,6 +110,7 @@ target_link_libraries(ActiveConnectionsService
 		ConnectionManager
 		SendCommandRequestHandler
 		Logger
+		ConfigReader
 )
 
 # Installing
