@@ -8,4 +8,4 @@ services:
         - "2525:2525"
         - "4551:4551"
       volumes:
-        - "./log.txt:/app/log.txt"
+        - "./app/log/:/app/log"
