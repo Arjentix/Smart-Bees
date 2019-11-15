@@ -20,7 +20,7 @@
 
 class ConnectionManager {
 public:
-	ConnectionManager();
+	ConnectionManager(int port);
 	~ConnectionManager();
 
 	/**

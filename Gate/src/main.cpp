@@ -88,13 +88,14 @@ int main()
 		vector<future<void>> futures;
 		while (!finish) {
 			token = alice_conn.get_token();
-			if (token != "" && token != "Check") {
+			LogPrinter::print("Token from Alice: " + token);
+			if (token != "Check") {
 				futures.push_back(
 					async([&] () {
 						LogPrinter::print("Token getted: '" + token + "'");
 						res = tok_hand.find(token, topic, command);
 						if (res == true) {
-							LogPrinter::print("Topic: " + topic);
+							LogPrinter::print("Topic: \"" + topic + "\"");
 							LogPrinter::print("Command: " + command);
 							LogPrinter::print("Publishing");
 							mqtt_pub.publish(topic, command, false);
@@ -105,6 +106,9 @@ int main()
 						}
 					})
 				);
+			}
+			else {
+				alice_conn.send_ok();
 			}
 		}
 	}

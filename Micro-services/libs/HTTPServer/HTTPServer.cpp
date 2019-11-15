@@ -1,23 +1,26 @@
 #include "HTTPServer.h"
 #include "signal.h"
 
-HTTPServer::Exception::Exception(const std::string& what_msg)
+HTTPServer::ServerException::ServerException(const std::string& what_msg)
 	: std::runtime_error(what_msg) {}
 
 HTTPServer::SocketFailed::SocketFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
 
 HTTPServer::BindFailed::BindFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
 
 HTTPServer::AcceptFailed::AcceptFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
 
 HTTPServer::RecvFailed::RecvFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
+
+HTTPServer::ClientDisconnected::ClientDisconnected(const std::string& what_msg)
+	: HTTPServer::ServerException(what_msg) {}
 
 HTTPServer::SendFailed::SendFailed(const std::string& what_msg)
-	: HTTPServer::Exception(what_msg) {}
+	: HTTPServer::ServerException(what_msg) {}
 
 
 std::string get_n_bytes(int client, size_t n) {
@@ -28,9 +31,16 @@ std::string get_n_bytes(int client, size_t n) {
 	char buffer[n + 1];	// + 1 for '\0'
 	memset(buffer, 0, n + 1);
 
-	if (recv(client, buffer, n, 0) <= 0) {
+	int res = recv(client, buffer, n, 0); 
+	if ( res == 0) {
+		throw HTTPServer::ClientDisconnected(
+			"Client disconnected on socket " + std::to_string(client)
+		);
+	}
+	if (res < 0) {
 		throw HTTPServer::RecvFailed(strerror(errno));
 	}
+
 	return buffer;
 }
 

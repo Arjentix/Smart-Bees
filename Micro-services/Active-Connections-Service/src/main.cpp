@@ -5,6 +5,7 @@
  * @date: 14.10.2019
 */
 
+#include "ConfigReader.h"
 #include "Logger.h"
 #include "HTTPServer.h"
 #include "ConnectionManager.h"
@@ -25,32 +26,41 @@ void signal_handler(int)
 	finish = true;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-    int fork_res = fork();
-    if (fork_res == -1) {	// Error
-        return -1;
-    }
-    if (fork_res > 0) {		// Parent
-        return 0;
-    }
-    
-    // Child 
-    // Closing useless fds
-    close(0);
-    close(1);
-    close(2);
+	// Daemon mode
+	if (argc > 1 && strcmp(argv[1], "-d") == 0) {
+		int fork_res = fork();
+		if (fork_res == -1) {	// Error
+			return -1;
+		}
+		if (fork_res > 0) {		// Parent
+			return 0;
+		}
+		
+		// Child 
+		// Closing useless fds
+		close(0);
+		close(1);
+		close(2);
+	}
 
 	try {
+		ConfigReader::reader.set_file_name("config.txt");
+		ConfigReader::reader.read_config(); // Buffering all configs
+
+		logger.open(ConfigReader::reader.read_value_by_key<string>("LOG_FILE"));
 		logger << "Start" << endl;
 
 		HTTPServer server;
-		server.start_server(2525);
+		server.start_server(
+			ConfigReader::reader.read_value_by_key<int>("HTTP_SERVER_PORT")
+		);
 		server.turn_to_listen(5);
 
-		logger << "Before manager" << endl;
-		ConnectionManager connection_manager;
-		logger << "After manager" << endl;
+		ConnectionManager connection_manager(
+			ConfigReader::reader.read_value_by_key<int>("GATE_SERVER_PORT")
+		);
 
 		// Capturing SIGINT signal
 		signal(SIGINT, signal_handler);
@@ -75,6 +85,7 @@ int main()
 		}
 	}
 	catch (exception& ex) {
+		cout << "Error: " << ex.what() << endl;
 		logger << "Error: " << ex.what() << endl;
 	}
 	

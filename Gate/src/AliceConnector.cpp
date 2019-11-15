@@ -71,43 +71,10 @@ AliceConnector::~AliceConnector()
 
 std::string AliceConnector::get_token()
 {
-	if (!_connected) {
-		return "";
-	}
-
-	/* Initialization */
-	char		buffer[BUF_SIZE];
-	fd_set		inputs;
-	struct timespec	timeout;
-	int		res;
-
-	memset(buffer, BUF_SIZE, 0);
-
-	/* Setting select parameters */
-	FD_ZERO(&inputs);
-	FD_SET(_sockfd, &inputs);
-	timeout.tv_sec = 2;
-	timeout.tv_nsec = 0;
-
-	/* Waiting for token for timeout seconds */
-	res = pselect(
-		FD_SETSIZE, &inputs, (fd_set*)NULL,
-		(fd_set*)NULL, &timeout, (const sigset_t*)NULL
-	);
-	switch(res) {
-	case -1:	// Select failed
-		throw std::runtime_error("Select was interrupted");
-		break;
-	case 0:		// No input token
-		break;
-	default:	// There is an input token
-		if (FD_ISSET(_sockfd, &inputs)) {
-			recv(_sockfd, buffer, BUF_SIZE, 0);
-			return buffer;
-		}
-	}
-
-	return "";
+	char buffer[BUF_SIZE];
+	int res = recv(_sockfd, buffer, BUF_SIZE, 0);
+	LogPrinter::print("res = " + std::to_string(res));
+	return buffer;
 }
 
 void AliceConnector::send_ok()

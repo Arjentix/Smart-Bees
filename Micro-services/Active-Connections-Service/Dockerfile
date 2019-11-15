@@ -20,6 +20,7 @@ COPY /libs/HTTPHandler /libs/HTTPHandler
 COPY /libs/HTTPServer /libs/HTTPServer
 COPY /libs/json /libs/json
 COPY /libs/Logger /libs/Logger
+COPY /libs/ConfigReader /libs/ConfigReader
 
 RUN mkdir -p /app/build
 WORKDIR /app/build
@@ -30,10 +31,6 @@ RUN cmake .. && \
 
 # Running ---------------
 FROM ubuntu:latest
-
-# Creating new user cause Docker uses root by default which is not good
-RUN groupadd -r sample && useradd -r -g sample sample
-USER sample
 
 WORKDIR /app
 COPY --from=build /app/bin/ActiveConnectionsService .

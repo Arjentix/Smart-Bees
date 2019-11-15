@@ -11,9 +11,9 @@
 
 using namespace std;
 
-ConnectionManager::ConnectionManager()
+ConnectionManager::ConnectionManager(int port)
 {
-	_server.start_server(4551);
+	_server.start_server(port);
 	_server.turn_to_listen(5);
 
 	_server_future = async(&ConnectionManager::_connect_loop, this);
@@ -35,6 +35,8 @@ string ConnectionManager::send_command(
 
 	HTTPServer::send_raw(sock, "Check");
 	logger << "Sended Check" << endl;
+	HTTPServer::get_raw(sock);
+	logger << "Check passed" << endl;
 	HTTPServer::send_raw(sock, command);
 	logger << "Sended command" << endl;
 
