@@ -3,6 +3,7 @@
 #include "HTTPHandler.h"
 #include "Logger.h"
 #include "nlohmann/json.hpp"
+#include "ConfigReader.h"
 
 #include <unistd.h>
 #include <signal.h>
@@ -10,10 +11,6 @@
 using namespace std;
 using json = nlohmann::json;
 
-const char* DB_HOSTNAME = "localhost";
-const char* DB_NAME = "alice_subs";
-const char* DB_USERNAME = "http_server";
-const char* DB_PASSWORD = "12345678";
 
 bool finish = false;
 
@@ -84,33 +81,46 @@ void signal_handler(int)
 	finish = true;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-	const int port = 3000;
 
-    int fork_res = fork();
-    if (fork_res == -1) {	// Error
-        return -1;
-    }
-    if (fork_res > 0) {		// Parent
-        return 0;
-    }
-    // Child 
-    // Closing useless fds
-    close(0);
-    close(1);
-    close(2);
+	// Daemon mode
+	if (argc > 1 && strcmp(argv[1], "-d") == 0) {
+		int fork_res = fork();
+		if (fork_res == -1) {	// Error
+			return -1;
+		}
+		if (fork_res > 0) {		// Parent
+			return 0;
+		}
+		
+		// Child 
+		// Closing useless fds
+		close(0);
+		close(1);
+		close(2);
+	}
 
 
 	try {
+		ConfigReader::reader.set_file_name("config.txt");
+		ConfigReader::reader.read_config(); // Buffering all configs
+
+		logger.open(ConfigReader::reader.read_value_by_key<string>("LOG_FILE"));
+		logger << "Start" << endl;
+
 		logger << "Initating database" << endl;
    		DataBase db;
-		db.init(DB_HOSTNAME, DB_NAME, DB_USERNAME, DB_PASSWORD);
-
+		db.init(
+				ConfigReader::reader.read_value_by_key<string>("DB_HOSTNAME"),
+				ConfigReader::reader.read_value_by_key<string>("DB_NAME"),
+				ConfigReader::reader.read_value_by_key<string>("DB_USERNAME"),
+				ConfigReader::reader.read_value_by_key<string>("DB_PASSWORD"),
+			   );
 
 		HTTPServer server;
 		logger << "Starting server..." << endl;
-		server.start_server(port);
+		server.start_server(ConfigReader::reader.read_value_by_key<int>("HTTP_SERVER_PORT"));
 		server.turn_to_listen(10);
 
 		// Capturing SIGINT signal
@@ -129,7 +139,7 @@ int main()
 		}
     } catch (exception& e) {
         logger << "[EXCEPTION] " << e.what() << endl;
-        return 1;
     }
 	logger << "Shutting down..." << endl;
+	return 0;
 }

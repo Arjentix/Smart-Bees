@@ -1,0 +1,11 @@
+version: '3'
+services:
+  example_service:
+      build:
+        context: ./..
+        dockerfile: ./Subscribe-Service/Dockerfile
+      ports:
+        - "3000:3000"
+      volumes:
+        - "./config.txt:/app/config.txt"
+        - "./app/log/:/app/log"

@@ -13,6 +13,15 @@ if(NOT TARGET HTTPHandler)
 	add_subdirectory(${HTTP_HANDLER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HTTPHandler)
 endif()
 
+# Adding ConfigReader
+set(
+	CONFIG_READER_INCLUDE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ConfigReader
+)
+if(NOT TARGET ConfigReader)
+	add_subdirectory(${CONFIG_READER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ConfigReader)
+endif()
+
 # Adding Logger
 set(
 	LOGGER_INCLUDE_DIR
@@ -67,16 +76,17 @@ set(SOURCE_EXE main.cpp)
 
 # --------------------------
 
-add_executable(main ${SOURCE_EXE})
+add_executable(SubscribeService ${SOURCE_EXE})
 
-set_target_properties(main PROPERTIES
+set_target_properties(SubscribeService PROPERTIES
 		CXX_STANDARD 17
 		CXX_STANDARD_REQUIRED ON
 		CXX_EXTENSIONS ON
 )
 
-target_include_directories(main PRIVATE
+target_include_directories(SubscribeService PRIVATE
 		${LOGGER_INCLUDE_DIR}
+		${CONFIG_READER_INCLUDE_DIR}
 		${HTTP_HANDLER_INCLUDE_DIR}
 		${HTTP_SERVER_INCLUDE_DIR}
 		${DATABASE_INCLUDE_DIR}
@@ -84,7 +94,7 @@ target_include_directories(main PRIVATE
 		${JSON_INCLUDE_DIR}/include
 )
 
-target_link_libraries(main
+target_link_libraries(SubscribeService
 		HTTPServer
 		Logger
 		HTTPHandler
@@ -92,3 +102,6 @@ target_link_libraries(main
 		database
 		nlohmann_json::nlohmann_json
 )
+
+# Installing
+install(TARGETS Subscribe DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../bin)
