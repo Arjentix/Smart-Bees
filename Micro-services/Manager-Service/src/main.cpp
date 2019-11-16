@@ -61,6 +61,7 @@ void check_sub(json req_body) {
 }
 
 string get_rasp_id(json req_body) {
+	return "12345";
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
