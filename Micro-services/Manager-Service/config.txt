@@ -1,0 +1,9 @@
+LOG_FILE = "log/log.txt"
+HTTP_SERVER_PORT = 3200
+SUB_SERVICE_HOST = "localhost"
+ID_SERVICE_HOST = "localhost"
+AC_SERVICE_HOST = "localhost"
+SUB_SERVICE_PORT = 3000
+ID_SERVICE_PORT = 2000
+AC_SERVICE_PORT = 2525
+API_KEY = "****************"

@@ -2,20 +2,22 @@
 #include "HTTPServer.h"
 #include "HTTPClient.h"
 #include "Logger.h"
+#include "ConfigReader.h"
 #include "nlohmann/json.hpp"
 
 #include <iostream>
-
-#define SUB_SERVICE_HOST "localhost"
-#define ID_SERVICE_HOST "localhost"
-#define AC_SERVICE_HOST "localhost"
-
-#define SUB_SERVICE_PORT 3000
-#define ID_SERVICE_PORT 2000
-#define AC_SERVICE_PORT 2525
+#include <signal.h>
 
 using namespace std;
 using json = nlohmann::json;
+
+
+bool finish = false;
+
+void signal_handler(int)
+{
+	finish = true;
+}
 
 void set_bad_request(HTTPHandler::Answer& answer) {
 	answer.status_code = 403;
@@ -39,7 +41,12 @@ void check_sub(json req_body) {
 	HTTPHandler::Answer answer;
 	json ans_body;
 	string user_id = req_body["user_id"];
-	client.connect_to_server(SUB_SERVICE_HOST, SUB_SERVICE_PORT);
+
+	client.connect_to_server(
+		ConfigReader::reader.read_value_by_key<string>("SUB_SERVICE_HOST"),
+		ConfigReader::reader.read_value_by_key<int>("SUB_SERVICE_PORT")
+	);
+
 	if(client.is_connected()) {
 		client.send_request(build_request(HTTPHandler::Method::GET, "/sub_status?user_id=" + user_id));
 		answer = client.read_answer();
@@ -58,7 +65,12 @@ string get_rasp_id(json req_body) {
 	HTTPHandler::Answer answer;
 	json ans_body;
 	string user_id = req_body["user_id"];
-	client.connect_to_server(ID_SERVICE_HOST, ID_SERVICE_PORT);
+
+	client.connect_to_server(
+		ConfigReader::reader.read_value_by_key<string>("ID_SERVICE_HOST"),
+		ConfigReader::reader.read_value_by_key<int>("ID_SERVICE_PORT")
+	);
+
 	if(client.is_connected()) {
 		client.send_request(build_request(HTTPHandler::Method::GET, "/get_gate?user_id=" + user_id));
 		answer = client.read_answer();
@@ -76,7 +88,12 @@ void ac_send(json req_body) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	client.connect_to_server(AC_SERVICE_HOST, AC_SERVICE_PORT);
+
+	client.connect_to_server(
+		ConfigReader::reader.read_value_by_key<string>("AC_SERVICE_HOST"),
+		ConfigReader::reader.read_value_by_key<int>("AC_SERVICE_PORT")
+	);
+	
 	if(client.is_connected()) {
 		client.send_request(build_request(HTTPHandler::Method::POST, "/", req_body.dump(4)));
 		answer = client.read_answer();
@@ -111,17 +128,46 @@ HTTPHandler::Answer check_all(HTTPHandler::Request request) {
 	return answer;
 }
 
+int main(int argc, char** argv)
+{
+	// Daemon mode
+	if (argc > 1 && strcmp(argv[1], "-d") == 0) {
+		int fork_res = fork();
+		if (fork_res == -1) {	// Error
+			return -1;
+		}
+		if (fork_res > 0) {		// Parent
+			return 0;
+		}
+		
+		// Child 
+		// Closing useless fds
+		close(0);
+		close(1);
+		close(2);
+	}
 
-int main() {
-	const int port = 2000;
 
 	try {
+		ConfigReader::reader.set_file_name("config.txt");
+		ConfigReader::reader.read_config(); // Buffering all configs
+
+		logger.open(ConfigReader::reader.read_value_by_key<string>("LOG_FILE"));
+
 		logger << "Starting manager service..." << endl;
+
+
 		HTTPServer server;
 		logger << "Starting server..." << endl;
-		server.start_server(port);
+		server.start_server(
+			ConfigReader::reader.read_value_by_key<int>("HTTP_SERVER_PORT")
+		);
 		server.turn_to_listen(10);
-		while(true) {
+
+		// Capturing SIGINT signal
+		signal(SIGINT, signal_handler);
+
+		while(!finish) {
 			logger << "Awaiting for connection..." << endl;
 			int client_id = server.connect_client();
 			logger << "Client connected" << endl;
