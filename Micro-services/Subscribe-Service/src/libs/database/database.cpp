@@ -78,20 +78,22 @@ DataBase::Time DataBase::time_left(int id) {
 		throw std::runtime_error("Database doesn't connected");
 }
 
-void DataBase::update_sub(int id, std::string s_start, std::string s_end) {
+void DataBase::update_sub(std::string user_id_str, std::string s_start, std::string s_end) {
+	int user_id = stoi(user_id_str);
 	if(dbc->is_connected()) {
-		check_for_exist(id);
-		std::string request = "UPDATE subs_table SET sub_start_date=\'" + s_start + "\', sub_end_date=\'" + s_end + "\' WHERE user_id=" + std::to_string(id) + ";";
+		check_for_exist(user_id);
+		std::string request = "UPDATE subs_table SET sub_start_date=\'" + s_start + "\', sub_end_date=\'" + s_end + "\' WHERE user_id=" + user_id_str + ";";
 		dbc->query(request);
 	}
 	else
 		throw std::runtime_error("Database doesn't connected");
 }
 
-void DataBase::insert_sub(int user_id, std::string username, std::string s_start, std::string s_end) {
+void DataBase::insert_sub(std::string user_id_str, std::string username, std::string s_start, std::string s_end) {
+	int user_id = stoi(user_id_str);
 	if(dbc->is_connected()) {
 		check_for_exist(user_id);
-		std::string request = "INSERT INTO subs_table(user_id, username, sub_start_date, sub_end_date) VALUES (\'" + std::to_string(user_id) + "\', \'" + username + "\', \'" + s_start + "\', \'" + s_end + "\');";
+		std::string request = "INSERT INTO subs_table(user_id, username, sub_start_date, sub_end_date) VALUES (\'" + user_id_str + "\', \'" + username + "\', \'" + s_start + "\', \'" + s_end + "\');";
 		dbc->query(request);
 	}
 	else

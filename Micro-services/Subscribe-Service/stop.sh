@@ -1,3 +1,3 @@
 #! /bin/bash
 
-kill -s SIGKILL $(pgrep "main")
+kill -s SIGKILL $(pgrep "Subscribe")
