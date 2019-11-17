@@ -10,8 +10,6 @@ import sys
 sys.path.insert(0, 'src')
 
 # Импортируем модуль связи со шлюзами
-'''import GateProcessor'''
-import Slavin_Menager
 
 import socket
 
@@ -23,10 +21,6 @@ logging.basicConfig(filename='skill.log', level=logging.DEBUG, filemode='w')
 
 # Хранилище данных о сессиях.
 sessionStorage = {}
-
-# Сервер для шлюза
-'''gateproc = GateProcessor.GateProcessor(4551)'''
-menager = Slavin_Menager.Slavin_Menager(4551)
 
 # Задаем параметры приложения Flask.
 @app.route("/", methods=['POST'])
@@ -69,19 +63,19 @@ def handle_dialog(req, res):
 	else:
 		# Обрабатываем ответ пользователя.
 		tokens = req['request']['nlu']['tokens']
-		#?!
-		j = json.dumps([{'user_id': user_id, 'command': tokens}])
-		r = requests.post('localhost:3200', 
-						   headers={'Api-Key': "ХЕР С НЕЙ"}, 
-						   json=j)
+
+		j = """{"user_id": "%s", "command": "%s"}""" % (user_id,' '.join(tokens) )
+		r = requests.post('http://localhost:3200', 
+				  headers={'Api-Key': '531'}, 
+				  json=json.loads(j))
 		logging.info('Gate answer: %s', r.text)
 		if (r.status_code == 200):
 			res['response']['text'] = 'Готово!'
 		else:
-			if 'error_mes' in r.json:
-				res['response']['text'] = r.json['error_mes']
+			if 'error_mes' in r.json():
+				res['response']['text'] = r.json()['error_mes']
 			else:
-    			res['response']['text'] = 'Что-то пошло не так'	
+    				res['response']['text'] = 'Что-то пошло не так'	
 		'''else:
 			res['response']['text'] = 'Нет соединения со шлюзом'
 	else:

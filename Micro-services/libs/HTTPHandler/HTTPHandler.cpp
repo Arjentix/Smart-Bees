@@ -61,11 +61,11 @@ Request HTTPHandler::parse_request(const string& request)
 
 void HTTPHandler::write_request(const Request& request, std::ostream& output)
 {
-	output << method_to_string(request.method) << " " << request.uri << "\r\n";
+	output << method_to_string(request.method) << " " << request.uri << " HTTP/1.1\r\n";
 	for (auto& [header, value] : request.headers) {
 		output << header << ": " << value << "\r\n";
 	}
-	output << request.body;
+	output << "\r\n" << request.body;
 }
 
 Answer HTTPHandler::parse_answer(const std::string& answer)

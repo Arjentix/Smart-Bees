@@ -40,7 +40,8 @@ std::string get_n_bytes(int client, size_t n) {
 	if (res < 0) {
 		throw HTTPServer::RecvFailed(strerror(errno));
 	}
-
+	// todo тут что-то не работает. Нужно натыкать выводов и запустить Данин микросервис без докера. 
+	std::cout << "Buffer: " << buffer << std::endl;
 	return buffer;
 }
 

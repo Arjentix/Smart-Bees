@@ -36,7 +36,9 @@ void ClientHandler::handle_client(int client_sock) const
 	string request_str;
 	try {
 		// Parsing request
-		auto request = HTTPServer::get_request(client_sock);
+		logger << "hello world"<< endl;
+		auto request = HTTPServer::get_request(client_sock); // тут падает потому что Слава не отправляет хедеры ? 
+		logger << "hello world 2"<< endl;
 		logger << "Getted request body: \n" << request.body << endl;
 
 		// Checking for correct API key
