@@ -164,9 +164,13 @@ void ac_send(json const& req_body) {
 		answer = client.read_answer();
 		logger << "AC service answer:\n" << answer_to_str(answer) << endl;
 
-		ans_body = json::parse(answer.body);
-		if(ans_body["status"].get<string>() == "error")
-			throw runtime_error(ans_body["error_message"].get<string>());
+		if(answer.status_code != 200 && !answer.body.empty()) {
+			ans_body = json::parse(answer.body);
+			if(ans_body["error_message"] != nullptr)
+				throw runtime_error(ans_body["error_message"].get<string>());
+			else
+				throw runtime_error("Unknown error");
+		}
 	}
 	else
 		throw runtime_error("AC sevice is not responding");
@@ -198,10 +202,8 @@ HTTPHandler::Answer check_all(HTTPHandler::Request request) {
 		req_body["gate_id"] = gate_id;
 		ac_send(req_body);
 
-		answer_json["status"] = "ok";
     } catch (exception& e) {
 		set_bad_request(answer);
-		answer_json["status"] = "error";
 	   	answer_json["error_message"] = e.what();
 		logger << "[EXCEPTION] " << e.what() << endl;
     }
