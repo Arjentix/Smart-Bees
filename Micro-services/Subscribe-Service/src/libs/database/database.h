@@ -36,8 +36,8 @@ public:
 	~DataBase();
 	void init(const char*, const char*, const char*, const char*);
 	bool check_for_sub(int);
-	void update_sub(int, std::string,  std::string);
-	void insert_sub(int, std::string, std::string, std::string);
+	void update_sub(std::string, std::string,  std::string);
+	void insert_sub(std::string, std::string, std::string, std::string);
 	void delete_sub(int);
 
 	class Time {

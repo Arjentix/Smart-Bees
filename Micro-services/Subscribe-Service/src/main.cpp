@@ -7,6 +7,8 @@
 
 #include <unistd.h>
 #include <signal.h>
+#include <iostream>
+#include <sstream>
 
 using namespace std;
 using json = nlohmann::json;
@@ -24,7 +26,15 @@ void set_ok(HTTPHandler::Answer& answer) {
 	answer.status_description = "OK";
 }
 
-HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& request) {
+void check_for_api_key(string const& api_key) {
+	if(
+	   api_key !=
+	   ConfigReader::reader.read_value_by_key<string>("API_KEY")
+	  )
+		throw runtime_error("API key is incorrect");
+}
+
+HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& request) {
 	HTTPHandler::Answer answer;
 	struct tm tm;
 	json args_json;
@@ -34,6 +44,8 @@ HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& reque
 
 
 	try {
+		check_for_api_key(request.headers.at("Api-Key"));
+
 		if(request.method == HTTPHandler::Method::POST || request.method == HTTPHandler::Method::PUT)
 			args_json = json::parse(request.body);
 		else {
@@ -56,33 +68,67 @@ HTTPHandler::Answer work_with_db(DataBase& db, const HTTPHandler::Request& reque
 					throw runtime_error("Unknown command");
 				break;
 			case HTTPHandler::Method::PUT:
-				db.update_sub(args_json["user_id"], args_json["sub_start_date"], args_json["sub_end_date"]);
+				db.update_sub(args_json["user_id"].get<string>(), 
+							  args_json["sub_start_date"].get<string>(), 
+							  args_json["sub_end_date"].get<string>()
+							 );
 				break;
 			case HTTPHandler::Method::POST:
-				db.insert_sub(args_json["user_id"], args_json["username"], args_json["sub_start_date"], args_json["sub_end_date"]);
+				db.insert_sub(args_json["user_id"].get<string>(), 
+							  args_json["username"].get<string>(), 
+							  args_json["sub_start_date"].get<string>(), 
+							  args_json["sub_end_date"].get<string>()
+							 );
 				break;
 			case HTTPHandler::Method::DELETE:
 				db.delete_sub(user_id);
 				break;
+			case default:
+				throw runtime_error("Unknown HTTP Method");
+				break;
 		}
 		set_ok(answer);
-		logger << "work was ended without exceptions" << endl;
+		logger << "Work was ended without exceptions" << endl;
 	} catch(exception& e) {
 		logger << "[EXCEPTION on work] " << e.what() << endl;
 		set_bad_request(answer);
 	   	answer_json["exception"] = e.what();
 	}
+
 	answer.body = answer_json.dump(4);
 	return answer;
 }
 
-void signal_handler(int)
-{
+string req_to_str(HTTPHandler::Request const& request) {
+	stringstream result_ss;
+	HTTPHandler::write_request(request, result_ss);
+/*	result_ss << request.method << " " 
+			  << request.uri << " HTTP/1.1" << endl;
+	for(auto it = request.headers.begin(); it != request.headers.end();++it)
+		result_ss << it->first << ": " << it->second << endl;
+	result_ss << endl;
+
+	for(auto it = request.variables.begin(); it != request.variables.end();++it)
+		result_ss << it->first << " = " << it->second << endl;
+	result_ss << endl;
+
+	result_ss << request.body;
+*/
+	return result_ss.str();
+}
+
+string answer_to_str(HTTPHandler::Answer const& answer) {
+	stringstream result_ss;
+	HTTPHandler::write_answer(answer, result_ss);
+	return result_ss.str();
+}
+
+
+void signal_handler(int) {
 	finish = true;
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 
 	// Daemon mode
 	if (argc > 1 && strcmp(argv[1], "-d") == 0) {
@@ -103,13 +149,15 @@ int main(int argc, char** argv)
 
 
 	try {
+
 		ConfigReader::reader.set_file_name("config.txt");
 		ConfigReader::reader.read_config(); // Buffering all configs
 
 		logger.open(ConfigReader::reader.read_value_by_key<string>("LOG_FILE"));
-		logger << "Start" << endl;
 
-		logger << "Initating database" << endl;
+		logger << "SubService starting..." << endl;
+
+		logger << "Initating database..." << endl;
    		DataBase db;
 		db.init(
 				ConfigReader::reader.read_value_by_key<string>("DB_HOSTNAME"),
@@ -117,6 +165,7 @@ int main(int argc, char** argv)
 				ConfigReader::reader.read_value_by_key<string>("DB_USERNAME"),
 				ConfigReader::reader.read_value_by_key<string>("DB_PASSWORD"),
 			   );
+		logger << "Database initiated successfully" << endl;
 
 		HTTPServer server;
 		logger << "Starting server..." << endl;
@@ -129,17 +178,23 @@ int main(int argc, char** argv)
 		while(!finish) {
 			logger << "Awaiting for connection..." << endl;
 			int client_id = server.connect_client();
-			logger << "Client was connected" << endl;
+			logger << "Client with id: " << client_id << " was connected" << endl;
+
 			HTTPHandler::Request request = server.get_request(client_id);
+			logger << "Request:\n" << req_to_str(request) << endl;
+
 			HTTPHandler::Answer answer = work_with_db(db, request);
+			logger << "Answer:\n" << answer_to_str(answer) << endl;
 			server.send_answer(client_id, answer);
-			logger << "Answer sent" << endl;
+			logger << "Answer was sent" << endl;
+
 			server.close_con(client_id);
-			logger << "Connection closed" << endl;
+			logger << "Connection closed with client id: " << client_id << endl;
 		}
     } catch (exception& e) {
         logger << "[EXCEPTION] " << e.what() << endl;
     }
+
 	logger << "Shutting down..." << endl;
 	return 0;
 }
