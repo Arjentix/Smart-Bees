@@ -20,76 +20,65 @@ SendCommandRequestHandler::SendCommandRequestHandler(ConnectionManager& connecti
 HTTPHandler::Answer SendCommandRequestHandler::handle(HTTPHandler::Request request) {
 	auto json_body = json::parse(request.body);
 
+	// Answer parameters
+	json answer_body = json::object();
+	int answer_code;
+	string answer_code_descr;
+
 	try {
 		string gate_answer = _connection_manager.send_command(
 			json_body.at("gate_id").get<string>(),
 			json_body.at("command").get<string>()
 		);
 		logger << "Gate answer = '" << gate_answer << "'" << endl;
-		HTTPHandler::Answer http_answer;
 		if (gate_answer == "OK") {
-			http_answer = {
-				200, "OK",
-				{
-					{"Content-Length", "0"},
-					{"Connection", "close"}
-				},
-				""
-			};
+			answer_code = 200;
+			answer_code_descr = "OK";
 		}
 		else {	// Gate can't process this command
-			http_answer = {
-				421, "Misdirected Request",
-				{
-					{"Content-Length", "0"},
-					{"Connection", "close"}
-				},
-				""
-			};
+			answer_code = 412;
+			answer_code_descr = "Misdirected Request";
+			answer_body = {{"error_message", "Неизвестная команда"}};
 		}
-		return http_answer;
 	}
 	catch (out_of_range& ex) {
-		return {
-			404, "Not Found",
-			{
-				{"Content-Length", "0"},
-				{"Connection", "close"}
-			},
-			""
-		};
+		answer_code = 404;
+		answer_code_descr = "Not Found";
+		answer_body = {{"error_message", "Нет такого шлюза"}};
 	}
 	catch (HTTPServer::SendFailed& ex) {
-		logger << "SendCommandRequestHandler::Send failed: " << ex.what() << endl;
-		return {
-			503, "Service Unavailable",
-			{
-				{"Content-Length", "0"},
-				{"Connection", "close"}
-			},
-			""
-		};
+		answer_code = 503;
+		answer_code_descr = "Service Unavailable";
+		answer_body = {{"error_message", "Не удалось выполнить отправку на шлюз"}};
 	}
 	catch (HTTPServer::RecvFailed& ex) {
-		logger << "SendCommandRequestHandler::Recv failed: " << ex.what() << endl;
-		return {
-			503, "Service Unavailable",
-			{
-				{"Content-Length", "0"},
-				{"Connection", "close"}
-			},
-			""
-		};
+		answer_code = 503;
+		answer_code_descr = "Service Unavailable";
+		answer_body = {{"error_message", "Не удалось получить ответ от шлюза"}};
+	}
+	catch (HTTPServer::ClientDisconnected& ex) {
+		answer_code = 503;
+		answer_code_descr = "Service Unavailable";
+		answer_body = {{"error_message", "Потеряно соединение со шлюзом"}};
 	}
 	catch (exception& ex) {
 		logger << "SendCommandRequestHandler::Unexcpected exception: " << ex.what() << endl;
-		return {
-			520, "Unknown Error",
-			{
-				{"Content-Length", "0"},
-				{"Connection", "close"}
-			},
-			""
-		};
+		answer_code = 520;
+		answer_code_descr = "Unknown Error";
+		answer_body = {{"error_message", "Неизвестная ошибка"}};
 	}
+
+	string answer_body_str = answer_body.dump(4);
+	if (answer_body_str == "{}") {
+		answer_body_str = "";
+	}
+	return {
+		answer_code, answer_code_descr,
+		{
+			{"Connection", "close"},
+			{"Content-Type", "application/json"},
+			{"Content-Length", to_string(answer_body_str.size())},
+		},
+		answer_body_str
+	};
 }
