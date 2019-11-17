@@ -17,6 +17,7 @@ COPY ${SERVICE}/src /app/src
 
 # Copying libs
 COPY /libs/HTTPHandler /libs/HTTPHandler
+COPY /libs/HTTPClient /libs/HTTPClient
 COPY /libs/HTTPServer /libs/HTTPServer
 COPY /libs/json /libs/json
 COPY /libs/Logger /libs/Logger

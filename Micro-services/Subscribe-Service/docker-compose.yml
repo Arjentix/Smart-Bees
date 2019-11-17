@@ -1,6 +1,6 @@
 version: '3'
 services:
-  example_service:
+  subscribe_service:
       build:
         context: ./..
         dockerfile: ./Subscribe-Service/Dockerfile
@@ -9,3 +9,18 @@ services:
       volumes:
         - "./config.txt:/app/config.txt"
         - "./app/log/:/app/log"
+    mysql:
+        container_name: mysql
+        image: mysql:5.7
+        restart: on-failure
+        command: --init-file /data/application/init.sql
+        environment:
+            - MYSQL_DATABASE=alice_subs
+              # - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_USER=http_server
+            - MYSQL_PASSWORD=12345678
+        ports:
+            - "3306:3306"
+        volumes:
+            # - "./database/data/mysql:/var/lib/mysql"
+              # - "./database/init.sql:/data/application/init.sql"

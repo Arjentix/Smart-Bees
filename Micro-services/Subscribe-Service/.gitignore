@@ -1,3 +1,7 @@
 build/*
 src/.trash/*
 .test_folder/*
+bin/*
+log.*
+app/*
+config.txt
