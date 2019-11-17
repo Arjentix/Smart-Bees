@@ -1,6 +1,6 @@
 version: '3'
 services:
-  example_service:
+  active_connections_service:
       build:
         context: ./..
         dockerfile: ./Active-Connections-Service/Dockerfile
