@@ -99,7 +99,7 @@ HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& reque
 	return answer;
 }
 
-string req_to_str(HTTPHandler::Request const& request) {
+string request_to_str(HTTPHandler::Request const& request) {
 	stringstream result_ss;
 	HTTPHandler::write_request(request, result_ss);
 /*	result_ss << request.method << " " 
@@ -181,7 +181,7 @@ int main(int argc, char** argv) {
 			logger << "Client with id: " << client_id << " was connected" << endl;
 
 			HTTPHandler::Request request = server.get_request(client_id);
-			logger << "Request:\n" << req_to_str(request) << endl;
+			logger << "Request:\n" << request_to_str(request) << endl;
 
 			HTTPHandler::Answer answer = work_with_db(db, request);
 			logger << "Answer:\n" << answer_to_str(answer) << endl;
