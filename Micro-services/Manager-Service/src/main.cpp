@@ -29,42 +29,82 @@ void set_ok(HTTPHandler::Answer& answer) {
 	answer.status_description = "OK";
 }
 
-HTTPHandler::Request build_request(HTTPHandler::Method method, string uri, string body="") {
+HTTPHandler::Request build_request(
+		HTTPHandler::Method const& method, 
+		string const& uri, 
+		string const& api_key, 
+		string const& body=""
+		) {
 	HTTPHandler::Request request;
-	request.method = method;
-	request.uri = uri;
-	request.body = body;
+	request = {
+		method, uri,
+		{},
+		{
+			{"Content-Type", "application/json"},
+			{"Content-Length", to_string(body.size())},
+			{"Connecton", "close"},
+			{"Api-Key", api_key}
+		},
+		body
+	};
+	return request;
 }
 
-void check_sub(json req_body) {
+string request_to_str(HTTPHandler::Request const& request) {
+	stringstream result_ss;
+	HTTPHandler::write_request(request, result_ss);
+	return result_ss.str();
+}
+
+string answer_to_str(HTTPHandler::Answer const& answer) {
+	stringstream result_ss;
+	HTTPHandler::write_answer(answer, result_ss);
+	return result_ss.str();
+}
+
+void check_sub(json const& req_body) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	string user_id = req_body["user_id"];
+	string user_id = req_body["user_id"].get<string>();
 
 	client.connect_to_server(
 		ConfigReader::reader.read_value_by_key<string>("SUB_SERVICE_HOST"),
 		ConfigReader::reader.read_value_by_key<int>("SUB_SERVICE_PORT")
 	);
 
+
 	if(client.is_connected()) {
-		client.send_request(build_request(HTTPHandler::Method::GET, "/sub_status?user_id=" + user_id));
+		logger << "Successfully connected to Subscribe service" << endl;
+
+		HTTPHandler::Request request = 
+			build_request(
+					HTTPHandler::Method::GET, 
+					"/sub_status?user_id=" + user_id,
+					ConfigReader::reader.read_value_by_key<string>("SUB_API_KEY")
+			);
+		
+		logger << "Subscribe service request:\n" << request_to_str(request) << endl;
+		client.send_request(request);
+
 		answer = client.read_answer();
+		logger << "Subscribe service answer:\n" << answer_to_str(answer) << endl;
+
 		ans_body = json::parse(answer.body);
-		if(ans_body["sub_status"] == nullptr)
-			throw runtime_error(ans_body["exception"]);
-		else if(ans_body["sub_status"] == false)
+		if(ans_body["status"] == "error")
+			throw runtime_error(ans_body["error_message"].get<string>());
+		else if(ans_body["sub_status"].get<bool>() == false)
 			throw runtime_error("Subscribe is invalid");
 	}
 	else
 		throw runtime_error("Subscribe sevice is not responding");
 }
 
-string get_rasp_id(json req_body) {
+string get_gate_id(json const& req_body) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	string user_id = req_body["user_id"];
+	string user_id = req_body["user_id"].get<string>();
 
 	client.connect_to_server(
 		ConfigReader::reader.read_value_by_key<string>("ID_SERVICE_HOST"),
@@ -72,19 +112,32 @@ string get_rasp_id(json req_body) {
 	);
 
 	if(client.is_connected()) {
-		client.send_request(build_request(HTTPHandler::Method::GET, "/get_gate?user_id=" + user_id));
+		logger << "Successfully connected to ID service" << endl;
+
+		HTTPHandler::Request request = 
+			build_request(
+					HTTPHandler::Method::GET, 
+					"/get_gate?user_id=" + user_id,
+					ConfigReader::reader.read_value_by_key<string>("ID_API_KEY")
+			);
+
+		logger << "ID service request:\n" << request_to_str(request) << endl;
+		client.send_request(request);
+
 		answer = client.read_answer();
+		logger << "ID service answer:\n" << answer_to_str(answer) << endl;
+
 		ans_body = json::parse(answer.body);
-		if(ans_body["gate_id"] == nullptr)
-			throw runtime_error(ans_body["exception"]);
+		if(ans_body["status"].get<string>() == "error")
+			throw runtime_error(ans_body["error_message"].get<string>());
 		else
-			return ans_body["gate_id"];
+			return ans_body["gate_id"].get<string>();
 	}
 	else
 		throw runtime_error("ID sevice is not responding");
 }
 
-void ac_send(json req_body) {
+void ac_send(json const& req_body) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
@@ -95,33 +148,62 @@ void ac_send(json req_body) {
 	);
 	
 	if(client.is_connected()) {
-		client.send_request(build_request(HTTPHandler::Method::POST, "/", req_body.dump(4)));
+		logger << "Successfully connected to AC service" << endl;
+
+		HTTPHandler::Request request = 
+			build_request(
+					HTTPHandler::Method::POST, 
+					"/", 
+					ConfigReader::reader.read_value_by_key<string>("AC_API_KEY"),
+					req_body.dump(4)
+			);
+
+		logger << "AC service request:\n" << request_to_str(request) << endl;
+		client.send_request(request);
+
 		answer = client.read_answer();
+		logger << "AC service answer:\n" << answer_to_str(answer) << endl;
+
 		ans_body = json::parse(answer.body);
-		if(ans_body["status"] == "fail")
-			throw runtime_error(ans_body["exception"]);
+		if(ans_body["status"].get<string>() == "error")
+			throw runtime_error(ans_body["error_message"].get<string>());
 	}
 	else
 		throw runtime_error("AC sevice is not responding");
 
 }
 
+void check_for_api_key(string const& api_key) {
+	if(
+	   api_key !=
+	   ConfigReader::reader.read_value_by_key<string>("API_KEY")
+	  )
+		throw runtime_error("API key is incorrect");
+}
+
 HTTPHandler::Answer check_all(HTTPHandler::Request request) {
 	HTTPHandler::Answer answer;
 	json answer_json;
-	string rasp_id;
+	string gate_id;
 	
 	try {
+		check_for_api_key(request.headers.at("Api-Key"));
+
 		json req_body = json::parse(request.body);
+
 		check_sub(req_body);
-		rasp_id = get_rasp_id(req_body);
-		req_body["rasp_id"] = rasp_id;
+
+		gate_id = get_gate_id(req_body);
+
+		req_body["gate_id"] = gate_id;
 		ac_send(req_body);
+
 		answer_json["status"] = "ok";
     } catch (exception& e) {
 		set_bad_request(answer);
-		answer_json["status"] = "fail";
-	   	answer_json["exception"] = e.what();
+		answer_json["status"] = "error";
+	   	answer_json["error_message"] = e.what();
+		logger << "[EXCEPTION] " << e.what() << endl;
     }
 	
 	answer.body = answer_json.dump(4);
@@ -170,15 +252,20 @@ int main(int argc, char** argv)
 		while(!finish) {
 			logger << "Awaiting for connection..." << endl;
 			int client_id = server.connect_client();
-			logger << "Client connected" << endl;
-			logger << "Getting request..." << endl;
+			logger << "Client with id: " << client_id << " was connected" << endl;
+
 			HTTPHandler::Request request = server.get_request(client_id);
-			logger << "Checking..." << endl;
+			logger << "Voice Assistant request:\n" << request_to_str(request) << endl;
+
+			logger << "Starting to send requests to all services..." << endl;
 			HTTPHandler::Answer answer = check_all(request);
-			logger << "Sending answer" << endl;
+			logger << "Answer to Voice Assistant:\n" << answer_to_str(answer) << endl;
+
+			logger << "Sending answer to Voice Assistant..." << endl;
 			server.send_answer(client_id, answer);
+
 			server.close_con(client_id);
-			logger << "Connection closed" << endl;
+			logger << "Connection closed with client id:" << client_id << endl;
 
 		}
     } catch (exception& e) {
