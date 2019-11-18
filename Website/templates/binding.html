@@ -1,15 +1,13 @@
 {% extends "wrapper.html" %}
 
-{#{% block content %}#}
-{#    <form method="post">#}
-{#        {% csrf_token %}#}
-{#        {{ form.as_p }}#}
-{#        <input type="submit" value="Добавить">#}
-{#    </form>#}
-{#{% endblock %}#}
 
 {% block content %}
-    <h3> Устройство {{ gate }}</h3>
+    <div class="row">
+        <div class="col-sm-6">
+            <h3> Устройство {{ gate }}</h3>
+        </div>
+    </div>
+
     <h3>Список голосовых помощников:</h3>
     {% for record in records %}
         <form action="{{ record.url }}" method="post">
