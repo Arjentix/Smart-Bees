@@ -24,12 +24,26 @@ private:
 
 
 public:
+	//------ Exceptions ------
+	struct ClientException : public std::runtime_error {
+		ClientException(const std::string& what_msg);
+	};
+
+	struct RecvFailed : public ClientException {
+		RecvFailed(const std::string& what_msg);
+	};
+
+	struct ServerDisconnected : public ClientException {
+		ServerDisconnected(const std::string& what_msg);
+	};
+
     HTTPClient();
 
     bool connect_to_server(std::string ip, int port);
     bool is_connected();
     void send_request(HTTPHandler::Request request);
     HTTPHandler::Answer read_answer();
+	std::string read_raw();
     void close_conn();
     ~HTTPClient();
 };

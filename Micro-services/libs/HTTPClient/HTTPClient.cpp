@@ -4,6 +4,36 @@
 
 using namespace HTTPHandler;
 
+HTTPClient::ClientException::ClientException(const std::string& what_msg)
+	: std::runtime_error(what_msg) {}
+
+HTTPClient::RecvFailed::RecvFailed(const std::string& what_msg)
+	: HTTPClient::ClientException(what_msg) {}
+
+HTTPClient::ServerDisconnected::ServerDisconnected(const std::string& what_msg)
+	: HTTPClient::ClientException(what_msg) {}
+
+std::string get_n_bytes(int server, size_t n) {
+	if (n <= 0) {
+		return "";
+	}
+
+	char buffer[n + 1];	// + 1 for '\0'
+	memset(buffer, 0, n + 1);
+
+	int res = recv(server, buffer, n, 0); 
+	if ( res == 0) {
+		throw HTTPClient::ServerDisconnected(
+			"Server disconnected on socket " + std::to_string(server)
+		);
+	}
+	if (res < 0) {
+		throw HTTPClient::RecvFailed(strerror(errno));
+	}
+
+	return buffer;
+}
+
 HTTPClient::HTTPClient() : connected(false) {
       // Setting socket
     client = socket(AF_INET, SOCK_STREAM, 0);
@@ -50,11 +80,33 @@ void HTTPClient::send_request(HTTPHandler::Request request){
 }
 
 HTTPHandler::Answer HTTPClient::read_answer(){
-    std::string answer;
-    char buffer[bufsize];
-    recv(client, buffer, bufsize, 0);
-    answer = buffer;
-    return HTTPHandler::parse_answer(answer);
+    // std::string answer;
+    // char buffer[bufsize];
+    // recv(client, buffer, bufsize, 0);
+    // answer = buffer;
+    // return HTTPHandler::parse_answer(answer);
+
+	std::string raw_answer = read_raw();
+	auto parsed_answer = HTTPHandler::parse_answer(raw_answer);
+
+	size_t cont_len;
+	if (parsed_answer.headers.count("Content-Length")) {
+		cont_len = atoi(parsed_request.headers.at("Content-Length").c_str());
+	}
+	else if (parsed_answer.headers.count("content-length")) {
+		cont_len = atoi(parsed_request.headers.at("content-length").c_str());
+	}
+	else {
+		throw std::runtime_error("Expected Content-Length header");
+	}
+
+	parsed_answer.body += get_n_bytes(client, cont_len - parsed_request.body.size());
+
+	return parsed_request
+}
+
+std::string HTTPClient::read_raw() {
+	return get_n_bytes(client, bufsize);
 }
 
 void HTTPClient::close_conn(){
