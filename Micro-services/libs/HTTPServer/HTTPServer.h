@@ -63,4 +63,7 @@ public:
 	static void send_answer(int, const HTTPHandler::Answer&);
 	static void send_raw(int, const std::string&, bool include_null_ch = true);
 	static void close_con(int);
+
+private:
+	static std::string get_n_bytes(int, size_t);
 };
