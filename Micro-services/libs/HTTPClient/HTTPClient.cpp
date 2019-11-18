@@ -13,7 +13,7 @@ HTTPClient::RecvFailed::RecvFailed(const std::string& what_msg)
 HTTPClient::ServerDisconnected::ServerDisconnected(const std::string& what_msg)
 	: HTTPClient::ClientException(what_msg) {}
 
-std::string get_n_bytes(int server, size_t n) {
+std::string HTTPClient::get_n_bytes(size_t n) {
 	if (n <= 0) {
 		return "";
 	}
@@ -21,10 +21,10 @@ std::string get_n_bytes(int server, size_t n) {
 	char buffer[n + 1];	// + 1 for '\0'
 	memset(buffer, 0, n + 1);
 
-	int res = recv(server, buffer, n, 0); 
+	int res = recv(client, buffer, n, 0); 
 	if ( res == 0) {
 		throw HTTPClient::ServerDisconnected(
-			"Server disconnected on socket " + std::to_string(server)
+			"Server disconnected on socket " + std::to_string(client)
 		);
 	}
 	if (res < 0) {
@@ -91,22 +91,22 @@ HTTPHandler::Answer HTTPClient::read_answer(){
 
 	size_t cont_len;
 	if (parsed_answer.headers.count("Content-Length")) {
-		cont_len = atoi(parsed_request.headers.at("Content-Length").c_str());
+		cont_len = atoi(parsed_answer.headers.at("Content-Length").c_str());
 	}
 	else if (parsed_answer.headers.count("content-length")) {
-		cont_len = atoi(parsed_request.headers.at("content-length").c_str());
+		cont_len = atoi(parsed_answer.headers.at("content-length").c_str());
 	}
 	else {
 		throw std::runtime_error("Expected Content-Length header");
 	}
 
-	parsed_answer.body += get_n_bytes(client, cont_len - parsed_request.body.size());
+	parsed_answer.body += get_n_bytes(cont_len - parsed_answer.body.size());
 
-	return parsed_request
+	return parsed_answer;
 }
 
 std::string HTTPClient::read_raw() {
-	return get_n_bytes(client, bufsize);
+	return get_n_bytes(bufsize);
 }
 
 void HTTPClient::close_conn(){

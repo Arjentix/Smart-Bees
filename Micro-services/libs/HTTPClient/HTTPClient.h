@@ -46,5 +46,8 @@ public:
 	std::string read_raw();
     void close_conn();
     ~HTTPClient();
+
+private:
+	std::string get_n_bytes(size_t n);
 };
 
