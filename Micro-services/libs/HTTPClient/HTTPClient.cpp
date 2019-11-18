@@ -43,11 +43,10 @@ bool HTTPClient::is_connected(){
 
 void HTTPClient::send_request(HTTPHandler::Request request){
     std::stringstream  req_stream;
-    write_request(request,req_stream);
-    char buffer[bufsize];
-    strcpy(buffer,req_stream.str().c_str());
-    send(client, buffer, bufsize, 0);
+    write_request(request, req_stream);
 
+	std::string req_str = req_stream.str();
+    send(client, req_str.c_str(), req_str.size(), 0);
 }
 
 HTTPHandler::Answer HTTPClient::read_answer(){
