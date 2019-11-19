@@ -23,7 +23,7 @@ HTTPServer::SendFailed::SendFailed(const std::string& what_msg)
 	: HTTPServer::ServerException(what_msg) {}
 
 
-std::string get_n_bytes(int client, size_t n) {
+std::string HTTPServer::get_n_bytes(int client, size_t n) {
 	if (n <= 0) {
 		return "";
 	}

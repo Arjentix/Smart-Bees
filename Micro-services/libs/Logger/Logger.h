@@ -45,6 +45,9 @@ public:
 	Logger& operator<<(const T& obj)
 	{
 		std::lock_guard guard(_locker);
+		if (!_log_file.is_open()) {
+			_log_file.open(_file_name, std::ios::out | std::ios::trunc);
+		}
 		_sstream << obj;
 		return *this;
 	}
@@ -52,12 +55,16 @@ public:
 	// Handling std::endl;
 	Logger& operator<<(std::ostream& (*f)(std::ostream&)) {
 		std::lock_guard guard(_locker);
+		if (!_log_file.is_open()) {
+			_log_file.open(_file_name, std::ios::out | std::ios::trunc);
+		}
 		_log_file << "[" << _get_current_time() << "]::" << _sstream.str() << std::endl;
 		_sstream = std::stringstream();
 
 		return *this;
 	}
 private:
+	std::string _file_name;
 	std::ofstream _log_file;
 	std::stringstream _sstream;
 	std::mutex _locker;
