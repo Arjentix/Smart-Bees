@@ -1,26 +1,26 @@
 version: '3'
 services:
-  subscribe_service:
-      build:
-        context: ./..
-        dockerfile: ./Subscribe-Service/Dockerfile
-      ports:
-        - "3000:3000"
-      volumes:
-        - "./config.txt:/app/config.txt"
-        - "./app/log/:/app/log"
+    subscribe_service:
+        build:
+            context: ./..
+            dockerfile: ./Subscribe-Service/Dockerfile
+        ports:
+            - "3000:3000"
+        volumes:
+            - "./config.txt:/app/config.txt"
+            - "./app/log/:/app/log"
     mysql:
         container_name: mysql
         image: mysql:5.7
         restart: on-failure
         command: --init-file /data/application/init.sql
         environment:
-            - MYSQL_DATABASE=alice_subs
-              # - MYSQL_ROOT_PASSWORD=root
-            - MYSQL_USER=http_server
-            - MYSQL_PASSWORD=12345678
+            - MYSQL_DATABASE=AliceDB
+            - MYSQL_ROOT_PASSWORD=root_password
+            - MYSQL_USER=db_user
+            - MYSQL_PASSWORD=user_password
         ports:
-            - "3306:3306"
+            - "33060:3306"
         volumes:
-            # - "./database/data/mysql:/var/lib/mysql"
-              # - "./database/init.sql:/data/application/init.sql"
+            - "./db_dir/data/mysql:/var/lib/mysql"
+            - "./db_dir/init.sql:/data/application/init.sql"
