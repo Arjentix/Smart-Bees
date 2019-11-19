@@ -26,7 +26,7 @@ COPY /libs/HTTPHandler /libs/HTTPHandler
 COPY /libs/HTTPServer /libs/HTTPServer
 COPY /libs/json /libs/json
 COPY /libs/Logger /libs/Logger
-COPY src/libs/database /libs/database
+COPY /Subscribe-Service/src/database /Subscribe-Service/src/database
 COPY /libs/ConfigReader /libs/ConfigReader
 COPY /libs/SimpleSQL /libs/SimpleSQL
 
@@ -43,8 +43,8 @@ FROM ubuntu:latest
 COPY --from=build /usr/lib/x86_64-linux-gnu/libmysqlclient.so.20 /usr/lib/x86_64-linux-gnu/
 
 # Creating new user cause Docker uses root by default which is not good
-RUN groupadd -r sample && useradd -r -g sample sample
-USER sample
+#RUN groupadd -r sample && useradd -r -g sample sample
+#USER sample
 
 WORKDIR /app
 COPY --from=build /app/bin/SubscribeService .

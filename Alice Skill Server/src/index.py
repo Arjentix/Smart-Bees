@@ -5,12 +5,11 @@ from __future__ import unicode_literals
 # Импортируем модули для работы с JSON и логами.
 import json
 import logging
-
+import requests
 import sys
 sys.path.insert(0, 'src')
 
 # Импортируем модуль связи со шлюзами
-import GateProcessor
 
 import socket
 
@@ -23,9 +22,6 @@ logging.basicConfig(filename='skill.log', level=logging.DEBUG, filemode='w')
 # Хранилище данных о сессиях.
 sessionStorage = {}
 
-# Сервер для шлюза
-gateproc = GateProcessor.GateProcessor(4551)
-
 # Задаем параметры приложения Flask.
 @app.route("/", methods=['POST'])
 
@@ -34,7 +30,7 @@ def main():
 	logging.info('Request: %r', request.json)
 
 	response = {
-	"version": request.json['version'],
+		"version": request.json['version'],
 		"session": request.json['session'],
 		"response": {
 			"end_session": False
@@ -55,29 +51,38 @@ def main():
 def handle_dialog(req, res):
 	user_id = req['session']['user_id']
 
-	# Проверка существования соединения со шлюзом этого пользователя
-	gate_serial = gateproc.get_gate_for(user_id)
+	# Проверка существования соединения со шлюзом этого пользователя 
+	# И НАЧИЯ У НЕГО ПОДПИСКИ
+	'''	gate_serial = gateproc.get_gate_for(user_id) #ПРОВЕРКА СОЕДИНЕНИЯ, У МЕНЕДЖЕРА
 	if (gate_serial != ''):
-		if (gateproc.is_gate_connected(gate_serial)):
-			if req['session']['new']:
-				# Это новая сессия.
-				res['response']['text'] = 'Привет! Что мне включить?'
-				return;
+		if (gateproc.is_gate_connected(gate_serial)):'''
+	if req['session']['new']:
+		# Это новая сессия.
+			res['response']['text'] = 'Привет! Что мне включить?'
+			return;
+	else:
+		# Обрабатываем ответ пользователя.
+		tokens = req['request']['nlu']['tokens']
 
-			# Обрабатываем ответ пользователя.
-			tokens = req['request']['nlu']['tokens']
-			gateproc.send_tokens(gate_serial, tokens)
-			answer = gateproc.recv_answer(gate_serial)
-			logging.info('Gate answer: %s', answer)
-			if (answer[0:2] == 'OK'):
-				res['response']['text'] = 'Готово!'
-			else:
-				res['response']['text'] = 'Что-то пошло не так'
+		j = """{"user_id": "%s", "command": "%s"}""" % (user_id,' '.join(tokens) )
+		r = requests.post('http://localhost:3200', 
+				  headers={'Api-Key': '531'}, 
+				  json=json.loads(j))
+		logging.info('Gate answer: %s', r.text)
+		if (r.status_code == 200):
+			res['response']['text'] = 'Готово!'
 		else:
+			if 'error_mes' in r.json():
+				res['response']['text'] = r.json()['error_mes']
+			else:
+    				res['response']['text'] = 'Что-то пошло не так'	
+		'''else:
 			res['response']['text'] = 'Нет соединения со шлюзом'
 	else:
 		res['response']['text'] = 'Ваше устройство еще не привязано ни к какому шлюзу.\
-Следуйте инструкции по регистрации нового устройства. Ваш uID: {}'.format(user_id)
+Следуйте инструкции по регистрации нового устройства. Ваш uID: {}'.format(user_id)'''
+
+
 
 
 # Функция возвращает подсказки для ответа.
