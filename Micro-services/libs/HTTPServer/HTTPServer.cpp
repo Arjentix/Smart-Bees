@@ -99,17 +99,22 @@ HTTPHandler::Request HTTPServer::get_request(int client) {
 	auto parsed_request = HTTPHandler::parse_request(raw_request);
 
 	size_t cont_len;
-	if (parsed_request.headers.count("Content-Length")) {
-		cont_len = atoi(parsed_request.headers.at("Content-Length").c_str());
-	}
-	else if (parsed_request.headers.count("content-length")) {
-		cont_len = atoi(parsed_request.headers.at("content-length").c_str());
-	}
-	else {
-		throw std::runtime_error("Expected Content-Length header");
-	}
+	if (
+		parsed_request.method == HTTPHandler::Method::POST ||
+		parsed_request.method == HTTPHandler::Method::PUT
+	) {
+		if (parsed_request.headers.count("Content-Length")) {
+			cont_len = atoi(parsed_request.headers.at("Content-Length").c_str());
+		}
+		else if (parsed_request.headers.count("content-length")) {
+			cont_len = atoi(parsed_request.headers.at("content-length").c_str());
+		}
+		else {
+			throw std::runtime_error("Expected Content-Length header");
+		}
 
-	parsed_request.body += get_n_bytes(client, cont_len - parsed_request.body.size());
+		parsed_request.body += get_n_bytes(client, cont_len - parsed_request.body.size());
+	}
 
 	return parsed_request;
 }
