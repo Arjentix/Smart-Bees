@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 		// Adding handlers
 		ClientHandler client_handler;
 		client_handler.add_request_handler(
-			HTTPHandler::Method::POST,
+			{HTTPHandler::Method::POST, "/", {}},
 			make_shared<
 				RequestHandler::SendCommandRequestHandler
 			>(connection_manager)
