@@ -147,6 +147,30 @@ void test_variables()
 	ASSERT_EQUAL(request.variables, expected_variables);
 }
 
+void test_write_request()
+{
+	HTTPHandler::Request request = {
+		HTTPHandler::Method::GET, "/", {{"id", "1"}, {"test", "yes"}},
+		{
+			{"Connection", "close"},
+			{"Content-Type", "application/json"},
+			{"Content-Length", "2"}
+		},
+		"{}"
+	};
+	string expected =
+	"GET /?id=1&test=yes HTTP/1.1\r\n"
+	"Connection: close\r\n"
+	"Content-Length: 2\r\n"
+	"Content-Type: application/json\r\n"
+	"\r\n"
+	"{}";
+	
+	ostringstream oss;
+	HTTPHandler::write_request(request, oss);
+	ASSERT_EQUAL(oss.str(), expected);
+}
+
 int main()
 {
 	TestRunner tr;
@@ -156,6 +180,7 @@ int main()
 	RUN_TEST(tr, test_wrong_request);
 	RUN_TEST(tr, test_wrong_answer);
 	RUN_TEST(tr, test_variables);
+	RUN_TEST(tr, test_write_request);
 
 	return 0;
 }
