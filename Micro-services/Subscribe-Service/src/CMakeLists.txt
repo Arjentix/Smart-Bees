@@ -66,7 +66,7 @@ endif()
 # Adding database
 set(
 	DATABASE_INCLUDE_DIR
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/database
+	${CMAKE_CURRENT_SOURCE_DIR}/database
 )
 if(NOT TARGET database)
 	add_subdirectory(${DATABASE_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/database)
@@ -96,6 +96,7 @@ target_include_directories(SubscribeService PRIVATE
 
 target_link_libraries(SubscribeService
 		HTTPServer
+		ConfigReader
 		Logger
 		HTTPHandler
 		SimpleSQL
@@ -104,4 +105,4 @@ target_link_libraries(SubscribeService
 )
 
 # Installing
-install(TARGETS Subscribe DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../bin)
+install(TARGETS SubscribeService DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../bin)

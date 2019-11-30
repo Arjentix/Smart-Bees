@@ -83,7 +83,7 @@ HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& reque
 			case HTTPHandler::Method::DELETE:
 				db.delete_sub(user_id);
 				break;
-			case default:
+			default:
 				throw runtime_error("Unknown HTTP Method");
 				break;
 		}
@@ -92,7 +92,7 @@ HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& reque
 	} catch(exception& e) {
 		logger << "[EXCEPTION on work] " << e.what() << endl;
 		set_bad_request(answer);
-	   	answer_json["exception"] = e.what();
+	   	answer_json["error_message"] = e.what();
 	}
 
 	answer.body = answer_json.dump(4);
@@ -160,10 +160,10 @@ int main(int argc, char** argv) {
 		logger << "Initating database..." << endl;
    		DataBase db;
 		db.init(
-				ConfigReader::reader.read_value_by_key<string>("DB_HOSTNAME"),
-				ConfigReader::reader.read_value_by_key<string>("DB_NAME"),
-				ConfigReader::reader.read_value_by_key<string>("DB_USERNAME"),
-				ConfigReader::reader.read_value_by_key<string>("DB_PASSWORD"),
+				ConfigReader::reader.read_value_by_key<string>("DB_HOSTNAME").c_str(),
+				ConfigReader::reader.read_value_by_key<string>("DB_NAME").c_str(),
+				ConfigReader::reader.read_value_by_key<string>("DB_USERNAME").c_str(),
+				ConfigReader::reader.read_value_by_key<string>("DB_PASSWORD").c_str()
 			   );
 		logger << "Database initiated successfully" << endl;
 

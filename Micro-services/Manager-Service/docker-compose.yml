@@ -1,6 +1,7 @@
 version: '3'
 services:
   manager_service:
+      network_mode: host
       build:
         context: ./..
         dockerfile: ./Manager-Service/Dockerfile
