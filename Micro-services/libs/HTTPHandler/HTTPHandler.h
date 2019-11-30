@@ -34,6 +34,8 @@ namespace HTTPHandler {
 		std::map<std::string, std::string> variables;
 		std::map<std::string, std::string> headers;
 		std::string body;
+
+		std::string str() const;
 	};
 
 	/**
@@ -44,6 +46,8 @@ namespace HTTPHandler {
 		std::string status_description;
 		std::map<std::string, std::string> headers;
 		std::string body;
+
+		std::string str() const;
 	};
 
 	/**
