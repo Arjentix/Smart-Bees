@@ -11,6 +11,7 @@
 #include "ConnectionManager.h"
 #include "ClientHandler.h"
 #include "SendCommandRequestHandler.h"
+#include "CheckConnectionRequestHandler.h"
 #include <unistd.h>
 #include <signal.h>
 #include <vector>
@@ -71,6 +72,12 @@ int main(int argc, char** argv)
 			{HTTPHandler::Method::POST, "/", {}},
 			make_shared<
 				RequestHandler::SendCommandRequestHandler
+			>(connection_manager)
+		);
+		client_handler.add_request_handler(
+			{HTTPHandler::Method::GET, "/connection", {"gate_id"}},
+			make_shared<
+				RequestHandler::CheckConnectionRequestHandler
 			>(connection_manager)
 		);
 

@@ -27,20 +27,30 @@ ConnectionManager::~ConnectionManager()
 }
 
 string ConnectionManager::send_command(
-	const string& id,
+	const string& gate_id,
 	const string& command
 ) const
 {
-	int sock = _id_to_sock.at(id);
+	int sock = _id_to_sock.at(gate_id);
 
-	HTTPServer::send_raw(sock, "Check");
-	logger << "Sended Check" << endl;
-	HTTPServer::get_raw(sock);
-	logger << "Check passed" << endl;
+	check_connection(gate_id);
 	HTTPServer::send_raw(sock, command);
 	logger << "Sended command" << endl;
 
 	return HTTPServer::get_raw(sock);
+}
+
+void ConnectionManager::check_connection(const string& gate_id) const
+{
+	const int check_count = 2;
+	int sock = _id_to_sock.at(gate_id);
+
+	for (int i = 0; i < check_count; ++i) {
+		HTTPServer::send_raw(sock, "Check");
+		logger << "Sended Check 1" << endl;
+		HTTPServer::get_raw(sock);
+		logger << "Check passed" << endl;
+	}
 }
 
 void ConnectionManager::_connect_loop()

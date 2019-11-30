@@ -14,8 +14,8 @@
 
 /**
  * ConnectionManager - manages connections with gates. It runs daemon server,
- * accepts connections from gates, receives their ids and stores.
- * Provides possibility to send message to the gate using it's id.
+ * accepts connections from gates, receives their IDs and stores it.
+ * Provides possibility to communicate with gate using it's id.
  */
 
 class ConnectionManager {
@@ -25,12 +25,20 @@ public:
 
 	/**
 	 * send_command() -- sends command to the given gate.
-	 * Can throw std::out_of_range exception if gate never was connected
+	 * Can throw std::out_of_range exception if gate never was connected and
+	 * some other exceptions of HTTPServer lib.
 	 */
 	std::string send_command(
 		const std::string& gate_id,
 		const std::string& command
 	) const;
+
+	/**
+	 * check_connection() -- checks for connection with the given gate.
+	 * Can throw std::out_of_range exception if gate never was connected and
+	 * some other exceptions of HTTPServer lib.
+	 */
+	void check_connection(const std::string& gate_id) const;
 
 private:
 	HTTPServer _server;
