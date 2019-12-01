@@ -1,5 +1,6 @@
 #include "HTTPServer.h"
-#include "signal.h"
+#include <signal.h>
+#include <sys/select.h>
 
 HTTPServer::ServerException::ServerException(const std::string& what_msg)
 	: std::runtime_error(what_msg) {}
@@ -22,6 +23,48 @@ HTTPServer::ClientDisconnected::ClientDisconnected(const std::string& what_msg)
 HTTPServer::SendFailed::SendFailed(const std::string& what_msg)
 	: HTTPServer::ServerException(what_msg) {}
 
+HTTPServer::Interrupted::Interrupted(const std::string& what_msg)
+	: HTTPServer::ServerException(what_msg) {}
+
+bool HTTPServer::_interrupted = false;
+std::mutex HTTPServer::_locker;
+
+/**
+ * _wait_for_data() -- call pselect system call which is waiting for input data.
+ * Can throw HTTPServer::Interrupted excpetion.
+ */
+int HTTPServer::_wait_for_data(int sock) {
+	fd_set		inputs;
+	timespec	timeout;
+
+	// Setting select parameters
+	FD_ZERO(&inputs);
+	FD_SET(sock, &inputs);
+	timeout.tv_sec = 2;
+	timeout.tv_nsec = 0;
+
+	// Infinite loop
+	// Returns when there are some data on the given socket
+	while(!is_interrupted()) {
+		int res = pselect(
+			FD_SETSIZE, &inputs, (fd_set*)NULL,
+			(fd_set*)NULL, &timeout, (sigset_t*)NULL
+		);
+		if (res < 0) {			// Select failed
+			set_interrupted(true);
+			throw HTTPServer::Interrupted("Select was interrupted");
+		}
+		else if (res == 0) {	// No input
+			continue;
+		}
+		// There is an input data
+		if (FD_ISSET(sock, &inputs)) {
+			return res;
+		}
+	}
+
+	throw HTTPServer::Interrupted("Select was interrupted");
+}
 
 std::string HTTPServer::get_n_bytes(int client, size_t n) {
 	if (n <= 0) {
@@ -31,8 +74,9 @@ std::string HTTPServer::get_n_bytes(int client, size_t n) {
 	char buffer[n + 1];	// + 1 for '\0'
 	memset(buffer, 0, n + 1);
 
+	_wait_for_data(client);
 	int res = recv(client, buffer, n, 0); 
-	if ( res == 0) {
+	if (res == 0) {
 		throw HTTPServer::ClientDisconnected(
 			"Client disconnected on socket " + std::to_string(client)
 		);
@@ -54,6 +98,15 @@ HTTPServer::~HTTPServer() {
 //	for(auto&& thread: threads)
 //		if(thread.joinable())
 //			thread.join();
+}
+
+bool HTTPServer::is_interrupted() {
+	return _interrupted;
+}
+
+void HTTPServer::set_interrupted(bool flag) {
+	std::lock_guard guard(_locker);
+	_interrupted = flag;
 }
 
 void HTTPServer::start_server(int port_num)
@@ -85,9 +138,10 @@ void HTTPServer::turn_to_listen(int queue_size) {
 
 int HTTPServer::connect_client()
 {
-    int client = accept(server,(struct sockaddr *)&server_addr, &size);
-
-    if (client < 0) {
+	_wait_for_data(server);
+	std::cout << "Trying to accept" << std::endl;
+	int client = accept(server, (struct sockaddr *)&server_addr, &size);
+	if (client < 0) {
 		throw AcceptFailed(strerror(errno));
 	}
 

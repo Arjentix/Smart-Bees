@@ -13,6 +13,7 @@
 #include <thread>
 #include <vector>
 #include <exception>
+#include <mutex>
 
 class HTTPServer {
 private:
@@ -51,10 +52,16 @@ public:
 		SendFailed(const std::string& what_msg);
 	};
 
+	struct Interrupted : public ServerException {
+		Interrupted(const std::string& what_msg);
+	};
+
 
 
 	HTTPServer();
 	~HTTPServer();
+	static bool is_interrupted();
+	static void set_interrupted(bool flag);
 	void start_server(int);
 	void turn_to_listen(int);
 	int connect_client();
@@ -65,5 +72,8 @@ public:
 	static void close_con(int);
 
 private:
+	static int _wait_for_data(int sock);
 	static std::string get_n_bytes(int, size_t);
+	static bool _interrupted;
+	static std::mutex _locker;
 };
