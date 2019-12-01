@@ -17,6 +17,7 @@
 #include <vector>
 #include <future>
 #include <thread>
+#include <iostream>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ bool finish = false;
 
 void signal_handler(int)
 {
+	logger << "Getted an interrupt signal" << endl;
 	finish = true;
 }
 
@@ -47,6 +49,9 @@ int main(int argc, char** argv)
 	}
 
 	try {
+		// Capturing SIGINT signal
+		signal(SIGINT, signal_handler);
+
 		ConfigReader::reader.set_file_name("config.txt");
 		ConfigReader::reader.read_config(); // Buffering all configs
 
@@ -62,9 +67,6 @@ int main(int argc, char** argv)
 		ConnectionManager connection_manager(
 			ConfigReader::reader.read_value_by_key<int>("GATE_SERVER_PORT")
 		);
-
-		// Capturing SIGINT signal
-		signal(SIGINT, signal_handler);
 
 		// Adding handlers
 		ClientHandler client_handler;
@@ -83,7 +85,7 @@ int main(int argc, char** argv)
 
 		logger << "Connecting" << endl;
 		vector<future<void>> futures;
-		while (!finish) {
+		while (!server.is_interrupted()) {
 			int client_sock = server.connect_client();
 			logger << "Client connected on socket " << client_sock << endl;
 			futures.push_back(async(
@@ -91,11 +93,13 @@ int main(int argc, char** argv)
 			));
 		}
 	}
+	catch (HTTPServer::Interrupted& ex) {
+		logger << ex.what() << endl;
+	}
 	catch (exception& ex) {
-		cout << "Error: " << ex.what() << endl;
 		logger << "Error: " << ex.what() << endl;
 	}
-	
+
 	logger << "Shutting down" << endl;
 	return 0;
 }
