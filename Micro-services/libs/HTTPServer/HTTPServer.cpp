@@ -54,9 +54,9 @@ int HTTPServer::_wait_for_data(int sock) {
 			set_interrupted(true);
 			throw HTTPServer::Interrupted("Select was interrupted");
 		}
-		else if (res == 0) {	// No input
-			continue;
-		}
+		// else if (res == 0) {	// No input
+		// 	continue;
+		// }
 		// There is an input data
 		if (FD_ISSET(sock, &inputs)) {
 			return res;
@@ -138,8 +138,7 @@ void HTTPServer::turn_to_listen(int queue_size) {
 
 int HTTPServer::connect_client()
 {
-	_wait_for_data(server);
-	std::cout << "Trying to accept" << std::endl;
+	// _wait_for_data(server);
 	int client = accept(server, (struct sockaddr *)&server_addr, &size);
 	if (client < 0) {
 		throw AcceptFailed(strerror(errno));
