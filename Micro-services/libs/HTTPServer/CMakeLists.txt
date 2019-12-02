@@ -13,4 +13,10 @@ set(SOURCE_LIB HTTPServer.cpp)
 
 add_library(HTTPServer STATIC ${SOURCE_LIB})
 
+set_target_properties(HTTPServer PROPERTIES
+		CXX_STANDARD 17
+		CXX_STANDARD_REQUIRED ON
+		CXX_EXTENSIONS ON
+)
+
 target_link_libraries(HTTPServer HTTPHandler)

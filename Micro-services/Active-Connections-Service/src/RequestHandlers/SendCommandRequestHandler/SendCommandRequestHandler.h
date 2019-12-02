@@ -19,7 +19,9 @@ namespace RequestHandler {
 	 * 		gate_id : string,
 	 * 		command : string
 	 * 
-	 * Returns answer without body.
+	 * Returns answer without body if the transfer was successful and answer
+	 * with body if something went wrong. In this case body will contains field
+	 * "error_message" with error describing
 	 */
 
 	class SendCommandRequestHandler : public RequestHandlerBase {

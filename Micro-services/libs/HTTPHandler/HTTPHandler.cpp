@@ -19,6 +19,22 @@ string method_to_string(Method method);
 map<string, string> parse_variables(istream& input);
 map<string, string> parse_headers(istream& input);
 
+string Request::str() const
+{
+	ostringstream oss;
+	write_request(*this, oss);
+
+	return oss.str();
+}
+
+string Answer::str() const
+{
+	ostringstream oss;
+	write_answer(*this, oss);
+
+	return oss.str();
+}
+
 Request HTTPHandler::parse_request(const string& request)
 {
 	Request result;
@@ -61,7 +77,21 @@ Request HTTPHandler::parse_request(const string& request)
 
 void HTTPHandler::write_request(const Request& request, std::ostream& output)
 {
-	output << method_to_string(request.method) << " " << request.uri << " HTTP/1.1\r\n";
+	output << method_to_string(request.method) << " " << request.uri;
+	if (!request.variables.empty()) {
+		output << "?";
+		bool first = true;
+		for (const auto& [var, val] : request.variables) {
+			if (!first) {
+				output << "&";
+			}
+			output << var << "=" << val;
+			first = false;
+		}
+
+	}
+	output << " HTTP/1.1\r\n";
+
 	for (auto& [header, value] : request.headers) {
 		output << header << ": " << value << "\r\n";
 	}

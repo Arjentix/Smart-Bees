@@ -67,6 +67,15 @@ if(NOT TARGET SendCommandRequestHandler)
 	add_subdirectory(${SEND_COMMAND_REQUEST_HANDLER_INCLUDE_DIR})
 endif()
 
+# Adding CheckConnectionRequestHandler
+set(
+	CHECK_CONNECTION_REQUEST_HANDLER_INCLUDE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/RequestHandlers/CheckConnectionRequestHandler
+)
+if(NOT TARGET CheckConnectionRequestHandler)
+	add_subdirectory(${CHECK_CONNECTION_REQUEST_HANDLER_INCLUDE_DIR})
+endif()
+
 # Adding nlohmann/detail/exceptions
 set(
 	JSON_EXCEPTIONS_INCLUDE_DIR
@@ -100,6 +109,7 @@ target_include_directories(ActiveConnectionsService PRIVATE
 		${HTTP_SERVER_INCLUDE_DIR}
 		${CONNECTION_MANAGER_INCLUDE_DIR}
 		${SEND_COMMAND_REQUEST_HANDLER_INCLUDE_DIR}
+		${CHECK_CONNECTION_REQUEST_HANDLER_INCLUDE_DIR}
 		${JSON_EXCEPTIONS_INCLUDE_DIR}
 )
 
@@ -109,6 +119,7 @@ target_link_libraries(ActiveConnectionsService
 		HTTPServer
 		ConnectionManager
 		SendCommandRequestHandler
+		CheckConnectionRequestHandler
 		Logger
 		ConfigReader
 )
