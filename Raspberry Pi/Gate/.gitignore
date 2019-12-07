@@ -1,7 +1,5 @@
 *.o
 *Test
-*.base
-*.conf
 test/bin/*
 bin/*
 log/*

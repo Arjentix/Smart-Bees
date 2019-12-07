@@ -14,7 +14,7 @@ namespace RequestHandler {
 
 	class RequestHandlerBase {
 	public:
-		RequestHandlerBase(ConnectionManager& animal_manager);
+		RequestHandlerBase(ConnectionManager& connection_manager);
 		virtual ~RequestHandlerBase();
 
 		virtual HTTPHandler::Answer handle(HTTPHandler::Request request) = 0;
