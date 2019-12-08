@@ -64,11 +64,6 @@ int main()
 	try {
 		LogPrinter::print("!!!---Program started---!!!");
 
-		/* Closing useless fds */
-		close(0);
-		close(1);
-		close(2);
-
 		/* Initialization */
 		PhotonConfigReader	photon_conf_reader("photon.conf");	// Reads config and gets new topic for every Photon
 		AliceConnector		alice_conn("********", 4551);	// Does all communication with Alice
