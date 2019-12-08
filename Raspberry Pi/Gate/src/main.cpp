@@ -43,14 +43,21 @@ void signal_handler(int sig)
 
 int main()
 {
-	int fork_res;
-
-	fork_res = fork();
-	if (fork_res == -1) {	// Error
-		return -1;
-	}
-	if (fork_res != 0) {	// Parent
-		return 0;
+	// Daemon mode
+	if (argc > 1 && strcmp(argv[1], "-d") == 0) {
+		int fork_res = fork();
+		if (fork_res == -1) {	// Error
+			return -1;
+		}
+		if (fork_res > 0) {		// Parent
+			return 0;
+		}
+		
+		// Child 
+		// Closing useless fds
+		close(0);
+		close(1);
+		close(2);
 	}
 
 	/* Child */
@@ -64,9 +71,9 @@ int main()
 
 		/* Initialization */
 		PhotonConfigReader	photon_conf_reader("photon.conf");	// Reads config and gets new topic for every Photon
-		// AliceConnector		alice_conn("172.105.77.74", 4551);	// Does all communication with Alice
-		AliceConnector		alice_conn("localhost", 4551);	// Does all communication with Alice
-		MQTTPublisher		mqtt_pub("localhost", 1883);		// Does publishing messages to the MQTT topis
+		AliceConnector		alice_conn("********", 4551);	// Does all communication with Alice
+		// AliceConnector		alice_conn("localhost", 4551);	// Does all communication with Alice
+		MQTTPublisher		mqtt_pub("localhost", 1883);		// Does publishing messages to the MQTT topics
 		TokenHandler		tok_hand("token.base");				// Checks for existing token and returns relevant parameters
 		string				token;
 		string				topic;
