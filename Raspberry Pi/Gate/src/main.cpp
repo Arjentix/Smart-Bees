@@ -5,6 +5,7 @@
 * Date: 03.05.19
 */
 
+#include "ConfigReader.h"
 #include "PhotonConfigReader.h"
 #include "AliceConnector.h"
 #include "MQTTPublisher.h"
@@ -13,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <future>
+#include <cstring>
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
@@ -41,33 +43,56 @@ void signal_handler(int sig)
 	finish = true;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-	int fork_res;
-
-	fork_res = fork();
-	if (fork_res == -1) {	// Error
-		return -1;
-	}
-	if (fork_res != 0) {	// Parent
-		return 0;
+	// Daemon mode
+	if (argc > 1 && strcmp(argv[1], "-d") == 0) {
+		int fork_res = fork();
+		if (fork_res == -1) {	// Error
+			return -1;
+		}
+		if (fork_res > 0) {		// Parent
+			return 0;
+		}
+		
+		// Child 
+		// Closing useless fds
+		close(0);
+		close(1);
+		close(2);
 	}
 
 	/* Child */
 	try {
 		LogPrinter::print("!!!---Program started---!!!");
 
-		/* Closing useless fds */
-		close(0);
-		close(1);
-		close(2);
+		ConfigReader::reader.set_file_name("config.txt");
+		ConfigReader::reader.read_config();
 
 		/* Initialization */
-		PhotonConfigReader	photon_conf_reader("photon.conf");	// Reads config and gets new topic for every Photon
-		// AliceConnector		alice_conn("172.105.77.74", 4551);	// Does all communication with Alice
-		AliceConnector		alice_conn("localhost", 4551);	// Does all communication with Alice
-		MQTTPublisher		mqtt_pub("localhost", 1883);		// Does publishing messages to the MQTT topis
-		TokenHandler		tok_hand("token.base");				// Checks for existing token and returns relevant parameters
+
+		// Reads config and gets new topic for every Photon
+		PhotonConfigReader	photon_conf_reader(
+			ConfigReader::reader.read_value_by_key<string>("PHOTON_CONFIG_FILE")
+		);
+
+		// Does all communication with Alice
+		AliceConnector		alice_conn(
+			ConfigReader::reader.read_value_by_key<string>("ACTIVE_CONNECTIONS_SERVICE_IP"),
+			ConfigReader::reader.read_value_by_key<int>("ACTIVE_CONNECTIONS_SERVICE_PORT")
+		);
+
+		// Does publishing messages to the MQTT topics
+		MQTTPublisher		mqtt_pub(
+			ConfigReader::reader.read_value_by_key<string>("MQTT_BROKER_IP"),
+			ConfigReader::reader.read_value_by_key<int>("MQTT_BROKER_PORT")
+		);
+
+		// Checks for existing token and returns relevant parameters
+		TokenHandler		tok_hand(
+			ConfigReader::reader.read_value_by_key<string>("TOKENS_CONFIG_FILE")
+		);
+
 		string				token;
 		string				topic;
 		string				command;
