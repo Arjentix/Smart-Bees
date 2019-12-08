@@ -33,8 +33,8 @@ std::string Logger::_get_current_time()
 	return buf;
 }
 
-Logger::Logger(const std::string& file_name)
-	: _file_name(file_name) {}
+Logger::Logger(const std::string& file_name, bool std_output)
+	: _file_name(file_name), _std_output(std_output) {}
 
 void Logger::open(const std::string& file_name)
 {
@@ -44,5 +44,10 @@ void Logger::open(const std::string& file_name)
 	}
 
 	_log_file.open(file_name, std::ios::out | ios::trunc);
+}
+
+void Logger::set_std_output(bool flag)
+{
+	_std_output = flag;
 }
 
