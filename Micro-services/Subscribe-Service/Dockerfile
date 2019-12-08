@@ -42,6 +42,9 @@ FROM ubuntu:latest
 # Copying lib
 COPY --from=build /usr/lib/x86_64-linux-gnu/libmysqlclient.so.20 /usr/lib/x86_64-linux-gnu/
 
+#COPY —from=build /usr/lib/x86_64-linux-gnu/libssl.so.1.1 /usr/lib/x86_64-linux-gnu/
+#COPY —from=build /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 /usr/lib/x86_64-linux-gnu/
+
 # Creating new user cause Docker uses root by default which is not good
 #RUN groupadd -r sample && useradd -r -g sample sample
 #USER sample

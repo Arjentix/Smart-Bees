@@ -5,8 +5,12 @@
 #include "ConfigReader.h"
 #include "nlohmann/json.hpp"
 
-#include <iostream>
+#include <unistd.h>
 #include <signal.h>
+#include <vector>
+#include <future>
+#include <thread>
+#include <iostream>
 
 using namespace std;
 using json = nlohmann::json;
@@ -252,6 +256,32 @@ HTTPHandler::Answer choose_way(HTTPHandler::Request request) {
 	return answer;
 }
 
+void handle_client(int client_sock)
+{
+	HTTPHandler::Answer answer;
+
+	try {
+		HTTPHandler::Request request = HTTPServer::get_request(client_sock);
+		logger << "Voice Assistant request:\n" << request_to_str(request) << endl;
+
+		logger << "Starting to send requests to all services..." << endl;
+		answer = choose_way(request);
+		logger << "Answer to Voice Assistant:\n" << answer_to_str(answer) << endl;
+
+		logger << "Sending answer to Voice Assistant..." << endl;
+		HTTPServer::send_answer(client_sock, answer);
+
+	} catch (HTTPServer::ClientDisconnected& ex) {
+		logger << ex.what() << endl;
+		HTTPServer::close_con(client_sock);
+		logger << "Connection closed with client id:" << client_sock << endl;
+		return;
+	}
+
+	HTTPServer::close_con(client_sock);
+	logger << "Connection closed with client id:" << client_sock << endl;
+}
+
 
 int main(int argc, char** argv)
 {
@@ -274,6 +304,9 @@ int main(int argc, char** argv)
 
 
 	try {
+		// Capturing SIGINT signal
+		signal(SIGINT, signal_handler);
+
 		ConfigReader::reader.set_file_name("config.txt");
 		ConfigReader::reader.read_config(); // Buffering all configs
 
@@ -289,27 +322,14 @@ int main(int argc, char** argv)
 		);
 		server.turn_to_listen(10);
 
-		// Capturing SIGINT signal
-		signal(SIGINT, signal_handler);
 
-		while(!finish) {
+		vector<future<void>> futures;
+		while(!server.is_interrupted()) {
 			logger << "Awaiting for connection..." << endl;
-			int client_id = server.connect_client();
-			logger << "Client with id: " << client_id << " was connected" << endl;
+			int client_sock = server.connect_client();
+			logger << "Client on socket " << client_sock << " was connected" << endl;
 
-			HTTPHandler::Request request = server.get_request(client_id);
-			logger << "Voice Assistant request:\n" << request_to_str(request) << endl;
-
-			logger << "Starting to send requests to all services..." << endl;
-			HTTPHandler::Answer answer = choose_way(request);
-			logger << "Answer to Voice Assistant:\n" << answer_to_str(answer) << endl;
-
-			logger << "Sending answer to Voice Assistant..." << endl;
-			server.send_answer(client_id, answer);
-
-			server.close_con(client_id);
-			logger << "Connection closed with client id:" << client_id << endl;
-
+			futures.push_back(async(&handle_client, client_sock));
 		}
     } catch (exception& e) {
         logger << "[EXCEPTION] " << e.what() << endl;
