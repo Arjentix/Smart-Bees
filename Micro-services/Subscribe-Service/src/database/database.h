@@ -30,15 +30,15 @@ private:
 	std::string time_to_string(time_t);
 	bool time_compare_begin(struct tm, struct tm);
 	bool time_compare_end(struct tm, struct tm);
-	void check_for_exist(int);
+	void check_for_exist(std::string);
 public:
 	DataBase();
 	~DataBase();
 	void init(const char*, const char*, const char*, const char*);
-	bool check_for_sub(int);
+	bool check_for_sub(std::string);
 	void update_sub(std::string, std::string, std::string);
 	void insert_sub(std::string, std::string, std::string);
-	void delete_sub(int);
+	void delete_sub(std::string);
 
 	class Time {
 	public:
@@ -54,7 +54,7 @@ public:
 		int minutes;
 	};
 
-	Time time_left(int);
+	Time time_left(std::string);
 private:
 	Time time_left_counter(struct tm, struct tm);
 };

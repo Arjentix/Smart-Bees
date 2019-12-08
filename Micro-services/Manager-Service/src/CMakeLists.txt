@@ -63,6 +63,12 @@ if(NOT TARGET HTTPClient)
 	add_subdirectory(${HTTP_CLIENT_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HTTPClient)
 endif()
 
+
+# Searching for Threads lib
+find_package(Threads REQUIRED)
+
+# --------------------------
+
 set(SOURCE_EXE main.cpp)
 
 # --------------------------
@@ -85,6 +91,7 @@ target_include_directories(ManagerService PRIVATE
 )
 
 target_link_libraries(ManagerService
+		${CMAKE_THREAD_LIBS_INIT}
 		HTTPServer
 		HTTPClient
 		Logger
