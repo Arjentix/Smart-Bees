@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <future>
+#include <cstring>
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
@@ -41,7 +42,7 @@ void signal_handler(int sig)
 	finish = true;
 }
 
-int main()
+int main(int argc, char** argv)
 {
 	// Daemon mode
 	if (argc > 1 && strcmp(argv[1], "-d") == 0) {
