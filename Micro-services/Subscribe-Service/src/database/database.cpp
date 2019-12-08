@@ -19,7 +19,7 @@ void DataBase::init(const char* hostname, const char* db_name, const char* user,
 	dbc->connect(HOSTNAME, USERNAME, PASSWORD, DATABASE, PORT_NO);
 }
 
-bool DataBase::time_compare(struct tm tm_n, struct tm tm_e) {
+bool DataBase::time_compare_end(struct tm tm_n, struct tm tm_e) {
 	if(tm_n.tm_year == tm_e.tm_year) {
 		if(tm_n.tm_mon == tm_e.tm_mon) {
 			if(tm_n.tm_mday == tm_e.tm_mday) {
@@ -33,18 +33,34 @@ bool DataBase::time_compare(struct tm tm_n, struct tm tm_e) {
 	} else return tm_n.tm_year < tm_e.tm_year;
 }
 
-bool DataBase::check_for_sub(int id) {
+bool DataBase::time_compare_begin(struct tm tm_n, struct tm tm_b) {
+	if(tm_n.tm_year == tm_b.tm_year) {
+		if(tm_n.tm_mon == tm_b.tm_mon) {
+			if(tm_n.tm_mday == tm_b.tm_mday) {
+				if(tm_n.tm_hour == tm_b.tm_hour) {
+					if(tm_n.tm_min == tm_b.tm_min) {
+						return true;
+					} else return tm_n.tm_min > tm_b.tm_min;
+				} else return tm_n.tm_hour > tm_b.tm_hour;
+			} else return tm_n.tm_mday > tm_b.tm_mday;
+		} else return tm_n.tm_mon > tm_b.tm_mon;
+	} else return tm_n.tm_year > tm_b.tm_year;
+}
+
+bool DataBase::check_for_sub(int user_id) {
 	if(dbc->is_connected()) {
-		check_for_exist(id);
+		check_for_exist(user_id);
+		struct tm tm_b;
 		struct tm tm_e;
-		std::string request = "SELECT sub_end_date FROM subs_table WHERE user_id=" + std::to_string(id) + ";";
+		std::string request = "SELECT sub_start_date, sub_end_date FROM subs_table WHERE user_id=" + std::to_string(user_id) + ";";
 		auto query_res_ptr = dbc->query(request);
 		auto row = query_res_ptr->get_row();
-		strptime(std::string(row[0]).c_str(), "%F %H:%M", &tm_e);
+		strptime(std::string(row[0]).c_str(), "%F %H:%M", &tm_b);
+		strptime(std::string(row[1]).c_str(), "%F %H:%M", &tm_e);
 		time_t now = time(NULL);
 		struct tm *tm_n = localtime(&now);
 
-		return time_compare(*tm_n, tm_e);
+		return time_compare_begin(*tm_n, tm_b) & time_compare_end(*tm_n, tm_e);
 	}
 	else
 		throw std::runtime_error("Database doesn't connected");
@@ -59,13 +75,13 @@ DataBase::Time DataBase::time_left_counter(struct tm tm_n, struct tm tm_e) {
 	return t_r;
 }
 
-DataBase::Time DataBase::time_left(int id) {
+DataBase::Time DataBase::time_left(int user_id) {
 	if(dbc->is_connected()) {
-		check_for_exist(id);
-		if(check_for_sub(id) == 0)
+		check_for_exist(user_id);
+		if(check_for_sub(user_id) == 0)
 			return Time(0, 0, 0);
 		struct tm tm_e;
-		std::string request = "SELECT sub_end_date FROM subs_table WHERE user_id=" + std::to_string(id) + ";";
+		std::string request = "SELECT sub_end_date FROM subs_table WHERE user_id=" + std::to_string(user_id) + ";";
 		auto query_res_ptr = dbc->query(request);
 		auto row = query_res_ptr->get_row();
 		strptime(std::string(row[0]).c_str(), "%F %H:%M", &tm_e);
@@ -89,21 +105,20 @@ void DataBase::update_sub(std::string user_id_str, std::string s_start, std::str
 		throw std::runtime_error("Database doesn't connected");
 }
 
-void DataBase::insert_sub(std::string user_id_str, std::string username, std::string s_start, std::string s_end) {
+void DataBase::insert_sub(std::string user_id_str, std::string s_start, std::string s_end) {
 	int user_id = stoi(user_id_str);
 	if(dbc->is_connected()) {
-		check_for_exist(user_id);
-		std::string request = "INSERT INTO subs_table(user_id, username, sub_start_date, sub_end_date) VALUES (\'" + user_id_str + "\', \'" + username + "\', \'" + s_start + "\', \'" + s_end + "\');";
+		std::string request = "INSERT INTO subs_table(user_id, sub_start_date, sub_end_date) VALUES (\'" + user_id_str + "\', \'" + s_start + "\', \'" + s_end + "\');";
 		dbc->query(request);
 	}
 	else
 		throw std::runtime_error("Database doesn't connected");
 
 }
-void DataBase::delete_sub(int id) {
+void DataBase::delete_sub(int user_id) {
 	if(dbc->is_connected()) {
-		check_for_exist(id);
-		std::string request = "DELETE FROM subs_table WHERE user_id=" + std::to_string(id) + ";";
+		check_for_exist(user_id);
+		std::string request = "DELETE FROM subs_table WHERE user_id=" + std::to_string(user_id) + ";";
 		dbc->query(request);
 	}
 	else {
@@ -119,18 +134,10 @@ std::string DataBase::time_to_string(time_t t) {
 	return std::string(c);
 }
 
-void DataBase::check_for_exist(int id) {
-	std::string request = "SELECT * FROM subs_table WHERE user_id=" + std::to_string(id) + ";";
+void DataBase::check_for_exist(int user_id) {
+	std::string request = "SELECT * FROM subs_table WHERE user_id=" + std::to_string(user_id) + ";";
 	auto query_res_ptr = dbc->query(request);
 	auto row = query_res_ptr->get_row();
 	if(!row)
 		throw std::runtime_error("User doesn't exist");
-}
-
-void DataBase::check_for_exist(std::string name) {
-	std::string request = "SELECT * FROM subs_table WHERE username=\'" + name + "\';";
-	auto query_res_ptr = dbc->query(request);
-	auto row = query_res_ptr->get_row();
-	if(row)
-		throw std::runtime_error("User has already exist");
 }

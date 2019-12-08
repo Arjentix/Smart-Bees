@@ -137,9 +137,12 @@ string get_gate_id(json const& req_body) {
 		throw runtime_error("ID sevice is not responding");
 }
 
-void ac_send(json const& req_body) {
+// send_code = 0 for send command
+// send_code = 1 for check gate
+void ac_send(json const& req_body, int const& send_code) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
+	HTTPHandler::Request request;
 	json ans_body;
 
 	client.connect_to_server(
@@ -149,14 +152,23 @@ void ac_send(json const& req_body) {
 	
 	if(client.is_connected()) {
 		logger << "Successfully connected to AC service" << endl;
-
-		HTTPHandler::Request request = 
-			build_request(
-					HTTPHandler::Method::POST, 
-					"/", 
-					ConfigReader::reader.read_value_by_key<string>("AC_API_KEY"),
-					req_body.dump(4)
-			);
+		if(send_code == 0) {
+			request = 
+				build_request(
+						HTTPHandler::Method::POST, 
+						"/", 
+						ConfigReader::reader.read_value_by_key<string>("AC_API_KEY"),
+						req_body.dump(4)
+				);
+		}
+		else if(send_code == 1) {
+			request = 
+				build_request(
+						HTTPHandler::Method::GET, 
+						"/connection?gate_id=" + req_body["gate_id"].get<string>(), 
+						ConfigReader::reader.read_value_by_key<string>("AC_API_KEY")
+				);
+		}
 
 		logger << "AC service request:\n" << request_to_str(request) << endl;
 		client.send_request(request);
@@ -185,32 +197,61 @@ void check_for_api_key(string const& api_key) {
 		throw runtime_error("API key is incorrect");
 }
 
-HTTPHandler::Answer check_all(HTTPHandler::Request request) {
-	HTTPHandler::Answer answer;
+json check_all(HTTPHandler::Request request) {
 	json answer_json;
 	string gate_id;
 	
+	json req_body = json::parse(request.body);
+
+	check_sub(req_body);
+
+	gate_id = get_gate_id(req_body);
+
+	req_body["gate_id"] = gate_id;
+	ac_send(req_body, 0);
+
+	return answer_json;
+	
+}
+
+
+HTTPHandler::Answer choose_way(HTTPHandler::Request request) {
+	HTTPHandler::Answer answer;
+	json answer_body;
+	json req_body;
+	string gate_id;
+
 	try {
 		check_for_api_key(request.headers.at("Api-Key"));
 
-		json req_body = json::parse(request.body);
 
-		check_sub(req_body);
-
-		gate_id = get_gate_id(req_body);
-
-		req_body["gate_id"] = gate_id;
-		ac_send(req_body);
-
+		switch(request.method) {
+			case HTTPHandler::Method::POST:
+				answer_body = check_all(request);
+				break;
+			case HTTPHandler::Method::GET:
+				if(request.uri == "/sub_check") {
+						check_sub(req_body);
+				} else if(request.uri == "/gate_id") {
+						gate_id = get_gate_id(req_body);
+						answer_body["gate_id"] = gate_id;
+				} else if(request.uri == "/gate_check") {
+						gate_id = get_gate_id(req_body);
+						req_body["gate_id"] = gate_id;
+						ac_send(req_body, 1);
+				}
+				break;
+		}
+		set_ok(answer);
     } catch (exception& e) {
 		set_bad_request(answer);
-	   	answer_json["error_message"] = e.what();
+	   	answer_body["error_message"] = e.what();
 		logger << "[EXCEPTION] " << e.what() << endl;
     }
-	
-	answer.body = answer_json.dump(4);
+	answer.body = answer_body.dump(4);
 	return answer;
 }
+
 
 int main(int argc, char** argv)
 {
@@ -260,7 +301,7 @@ int main(int argc, char** argv)
 			logger << "Voice Assistant request:\n" << request_to_str(request) << endl;
 
 			logger << "Starting to send requests to all services..." << endl;
-			HTTPHandler::Answer answer = check_all(request);
+			HTTPHandler::Answer answer = choose_way(request);
 			logger << "Answer to Voice Assistant:\n" << answer_to_str(answer) << endl;
 
 			logger << "Sending answer to Voice Assistant..." << endl;

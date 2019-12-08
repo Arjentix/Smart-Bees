@@ -75,7 +75,6 @@ HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& reque
 				break;
 			case HTTPHandler::Method::POST:
 				db.insert_sub(args_json["user_id"].get<string>(), 
-							  args_json["username"].get<string>(), 
 							  args_json["sub_start_date"].get<string>(), 
 							  args_json["sub_end_date"].get<string>()
 							 );
