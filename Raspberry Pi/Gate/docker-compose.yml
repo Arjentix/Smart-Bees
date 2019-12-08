@@ -1,0 +1,13 @@
+version: '3'
+services:
+  gate:
+      build:
+        context: .
+        dockerfile: ./Dockerfile
+      ports:
+        - "18830:1883"
+      volumes:
+        - "./config.txt:/app/config.txt"
+        - "./photon.conf:/app/photon.conf"
+        - "./token.base:/app/token.base"
+        - "./app/log/:/app/log"
