@@ -72,6 +72,12 @@ if(NOT TARGET database)
 	add_subdirectory(${DATABASE_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/database)
 endif()
 
+
+# Searching for Threads lib
+find_package(Threads REQUIRED)
+
+# --------------------------
+
 set(SOURCE_EXE main.cpp)
 
 # --------------------------
@@ -95,6 +101,7 @@ target_include_directories(SubscribeService PRIVATE
 )
 
 target_link_libraries(SubscribeService
+		${CMAKE_THREAD_LIBS_INIT}
 		HTTPServer
 		ConfigReader
 		Logger
