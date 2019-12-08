@@ -13,6 +13,7 @@
 #include <future>
 #include <thread>
 #include <iostream>
+#include <functional>
 
 
 using namespace std;
@@ -117,7 +118,7 @@ void signal_handler(int) {
 
 //DataBase db;
 
-void handle_client(int client_sock, DataBase db)
+void handle_client(int client_sock, DataBase &db)
 {
 	HTTPHandler::Answer answer;
 
@@ -197,7 +198,7 @@ int main(int argc, char** argv) {
 			logger << "Awaiting for connection..." << endl;
 			int client_sock = server.connect_client();
 			logger << "Client with id: " << client_sock << " was connected" << endl;
-			futures.push_back(async(handle_client, client_sock, db));
+			futures.push_back(async(handle_client, client_sock, std::ref(db)));
 		}
 
     } catch (exception& e) {
