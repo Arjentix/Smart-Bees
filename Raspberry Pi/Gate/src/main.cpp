@@ -5,6 +5,7 @@
 * Date: 03.05.19
 */
 
+#include "ConfigReader.h"
 #include "PhotonConfigReader.h"
 #include "AliceConnector.h"
 #include "MQTTPublisher.h"
@@ -65,12 +66,33 @@ int main(int argc, char** argv)
 	try {
 		LogPrinter::print("!!!---Program started---!!!");
 
+		ConfigReader::reader.set_file_name("config.txt");
+		ConfigReader::reader.read_config();
+
 		/* Initialization */
-		PhotonConfigReader	photon_conf_reader("photon.conf");	// Reads config and gets new topic for every Photon
-		AliceConnector		alice_conn("********", 4551);	// Does all communication with Alice
-		// AliceConnector		alice_conn("localhost", 4551);	// Does all communication with Alice
-		MQTTPublisher		mqtt_pub("localhost", 1883);		// Does publishing messages to the MQTT topics
-		TokenHandler		tok_hand("token.base");				// Checks for existing token and returns relevant parameters
+
+		// Reads config and gets new topic for every Photon
+		PhotonConfigReader	photon_conf_reader(
+			ConfigReader::reader.read_value_by_key<string>("PHOTON_CONFIG_FILE")
+		);
+
+		// Does all communication with Alice
+		AliceConnector		alice_conn(
+			ConfigReader::reader.read_value_by_key<string>("ACTIVE_CONNECTIONS_SERVICE_IP"),
+			ConfigReader::reader.read_value_by_key<int>("ACTIVE_CONNECTIONS_SERVICE_PORT")
+		);
+
+		// Does publishing messages to the MQTT topics
+		MQTTPublisher		mqtt_pub(
+			ConfigReader::reader.read_value_by_key<string>("MQTT_BROKER_IP"),
+			ConfigReader::reader.read_value_by_key<int>("MQTT_BROKER_PORT")
+		);
+
+		// Checks for existing token and returns relevant parameters
+		TokenHandler		tok_hand(
+			ConfigReader::reader.read_value_by_key<string>("TOKENS_CONFIG_FILE")
+		);
+
 		string				token;
 		string				topic;
 		string				command;

@@ -11,6 +11,15 @@ set(SOURCE_EXE
 		TokenHandler.cpp
 )
 
+# Adding ConfigReader
+set(
+	CONFIG_READER_INCLUDE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/ConfigReader
+)
+if(NOT TARGET ConfigReader)
+	add_subdirectory(${CONFIG_READER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ConfigReader)
+endif()
+
 # Adding path to the FindMosquitto.cmake
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -28,8 +37,15 @@ set_target_properties(gate PROPERTIES
 		CXX_EXTENSIONS ON
 )
 
-target_include_directories(gate PUBLIC ${MOSQUITTO_INCLUDE_DIR})
-target_link_libraries(gate ${MOSQUITTO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_include_directories(gate PUBLIC
+	${CONFIG_READER_INCLUDE_DIR}
+	${MOSQUITTO_INCLUDE_DIR}
+)
+target_link_libraries(gate
+	ConfigReader
+	${MOSQUITTO_LIBRARIES}
+	${CMAKE_THREAD_LIBS_INIT}
+)
 
 # Installing
 install(TARGETS gate DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../bin)
