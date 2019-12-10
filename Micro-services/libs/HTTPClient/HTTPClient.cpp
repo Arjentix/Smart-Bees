@@ -97,7 +97,7 @@ HTTPHandler::Answer HTTPClient::read_answer(){
 		cont_len = atoi(parsed_answer.headers.at("content-length").c_str());
 	}
 	else {
-		throw std::runtime_error("Expected Content-Length header");
+		return parsed_answer;
 	}
 
 	parsed_answer.body += get_n_bytes(cont_len - parsed_answer.body.size());
