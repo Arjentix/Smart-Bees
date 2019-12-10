@@ -102,7 +102,7 @@ HTTPHandler::Answer HTTPClient::read_answer() {
 std::string HTTPClient::read_raw() {
 	std::string buffer = get_n_bytes(bufsize);
 
-	while (buffer.find_first_of("\r\n\r\n") == std::string::npos) {
+	while (buffer.find("\r\n\r\n") == std::string::npos) {
 		buffer += get_n_bytes(bufsize);
 	}
 
