@@ -42,11 +42,11 @@ HTTPClient::HTTPClient() : connected(false) {
     }
 }
 
-HTTPClient::~HTTPClient(){
+HTTPClient::~HTTPClient() {
     close(client);
 }
 
-bool HTTPClient::connect_to_server(std::string ip, int port){
+bool HTTPClient::connect_to_server(std::string ip, int port) {
     
     // Setting server address
     sockaddr_in server_addr;
@@ -67,7 +67,7 @@ bool HTTPClient::connect_to_server(std::string ip, int port){
     return connected;
 }
 
-bool HTTPClient::is_connected(){
+bool HTTPClient::is_connected() {
     return connected;
 }
 
@@ -79,13 +79,7 @@ void HTTPClient::send_request(HTTPHandler::Request request){
     send(client, req_str.c_str(), req_str.size(), 0);
 }
 
-HTTPHandler::Answer HTTPClient::read_answer(){
-    // std::string answer;
-    // char buffer[bufsize];
-    // recv(client, buffer, bufsize, 0);
-    // answer = buffer;
-    // return HTTPHandler::parse_answer(answer);
-
+HTTPHandler::Answer HTTPClient::read_answer() {
 	std::string raw_answer = read_raw();
 	auto parsed_answer = HTTPHandler::parse_answer(raw_answer);
 
@@ -106,9 +100,15 @@ HTTPHandler::Answer HTTPClient::read_answer(){
 }
 
 std::string HTTPClient::read_raw() {
-	return get_n_bytes(bufsize);
+	std::string buffer = get_n_bytes(bufsize);
+
+	while (buffer.find_first_of("\r\n\r\n") == std::string::npos) {
+		buffer += get_n_bytes(bufsize);
+	}
+
+	return buffer;
 }
 
-void HTTPClient::close_conn(){
+void HTTPClient::close_conn() {
     close(client);
 }
