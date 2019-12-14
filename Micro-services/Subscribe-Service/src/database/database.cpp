@@ -52,7 +52,7 @@ bool DataBase::check_for_sub(std::string user_id) {
 		check_for_exist(user_id);
 		struct tm tm_b;
 		struct tm tm_e;
-		std::string request = "SELECT sub_start_date, sub_end_date FROM subs_table WHERE user_id=" + user_id + ";";
+		std::string request = "SELECT sub_start_date, sub_end_date FROM subs_table WHERE user_id='" + user_id + "';";
 		auto query_res_ptr = dbc->query(request);
 		auto row = query_res_ptr->get_row();
 		strptime(std::string(row[0]).c_str(), "%F %H:%M", &tm_b);
@@ -81,7 +81,7 @@ DataBase::Time DataBase::time_left(std::string user_id) {
 		if(check_for_sub(user_id) == 0)
 			return Time(0, 0, 0);
 		struct tm tm_e;
-		std::string request = "SELECT sub_end_date FROM subs_table WHERE user_id=" + user_id + ";";
+		std::string request = "SELECT sub_end_date FROM subs_table WHERE user_id='" + user_id + "';";
 		auto query_res_ptr = dbc->query(request);
 		auto row = query_res_ptr->get_row();
 		strptime(std::string(row[0]).c_str(), "%F %H:%M", &tm_e);
@@ -116,7 +116,7 @@ void DataBase::insert_sub(std::string user_id, std::string s_start, std::string 
 void DataBase::delete_sub(std::string user_id) {
 	if(dbc->is_connected()) {
 		check_for_exist(user_id);
-		std::string request = "DELETE FROM subs_table WHERE user_id=" + user_id + ";";
+		std::string request = "DELETE FROM subs_table WHERE user_id='" + user_id + "';";
 		dbc->query(request);
 	}
 	else {
@@ -133,7 +133,7 @@ std::string DataBase::time_to_string(time_t t) {
 }
 
 void DataBase::check_for_exist(std::string user_id) {
-	std::string request = "SELECT * FROM subs_table WHERE user_id=" + user_id + ";";
+	std::string request = "SELECT * FROM subs_table WHERE user_id='" + user_id + "';";
 	auto query_res_ptr = dbc->query(request);
 	auto row = query_res_ptr->get_row();
 	if(!row)

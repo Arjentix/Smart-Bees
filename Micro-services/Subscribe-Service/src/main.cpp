@@ -53,9 +53,9 @@ HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& reque
 		switch(request.method) {
 			case HTTPHandler::Method::GET:
 				if(request.uri == "/sub_status")
-					answer_json["sub_status"] = db.check_for_sub(args_json["user_id"].get<string>());
+					answer_json["sub_status"] = db.check_for_sub(request.variables.at("user_id"));
 				else if(request.uri == "/sub_left") {
-					DataBase::Time t_r = db.time_left(args_json["user_id"].get<string>());
+					DataBase::Time t_r = db.time_left(request.variables.at("user_id"));
 					answer_json["minutes"] = t_r.minutes;
 					answer_json["hours"] = t_r.hours;
 					answer_json["days"] = t_r.days;
@@ -78,7 +78,7 @@ HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& reque
 							 );
 				break;
 			case HTTPHandler::Method::DELETE:
-				db.delete_sub(args_json["user_id"].get<string>());
+				db.delete_sub(request.variables.at("user_id"));
 				break;
 			default:
 				throw runtime_error("Unknown HTTP Method");
