@@ -134,6 +134,7 @@ int main(int argc, char** argv)
 							LogPrinter::print("Command: " + command);
 							LogPrinter::print("Publishing");
 							mqtt_pub.publish(topic, command, false);
+							LogPrinter::print("Sending OK");
 							alice_conn.send_ok();
 						}
 						else {
