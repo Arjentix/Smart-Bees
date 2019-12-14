@@ -66,17 +66,20 @@ string answer_to_str(HTTPHandler::Answer const& answer) {
 	return result_ss.str();
 }
 
-void check_sub(json const& req_body) {
+void check_sub(HTTPHandler::Request const& request, int const& send_code) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	string user_id = req_body["user_id"].get<string>();
+	string user_id;
+	if(send_code == 0)
+		user_id = req_body["user_id"].get<string>();
+	else if(send_code == 1)
+		user_id = request.variables.at("user_id");
 
 	client.connect_to_server(
 		ConfigReader::reader.read_value_by_key<string>("SUB_SERVICE_HOST"),
 		ConfigReader::reader.read_value_by_key<int>("SUB_SERVICE_PORT")
 	);
-
 
 	if(client.is_connected()) {
 		logger << "Successfully connected to Subscribe service" << endl;
@@ -95,8 +98,14 @@ void check_sub(json const& req_body) {
 		logger << "Subscribe service answer:\n" << answer_to_str(answer) << endl;
 
 		ans_body = json::parse(answer.body);
-		if(ans_body["status"] == "error")
-			throw runtime_error(ans_body["error_message"].get<string>());
+
+		if(answer.status_code != 200 && !answer.body.empty()) {
+			ans_body = json::parse(answer.body);
+			if(ans_body["error_message"] != nullptr)
+				throw runtime_error(ans_body["error_message"].get<string>());
+			else
+				throw runtime_error("Unknown error");
+		}
 		else if(ans_body["sub_status"].get<bool>() == false)
 			throw runtime_error("Subscribe is invalid");
 	}
@@ -104,11 +113,16 @@ void check_sub(json const& req_body) {
 		throw runtime_error("Subscribe sevice is not responding");
 }
 
-string get_gate_id(json const& req_body) {
+string get_gate_id(HTTPHandler::Request const& request, int const& send_code) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	string user_id = req_body["user_id"].get<string>();
+	json req_body = json::parse(request.body);
+	string user_id;
+	if(send_code == 0)
+		user_id = req_body["user_id"].get<string>();
+	else if(send-code == 1)
+		user_id = request.variables.at("user_id"); 
 
 	client.connect_to_server(
 		ConfigReader::reader.read_value_by_key<string>("ID_SERVICE_HOST"),
@@ -132,8 +146,14 @@ string get_gate_id(json const& req_body) {
 		logger << "ID service answer:\n" << answer_to_str(answer) << endl;
 
 		ans_body = json::parse(answer.body);
-		if(ans_body["status"].get<string>() == "error")
-			throw runtime_error(ans_body["error_message"].get<string>());
+
+		if(answer.status_code != 200 && !answer.body.empty()) {
+			ans_body = json::parse(answer.body);
+			if(ans_body["error_message"] != nullptr)
+				throw runtime_error(ans_body["error_message"].get<string>());
+			else
+				throw runtime_error("Unknown error");
+		}
 		else
 			return ans_body["gate_id"].get<string>();
 	}
@@ -235,12 +255,12 @@ HTTPHandler::Answer choose_way(HTTPHandler::Request request) {
 				break;
 			case HTTPHandler::Method::GET:
 				if(request.uri == "/sub_check") {
-						check_sub(req_body);
+						check_sub(request, 1);
 				} else if(request.uri == "/gate_id") {
-						gate_id = get_gate_id(req_body);
+						gate_id = get_gate_id(request, 1);
 						answer_body["gate_id"] = gate_id;
 				} else if(request.uri == "/gate_check") {
-						gate_id = get_gate_id(req_body);
+						gate_id = get_gate_id(request, 1);
 						req_body["gate_id"] = gate_id;
 						ac_send(req_body, 1);
 				}
