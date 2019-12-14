@@ -71,8 +71,10 @@ void check_sub(HTTPHandler::Request const& request, int const& send_code) {
 	HTTPHandler::Answer answer;
 	json ans_body;
 	string user_id;
-	if(send_code == 0)
+	if(send_code == 0) {
+		json req_body = json::parse(request.body);
 		user_id = req_body["user_id"].get<string>();
+	}
 	else if(send_code == 1)
 		user_id = request.variables.at("user_id");
 
@@ -117,11 +119,12 @@ string get_gate_id(HTTPHandler::Request const& request, int const& send_code) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	json req_body = json::parse(request.body);
 	string user_id;
-	if(send_code == 0)
+	if(send_code == 0) {
+		json req_body = json::parse(request.body);
 		user_id = req_body["user_id"].get<string>();
-	else if(send-code == 1)
+	}
+	else if(send_code == 1)
 		user_id = request.variables.at("user_id"); 
 
 	client.connect_to_server(
@@ -227,9 +230,9 @@ json check_all(HTTPHandler::Request request) {
 	
 	json req_body = json::parse(request.body);
 
-	check_sub(req_body);
+	check_sub(request, 0);
 
-	gate_id = get_gate_id(req_body);
+	gate_id = get_gate_id(request, 0);
 
 	req_body["gate_id"] = gate_id;
 	ac_send(req_body, 0);
