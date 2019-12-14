@@ -58,8 +58,40 @@ def handle_dialog(req, res):
 		if (gateproc.is_gate_connected(gate_serial)):'''
 	if req['session']['new']:
 		# Это новая сессия.
-			res['response']['text'] = 'Привет! Что мне включить?'
-			return;
+		answer = requests.get(
+			'http://localhost:3200/gate_id?user_id={}'.format(user_id),
+			headers = {'Api-Key' : 'Manager12345'}
+		)
+		if not answer.ok:
+			res['response']['text'] = 'Вы еще не зарегистрированы'
+			return
+
+		answer = requests.get(
+			'http://localhost:3200/sub_check?user_id={}'.format(user_id),
+			headers = {'Api-Key' : 'Manager12345'}
+		)
+		if not answer.ok:
+			res['response']['text'] = 'Необходимо продлить подписку для пользования сервисом'
+			return
+
+		answer = requests.get(
+			'http://localhost:3200/sub_check?user_id={}'.format(user_id),
+			headers = {'Api-Key' : 'Manager12345'}
+		)
+		if not answer.ok:
+			res['response']['text'] = 'Необходимо продлить подписку для пользования сервисом'
+			return
+
+		answer = requests.get(
+			'http://localhost:3200/gate_check?user_id={}'.format(user_id),
+			headers = {'Api-Key' : 'Manager12345'}
+		)
+		if not answer.ok:
+			res['response']['text'] = 'Кажется, ваш шлюз не подключен к сети'
+			return
+
+		res['response']['text'] = 'Привет! Что мне включить?'
+		return
 	else:
 		# Обрабатываем ответ пользователя.
 		tokens = req['request']['nlu']['tokens']
