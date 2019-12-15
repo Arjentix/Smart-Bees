@@ -14,6 +14,7 @@
 
 #include <fstream>
 #include <string>
+#include <iostream>
 #include <sstream>
 #include <mutex>
 
@@ -33,12 +34,17 @@ public:
 	 * Logger() - takes name of the log file as a parameter.
 	 * All content of file will be discarded.
 	 */
-	Logger(const std::string& file_name);
+	Logger(const std::string& file_name, bool std_ouput = true);
 
 	/**
 	 * open() - opens another file and close previous.
 	 */
 	void open(const std::string& file_name);
+
+	/**
+	 * set_std_output() - change flag for writing to the std output
+	 */
+	void set_std_output(bool flag);
 
 	// Using cout-like interface
 	template <typename T>
@@ -59,12 +65,17 @@ public:
 			_log_file.open(_file_name, std::ios::out | std::ios::trunc);
 		}
 		_log_file << "[" << _get_current_time() << "]::" << _sstream.str() << std::endl;
+		if (_std_output == true) {
+			std::cout << "[" << _get_current_time() << "]::" << _sstream.str() << std::endl;
+		}
+
 		_sstream = std::stringstream();
 
 		return *this;
 	}
 private:
 	std::string _file_name;
+	bool _std_output;
 	std::ofstream _log_file;
 	std::stringstream _sstream;
 	std::mutex _locker;

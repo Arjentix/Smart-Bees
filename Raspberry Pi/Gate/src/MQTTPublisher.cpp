@@ -10,7 +10,7 @@
 #include <cstring>
 #include <errno.h>
 
-#define KEEP_ALIVE 120
+#define KEEP_ALIVE 0
 
 /*
 * This file defines class MQTTPublisher described in MQTTPublisher.h.
@@ -87,6 +87,25 @@ void MQTTPublisher::publish(const std::string& topic, const std::string& mes, bo
 				"MQTT publishing failed cause of payload is too large"
 			);
 			break;
+		case MOSQ_ERR_MALFORMED_UTF8:
+			throw std::runtime_error(
+				"MQTT publishing failed cause of topic is not valid UTF-8"
+			);
+			break;
+		// case MOSQ_ERR_QOS_NOT_SUPPORTED:
+		// 	throw std::runtime_error(
+		// 		"MQTT publishing failed cause the QoS is greater than that supported by the broker"
+		// 	);
+		// 	break;
+		// case MOSQ_ERR_OVERSIZE_PACKET:
+		// 	throw std::runtime_error(
+		// 		"MQTT publishing failed cause he resulting packet would be larger than supported by the broker"
+		// 	);
+		// 	break;
+		default:
+			throw std::runtime_error(
+				"MQTT publishing failed cause unknown error with error code = " + std::to_string(res)
+			);
 		}
 	}
 }
