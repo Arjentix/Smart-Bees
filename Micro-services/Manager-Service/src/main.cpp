@@ -97,13 +97,17 @@ void check_sub(string gate_id) {
 		if(answer.status_code != 200 && !answer.body.empty()) {
 			ans_body = json::parse(answer.body);
 			if(ans_body["error_message"] != nullptr)
-				throw runtime_error(ans_body["error_message"].get<string>());
+				logger << "[EXCEPTION] " << ans_body["error_message"].get<string>() << endl;
 			else
-				throw runtime_error("Unknown error");
+				logger << "[EXCEPTION] " << "Unknown error" << endl;
+
+			throw runtime_error("Необходимо продлить подписку для пользования сервисом");
 		}
 		else if(ans_body["sub_status"] != nullptr) {
-			if(ans_body["sub_status"].get<bool>() == false)
-				throw runtime_error("Subscribe is invalid");
+			if(ans_body["sub_status"].get<bool>() == false) {
+				logger << "[EXCEPTION] " << "Subscribe is invalid" << endl;
+				throw runtime_error("Необходимо продлить подписку для пользования сервисом");
+			}
 		} 
 		else
 			throw runtime_error("Incorrect service answer");
@@ -143,9 +147,10 @@ string get_gate_id(string user_id) {
 		if(answer.status_code != 200 && !answer.body.empty()) {
 			ans_body = json::parse(answer.body);
 			if(ans_body["error_message"] != nullptr)
-				throw runtime_error(ans_body["error_message"].get<string>());
+				logger << "[EXCEPTION] " << ans_body["error_message"].get<string>() << endl;
 			else
-				throw runtime_error("Unknown error");
+				logger << "[EXCEPTION] " << "Unknown error" << endl;
+			throw runtime_error("Вы еще не зарегистрированы");
 		}
 		else if(ans_body["gate_id"] != nullptr)
 			return ans_body["gate_id"].get<string>();
@@ -198,9 +203,10 @@ void ac_send(json const& req_body, int const& send_code) {
 		if(answer.status_code != 200 && !answer.body.empty()) {
 			ans_body = json::parse(answer.body);
 			if(ans_body["error_message"] != nullptr)
-				throw runtime_error(ans_body["error_message"].get<string>());
+				logger << "[EXCEPTION] " << ans_body["error_message"].get<string>() << endl;
 			else
-				throw runtime_error("Unknown error");
+				logger << "[EXCEPTION] " << "Unknown error" << endl;
+			throw runtime_error("Кажется, вас шлюз не подключен к сети");
 		}
 	}
 	else
