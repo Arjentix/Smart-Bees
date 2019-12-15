@@ -53,9 +53,9 @@ HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& reque
 		switch(request.method) {
 			case HTTPHandler::Method::GET:
 				if(request.uri == "/sub_status")
-					answer_json["sub_status"] = db.check_for_sub(request.variables.at("user_id"));
+					answer_json["sub_status"] = db.check_for_sub(request.variables.at("gate_id"));
 				else if(request.uri == "/sub_left") {
-					DataBase::Time t_r = db.time_left(request.variables.at("user_id"));
+					DataBase::Time t_r = db.time_left(request.variables.at("gate_id"));
 					answer_json["minutes"] = t_r.minutes;
 					answer_json["hours"] = t_r.hours;
 					answer_json["days"] = t_r.days;
@@ -65,20 +65,20 @@ HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& reque
 				break;
 			case HTTPHandler::Method::PUT:
 				args_json = json::parse(request.body);
-				db.update_sub(args_json["user_id"].get<string>(), 
+				db.update_sub(args_json["gate_id"].get<string>(), 
 							  args_json["sub_start_date"].get<string>(), 
 							  args_json["sub_end_date"].get<string>()
 							 );
 				break;
 			case HTTPHandler::Method::POST:
 				args_json = json::parse(request.body);
-				db.insert_sub(args_json["user_id"].get<string>(), 
+				db.insert_sub(args_json["gate_id"].get<string>(), 
 							  args_json["sub_start_date"].get<string>(), 
 							  args_json["sub_end_date"].get<string>()
 							 );
 				break;
 			case HTTPHandler::Method::DELETE:
-				db.delete_sub(request.variables.at("user_id"));
+				db.delete_sub(request.variables.at("gate_id"));
 				break;
 			default:
 				throw runtime_error("Unknown HTTP Method");
@@ -115,8 +115,6 @@ string answer_to_str(HTTPHandler::Answer const& answer) {
 void signal_handler(int) {
 	finish = true;
 }
-
-//DataBase db;
 
 void handle_client(int client_sock, DataBase &db)
 {
