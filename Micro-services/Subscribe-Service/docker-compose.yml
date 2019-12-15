@@ -24,5 +24,5 @@ services:
         ports:
             - "33060:3306"
         volumes:
-            - "./db_dir/data/mysql:/var/lib/mysql"
+            #- "./db_dir/data/mysql:/var/lib/mysql"
             - "./db_dir/init.sql:/data/application/init.sql"
