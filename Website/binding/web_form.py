@@ -1,5 +1,5 @@
 from django import forms
-from binding.models import gate_uid
+#from binding.models import gate_uid
 
 
 class web_form(forms.Form):

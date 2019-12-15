@@ -7,7 +7,7 @@ urlpatterns = [
     # path('unbind/a=<str:gate>&b=<str:uid>', unbind),
     # path('subscription', subscription),
     # path('', index)
-    path('gate/<str:gate>',devices),
+    path('gate/<str:gate>', devices),
     path('unbind/a=<str:gate>&b=<str:uid>', unbind),
     path('subscribe/<str:gate>',subscription),
     path('config_editor/<str:gate>', config_editor)
