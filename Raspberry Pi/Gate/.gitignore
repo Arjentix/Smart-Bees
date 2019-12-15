@@ -1,0 +1,7 @@
+*.o
+*Test
+test/bin/*
+bin/*
+log/*
+build/*
+app/*
