@@ -66,17 +66,10 @@ string answer_to_str(HTTPHandler::Answer const& answer) {
 	return result_ss.str();
 }
 
-void check_sub(HTTPHandler::Request const& request, int const& send_code) {
+void check_sub(string gate_id) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	string user_id;
-	if(send_code == 0) {
-		json req_body = json::parse(request.body);
-		user_id = req_body["user_id"].get<string>();
-	}
-	else if(send_code == 1)
-		user_id = request.variables.at("user_id");
 
 	client.connect_to_server(
 		ConfigReader::reader.read_value_by_key<string>("SUB_SERVICE_HOST"),
@@ -89,7 +82,7 @@ void check_sub(HTTPHandler::Request const& request, int const& send_code) {
 		HTTPHandler::Request request = 
 			build_request(
 					HTTPHandler::Method::GET, 
-					"/sub_status?user_id=" + user_id,
+					"/sub_status?gate_id=" + gate_id,
 					ConfigReader::reader.read_value_by_key<string>("SUB_API_KEY")
 			);
 		
@@ -108,24 +101,21 @@ void check_sub(HTTPHandler::Request const& request, int const& send_code) {
 			else
 				throw runtime_error("Unknown error");
 		}
-		else if(ans_body["sub_status"].get<bool>() == false)
-			throw runtime_error("Subscribe is invalid");
+		else if(ans_body["sub_status"] != nullptr) {
+			if(ans_body["sub_status"].get<bool>() == false)
+				throw runtime_error("Subscribe is invalid");
+		} 
+		else
+			throw runtime_error("Incorrect service answer");
 	}
 	else
 		throw runtime_error("Subscribe sevice is not responding");
 }
 
-string get_gate_id(HTTPHandler::Request const& request, int const& send_code) {
+string get_gate_id(string user_id) {
 	HTTPClient client;
 	HTTPHandler::Answer answer;
 	json ans_body;
-	string user_id;
-	if(send_code == 0) {
-		json req_body = json::parse(request.body);
-		user_id = req_body["user_id"].get<string>();
-	}
-	else if(send_code == 1)
-		user_id = request.variables.at("user_id"); 
 
 	client.connect_to_server(
 		ConfigReader::reader.read_value_by_key<string>("ID_SERVICE_HOST"),
@@ -157,8 +147,10 @@ string get_gate_id(HTTPHandler::Request const& request, int const& send_code) {
 			else
 				throw runtime_error("Unknown error");
 		}
-		else
+		else if(ans_body["gate_id"] != nullptr)
 			return ans_body["gate_id"].get<string>();
+		else
+			throw runtime_error("Incorrect service answer");
 	}
 	else
 		throw runtime_error("ID sevice is not responding");
@@ -224,29 +216,32 @@ void check_for_api_key(string const& api_key) {
 		throw runtime_error("API key is incorrect");
 }
 
-json check_all(HTTPHandler::Request request) {
+json check_all(HTTPHandler::Request const& request) {
 	json answer_json;
-	string gate_id;
-	
+	string gate_id, user_id;
 	json req_body = json::parse(request.body);
 
-	check_sub(request, 0);
+	if(req_body["user_id"] != nullptr)
+		user_id = req_body["user_id"].get<string>();
+	else
+		throw runtime_error("Incorrect request body");
 
-	gate_id = get_gate_id(request, 0);
-
+	gate_id = get_gate_id(user_id);
 	req_body["gate_id"] = gate_id;
+
+	check_sub(gate_id);
+
 	ac_send(req_body, 0);
 
 	return answer_json;
-	
 }
 
 
-HTTPHandler::Answer choose_way(HTTPHandler::Request request) {
+HTTPHandler::Answer choose_way(HTTPHandler::Request const& request) {
 	HTTPHandler::Answer answer;
 	json answer_body;
 	json req_body;
-	string gate_id;
+	string gate_id, user_id;
 
 	try {
 		check_for_api_key(request.headers.at("Api-Key"));
@@ -257,15 +252,29 @@ HTTPHandler::Answer choose_way(HTTPHandler::Request request) {
 				answer_body = check_all(request);
 				break;
 			case HTTPHandler::Method::GET:
-				if(request.uri == "/sub_check") {
-						check_sub(request, 1);
+				json req_body = json::parse(request.body);
+				if(req_body["user_id"] != nullptr)
+					user_id = req_body["user_id"].get<string>();
+				else
+					throw runtime_error("Incorrect request body");
+				if(request.uri == "/all_check") {
+					gate_id = get_gate_id(user_id);
+					req_body["gate_id"] = gate_id;
+					check_sub(gate_id);
+					ac_send(req_body, 1);
+				}
+				else if(request.uri == "/sub_check") {
+					gate_id = get_gate_id(user_id);
+					check_sub(gate_id);
 				} else if(request.uri == "/gate_id") {
-						gate_id = get_gate_id(request, 1);
-						answer_body["gate_id"] = gate_id;
+					gate_id = get_gate_id(user_id);
+					answer_body["gate_id"] = gate_id;
 				} else if(request.uri == "/gate_check") {
-						gate_id = get_gate_id(request, 1);
-						req_body["gate_id"] = gate_id;
-						ac_send(req_body, 1);
+					gate_id = get_gate_id(user_id);
+					req_body["gate_id"] = gate_id;
+					ac_send(req_body, 1);
+				} else {
+					throw runtime_error("Incorrect url");
 				}
 				break;
 		}
