@@ -258,11 +258,10 @@ HTTPHandler::Answer choose_way(HTTPHandler::Request const& request) {
 				answer_body = check_all(request);
 				break;
 			case HTTPHandler::Method::GET:
-				json req_body = json::parse(request.body);
-				if(req_body["user_id"] != nullptr)
-					user_id = req_body["user_id"].get<string>();
+				if(request.variables.find("user_id") != request.variables.end())
+					user_id = request.variables.at("user_id");
 				else
-					throw runtime_error("Incorrect request body");
+					throw runtime_error("Incorrect variable in url");
 				if(request.uri == "/all_check") {
 					gate_id = get_gate_id(user_id);
 					req_body["gate_id"] = gate_id;
@@ -276,6 +275,7 @@ HTTPHandler::Answer choose_way(HTTPHandler::Request const& request) {
 					gate_id = get_gate_id(user_id);
 					answer_body["gate_id"] = gate_id;
 				} else if(request.uri == "/gate_check") {
+					json req_body;
 					gate_id = get_gate_id(user_id);
 					req_body["gate_id"] = gate_id;
 					ac_send(req_body, 1);
