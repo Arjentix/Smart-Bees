@@ -53,9 +53,6 @@ def handle_dialog(req, res):
 
 	# Проверка существования соединения со шлюзом этого пользователя 
 	# И НАЧИЯ У НЕГО ПОДПИСКИ
-	'''	gate_serial = gateproc.get_gate_for(user_id) #ПРОВЕРКА СОЕДИНЕНИЯ, У МЕНЕДЖЕРА
-	if (gate_serial != ''):
-		if (gateproc.is_gate_connected(gate_serial)):'''
 	if req['session']['new']:
 		# Это новая сессия.
 		answer = requests.get(
@@ -63,7 +60,8 @@ def handle_dialog(req, res):
 			headers = {'Api-Key' : 'Manager12345'}
 		)
 		if not answer.ok:
-			res['response']['text'] = 'Вы еще не зарегистрированы'
+			res['response']['text'] = 'Вы еще не зарегистрированы.'
+				'Следуйте инструкции по регистрации. Ваш персональдый код: {}'.format(user_id)
 			return
 
 		answer = requests.get(
