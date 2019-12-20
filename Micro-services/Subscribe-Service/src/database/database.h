@@ -39,6 +39,7 @@ public:
 	void update_sub(std::string, std::string, std::string);
 	void insert_sub(std::string, std::string, std::string);
 	void delete_sub(std::string);
+	void ping_db();
 
 	class Time {
 	public:
