@@ -63,7 +63,7 @@ def handle_dialog(response):
         print(user_id)
 
         if intent == 'actions.intent.MAIN':
-
+                query = data['inputs'][0]['rawInputs'][0]['query'].strip().lower()
                 answer = requests.get(
                                 'http://165.22.16.92:3200/gate_id?user_id={}'.format(user_id),
                                 headers = {'Api-Key' : 'Manager12345'}
@@ -100,15 +100,15 @@ def handle_dialog(response):
                         return
 
                 response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
-                        ["items"][0]["simpleResponse"]["textToSpeech"] = "Привет, что мне включить?"
+                        ["items"][0]["simpleResponse"]["textToSpeech"] = "Привет, что мне сделать?"
                 response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
-                        ["items"][0]["simpleResponse"]["displayText"] = "Привет, что мне включить?"
+                        ["items"][0]["simpleResponse"]["displayText"] = "Привет, что мне сделать?"
 
                 return
         if intent == 'actions.intent.TEXT':
 
                 print('text')
-                query = data['inputs'][0]['rawInputs'][0]['query']
+                query = data['inputs'][0]['rawInputs'][0]['query'].strip().lower()
 
                 if query == 'войти':
                         response["expectedInputs"][0].setdefault("possibleIntents", [{"intent": "actions.intent.SIGN_IN", 
