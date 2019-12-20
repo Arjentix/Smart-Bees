@@ -1,4 +1,6 @@
 FROM python:3.7.4-buster
-RUN pip install Django
+
+RUN pip install Flask
 RUN pip install requests
-COPY . /app
+
+COPY src /app
