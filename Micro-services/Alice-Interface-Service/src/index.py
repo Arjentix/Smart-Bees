@@ -60,7 +60,7 @@ def handle_dialog(req, res):
 			headers = {'Api-Key' : 'Manager12345'}
 		)
 		if not answer.ok:
-			res['response']['text'] = 'Вы еще не зарегистрированы.'
+			res['response']['text'] = 'Вы еще не зарегистрированы.'\
 				'Следуйте инструкции по регистрации. Ваш персональдый код: {}'.format(user_id)
 			return
 
