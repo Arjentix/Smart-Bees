@@ -1,0 +1,37 @@
+{
+  "actions": [
+    {
+      "description": "Default Welcome Intent",
+      "name": "MAIN",
+      "fulfillment": {
+        "conversationName": "smartBees-app"
+      },
+      "intent": {
+        "name": "actions.intent.MAIN",
+        "trigger": {
+          "queryPatterns": [
+            "Говорить с приложением мой умный дом"
+          ]
+        }
+      }
+    },
+    {
+      "description":"Enter",
+      "name": "SIGN_IN",
+      "fulfillment":{
+        "conversationName": "smartBees-app"
+      },
+      "intent":{
+        "name":"actions.intent.SIGN_IN"
+      }
+    }
+  ],
+  "conversations": {
+    "smartBees-app": {
+      "name": "smartBees-app",
+      "url": "https://eaf188fd.ngrok.io",
+      "fulfillmentApiVersion":2
+    }
+  },
+  "locale": "ru"
+}

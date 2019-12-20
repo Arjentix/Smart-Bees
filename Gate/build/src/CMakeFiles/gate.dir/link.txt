@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/gate.dir/main.cpp.o CMakeFiles/gate.dir/AliceConnector.cpp.o CMakeFiles/gate.dir/LogPrinter.cpp.o CMakeFiles/gate.dir/MQTTPublisher.cpp.o CMakeFiles/gate.dir/PhotonConfigReader.cpp.o CMakeFiles/gate.dir/TokenHandler.cpp.o  -o gate /usr/lib/x86_64-linux-gnu/libmosquitto.so -lpthread 

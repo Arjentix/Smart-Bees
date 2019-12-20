@@ -7,11 +7,8 @@ import json
 import logging
 import requests
 import sys
-sys.path.insert(0, 'src')
-
-# Импортируем модуль связи со шлюзами
-
 import socket
+sys.path.insert(0, 'src')
 
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
@@ -53,9 +50,6 @@ def handle_dialog(req, res):
 
 	# Проверка существования соединения со шлюзом этого пользователя 
 	# И НАЧИЯ У НЕГО ПОДПИСКИ
-	'''	gate_serial = gateproc.get_gate_for(user_id) #ПРОВЕРКА СОЕДИНЕНИЯ, У МЕНЕДЖЕРА
-	if (gate_serial != ''):
-		if (gateproc.is_gate_connected(gate_serial)):'''
 	if req['session']['new']:
 		# Это новая сессия.
 		answer = requests.get(
@@ -75,14 +69,6 @@ def handle_dialog(req, res):
 			return
 
 		answer = requests.get(
-			'http://localhost:3200/sub_check?user_id={}'.format(user_id),
-			headers = {'Api-Key' : 'Manager12345'}
-		)
-		if not answer.ok:
-			res['response']['text'] = 'Необходимо продлить подписку для пользования сервисом'
-			return
-
-		answer = requests.get(
 			'http://localhost:3200/gate_check?user_id={}'.format(user_id),
 			headers = {'Api-Key' : 'Manager12345'}
 		)
@@ -91,7 +77,6 @@ def handle_dialog(req, res):
 			return
 
 		res['response']['text'] = 'Привет! Что мне включить?'
-		return
 	else:
 		# Обрабатываем ответ пользователя.
 		tokens = req['request']['nlu']['tokens']
@@ -104,30 +89,10 @@ def handle_dialog(req, res):
 		if (r.status_code == 200):
 			res['response']['text'] = 'Готово!'
 		else:
-			if 'error_mes' in r.json():
-				res['response']['text'] = r.json()['error_mes']
+			if 'error_message' in r.json():
+				res['response']['text'] = r.json()['error_message']
 			else:
     				res['response']['text'] = 'Что-то пошло не так'	
-		'''else:
-			res['response']['text'] = 'Нет соединения со шлюзом'
-	else:
-		res['response']['text'] = 'Ваше устройство еще не привязано ни к какому шлюзу.\
-Следуйте инструкции по регистрации нового устройства. Ваш uID: {}'.format(user_id)'''
-
-
-
-
-# Функция возвращает подсказки для ответа.
-def get_suggests(user_id):
-	session = sessionStorage[user_id]
-
-	# Выбираем подсказки из массива.
-	suggests = [
-		{'title': suggest, 'hide': False}
-		for suggest in session['suggests']
-	]
-
-	return suggests
 
 if __name__ == '__main__':
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
