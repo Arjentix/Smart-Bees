@@ -65,38 +65,21 @@ def handle_dialog(response):
         if intent == 'actions.intent.MAIN':
                 query = data['inputs'][0]['rawInputs'][0]['query'].strip().lower()
                 answer = requests.get(
-                                'http://165.22.16.92:3200/gate_id?user_id={}'.format(user_id),
+                                'http://165.22.16.92:3200/all_check?user_id={}'.format(user_id),
                                 headers = {'Api-Key' : 'Manager12345'}
                         )
                 if not answer.ok:
-                        response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
-                                ["items"][0]["simpleResponse"]["textToSpeech"] = "Вы еще не зарегистрированы"
-                        response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
-                                ["items"][0]["simpleResponse"]["displayText"] = "Вы еще не зарегистрированы"
-                        return
+                        if 'error_message' in answer.json():
+                                response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
+                                        ["items"][0]["simpleResponse"]["textToSpeech"] = answer.json()['error_message']
+                                response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
+                                        ["items"][0]["simpleResponse"]["displayText"] = answer.json()['error_message']
+                        else:
+                                response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
+                                        ["items"][0]["simpleResponse"]["textToSpeech"] = 'Что-то пошло не так'
+                                response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
+                                        ["items"][0]["simpleResponse"]["displayText"] = 'Что-то пошло не так'
 
-                answer = requests.get(
-                        'http://165.22.16.92:3200/sub_check?user_id={}'.format(user_id),
-                        headers = {'Api-Key' : 'Manager12345'}
-                )
-
-                if not answer.ok:
-                        response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
-                                ["items"][0]["simpleResponse"]["textToSpeech"] = "Необходимо продлить подписку для пользования сервисом"
-                        response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
-                                ["items"][0]["simpleResponse"]["displayText"] = "Необходимо продлить подписку для пользования сервисом"
-                        return
-                answer = requests.get(
-                        'http://165.22.16.92:3200/gate_check?user_id={}'.format(user_id),
-                        headers = {'Api-Key' : 'Manager12345'}
-                )
-                if not answer.ok:
-                        response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
-                                ["items"][0]["simpleResponse"]["textToSpeech"] = \
-                                        "Кажется, ваш шлюз не подключен к сети"
-                        response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
-                                ["items"][0]["simpleResponse"]["displayText"] = \
-                                        "Кажется, ваш шлюз не подключен к сети"
                         return
 
                 response["expectedInputs"][0]["inputPrompt"]["richInitialPrompt"]\
