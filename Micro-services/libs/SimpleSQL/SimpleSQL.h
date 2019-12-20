@@ -114,6 +114,13 @@ namespace SimpleSQL {
 		bool is_connected();
 
 		/**
+		 * ping_db() - check if db was disconnected by time out
+		*/
+
+		void ping_db();
+
+
+		/**
 		 * query() - sends given query to the connected database.
 		 * Return type is pointer cause class Connector stores information about
 		 * last query result and releases its memory in next query() call.

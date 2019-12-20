@@ -14,7 +14,7 @@ services:
     mysql:
         container_name: mysql
         image: mysql:5.7
-        restart: on-failure
+        restart: always
         command: --init-file /data/application/init.sql
         environment:
             - MYSQL_DATABASE=AliceDB
