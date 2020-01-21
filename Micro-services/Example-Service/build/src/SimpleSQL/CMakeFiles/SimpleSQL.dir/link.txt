@@ -1,2 +1,0 @@
-/usr/bin/ar qc libSimpleSQL.a  CMakeFiles/SimpleSQL.dir/SimpleSQL.cpp.o
-/usr/bin/ranlib libSimpleSQL.a

@@ -1,8 +1,0 @@
-/home/arjentix/Projects/Smart-Bees/Micro-services/Example-Service/build/CMakeFiles/rebuild_cache.dir
-/home/arjentix/Projects/Smart-Bees/Micro-services/Example-Service/build/CMakeFiles/edit_cache.dir
-/home/arjentix/Projects/Smart-Bees/Micro-services/Example-Service/build/src/CMakeFiles/rebuild_cache.dir
-/home/arjentix/Projects/Smart-Bees/Micro-services/Example-Service/build/src/CMakeFiles/main.dir
-/home/arjentix/Projects/Smart-Bees/Micro-services/Example-Service/build/src/CMakeFiles/edit_cache.dir
-/home/arjentix/Projects/Smart-Bees/Micro-services/Example-Service/build/src/SimpleSQL/CMakeFiles/rebuild_cache.dir
-/home/arjentix/Projects/Smart-Bees/Micro-services/Example-Service/build/src/SimpleSQL/CMakeFiles/SimpleSQL.dir
-/home/arjentix/Projects/Smart-Bees/Micro-services/Example-Service/build/src/SimpleSQL/CMakeFiles/edit_cache.dir
