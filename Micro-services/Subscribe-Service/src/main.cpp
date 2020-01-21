@@ -50,6 +50,8 @@ HTTPHandler::Answer work_with_db(DataBase& db, HTTPHandler::Request const& reque
 	try {
 		check_for_api_key(request.headers.at("Api-Key"));
 
+		db.ping_db();
+
 		switch(request.method) {
 			case HTTPHandler::Method::GET:
 				if(request.uri == "/sub_status")

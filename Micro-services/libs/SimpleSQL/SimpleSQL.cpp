@@ -83,6 +83,10 @@ bool Connector::connect(
 	const char* tmp_unix_socket = (unix_socket.empty() ? 
 		nullptr : unix_socket.c_str()
 	);
+
+	my_bool reconnect = 1;
+	mysql_options(_conn_ptr, MYSQL_OPT_RECONNECT, &reconnect);
+
 	MYSQL* res = mysql_real_connect(
 		_conn_ptr, 
 		host.c_str(),
@@ -100,9 +104,12 @@ bool Connector::connect(
 	return _connected;
 }
 
-bool Connector::is_connected()
-{
+bool Connector::is_connected() {
 	return _connected;
+}
+
+void Connector::ping_db() {
+	mysql_ping(_conn_ptr);
 }
 
 Connector::~Connector()

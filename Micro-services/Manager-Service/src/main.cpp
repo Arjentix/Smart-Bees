@@ -200,13 +200,22 @@ void ac_send(json const& req_body, int const& send_code) {
 		answer = client.read_answer();
 		logger << "AC service answer:\n" << answer_to_str(answer) << endl;
 
-		if(answer.status_code != 200 && !answer.body.empty()) {
+		if(answer.status_code == 200)
+			logger << "AC service successfully completed work" << endl;
+		else if((answer.status_code == 404 || 
+					answer.status_code == 412 || 
+					answer.status_code == 503
+					) && !answer.body.empty()) 
+		{
 			ans_body = json::parse(answer.body);
 			if(ans_body["error_message"] != nullptr)
 				logger << "[EXCEPTION] " << ans_body["error_message"].get<string>() << endl;
 			else
 				logger << "[EXCEPTION] " << "Unknown error" << endl;
-			throw runtime_error("Кажется, вас шлюз не подключен к сети");
+			throw runtime_error(ans_body["error_message"].get<string>());
+		} else {
+			logger << "[EXCEPTION] " << answer.status_code << " " << answer.status_description << endl;
+			throw runtime_error("Internal Server Error");
 		}
 	}
 	else

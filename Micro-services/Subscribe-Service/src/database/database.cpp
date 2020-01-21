@@ -47,6 +47,10 @@ bool DataBase::time_compare_begin(struct tm tm_n, struct tm tm_b) {
 	} else return tm_n.tm_year > tm_b.tm_year;
 }
 
+void DataBase::ping_db() {
+	dbc->ping_db();
+}
+
 bool DataBase::check_for_sub(std::string gate_id) {
 	if(dbc->is_connected()) {
 		check_for_exist(gate_id);
