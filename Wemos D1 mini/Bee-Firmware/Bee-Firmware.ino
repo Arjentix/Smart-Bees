@@ -25,7 +25,7 @@
 #define STAPSK  "******"
 #endif
 
-#define PORT 1883
+#define PORT 18830
 #define DEBUG 0
 
 /*
@@ -159,18 +159,6 @@ void broker_connect()
     }
     else {
       print("failed, rc=" + client.state());
-//      if (broker[2] == 255) {
-//        sprintf(log_mes, "Can't find any broker on port %d", PORT);
-//        print(log_mes);
-//        break;
-//      }
-//      else if (broker[3] == 255) {
-//        broker[3] = 0;
-//        broker[2]++;
-//      }
-//      else {
-//        broker[3]++;
-//      }
     }
   }
 }
@@ -197,8 +185,8 @@ void blink()
 {
   for (int i = 0; i < 2; ++i) {
     digitalWrite(BUILTIN_LED, HIGH);
-    delay(400);
+    delay(100);
     digitalWrite(BUILTIN_LED, LOW);
-    delay(400);
+    delay(100);
   }
 }
