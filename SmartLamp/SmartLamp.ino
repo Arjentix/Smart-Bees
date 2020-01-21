@@ -130,9 +130,7 @@ void loop() {
       turnoff_all();
       happy_new_year = true;
       
-      digitalWrite(OUT_PIN_RED, HIGH);
       digitalWrite(OUT_PIN_GREEN, HIGH);
-      digitalWrite(OUT_PIN_BLUE, HIGH);
       
       Serial.println("White");
     }
